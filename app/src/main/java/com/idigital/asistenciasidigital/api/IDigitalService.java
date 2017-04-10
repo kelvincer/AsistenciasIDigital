@@ -30,4 +30,12 @@ public interface IDigitalService {
 
     @GET("attendance")
     Call<ReportResponse> getReport();
+
+    @FormUrlEncoded
+    @POST("attendance_place")
+    Call<ReportResponse> getUserReport(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter);
+
+    @FormUrlEncoded
+    @POST("attendance_allplaces")
+    Call<ReportResponse> getAllUserReport(@Field("id_user") String idUser);
 }

@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.model.Report;
 import com.idigital.asistenciasidigital.response.ReportResponse;
+import com.idigital.asistenciasidigital.util.Constants;
 
 import java.util.List;
 
@@ -60,9 +62,17 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
 
         private void bindItem(Report item) {
 
-            txvUser.setText(item.getIdUser());
+            txvUser.setText(getUserFullName());
             txvDate.setText(item.getDateAdd());
             txvMovement.setText(item.getMovement());
+        }
+
+        private String getUserFullName() {
+
+            PreferenceManager preferenceManager = new PreferenceManager(txvDate.getContext());
+            String name = preferenceManager.getString(Constants.USER_NAME, "null");
+            String lastName = preferenceManager.getString(Constants.USER_LAST_NAME, "null");
+            return name + " "  + lastName;
         }
     }
 }

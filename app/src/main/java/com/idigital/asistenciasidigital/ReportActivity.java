@@ -12,6 +12,7 @@ import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.model.Report;
 import com.idigital.asistenciasidigital.response.ReportResponse;
+import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import retrofit2.Response;
 
 public class ReportActivity extends AppCompatActivity {
 
-    private static final String TAG = RegisterActivity.class.getSimpleName();
+    private static final String TAG = ReportActivity.class.getSimpleName();
 
     @BindView(R.id.ryv_report)
     RecyclerView ryvReport;
@@ -40,15 +41,18 @@ public class ReportActivity extends AppCompatActivity {
 
     private void fetchReport() {
 
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+        String idUser = preferenceManager.getString(Constants.USER_ID, "invalid");
         IDigitalService service = IDigitalClient.getClubService();
-        Call<ReportResponse> call = service.getReport();
+        Call<ReportResponse> call = service.getAllUserReport(idUser);
         call.enqueue(new Callback<ReportResponse>() {
             @Override
             public void onResponse(Call<ReportResponse> call, Response<ReportResponse> response) {
                 if (response.isSuccessful()) {
 
                     ReportResponse responseList = response.body();
-                    fillRecyclerView(responseList.getData());
+                    if(!responseList.getError())
+                        fillRecyclerView(responseList.getData());
                 }
 
                 Log.i(TAG, response.raw().toString());

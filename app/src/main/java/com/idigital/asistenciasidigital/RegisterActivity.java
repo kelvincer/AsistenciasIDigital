@@ -1,7 +1,6 @@
 package com.idigital.asistenciasidigital;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,8 +25,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.dstabase.DatabaseHelper;
@@ -35,9 +32,11 @@ import com.idigital.asistenciasidigital.dstabase.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
 import com.idigital.asistenciasidigital.util.ConnectionUtil;
+import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.DateUtil;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.Util;
+import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,12 +60,12 @@ public class RegisterActivity extends AppCompatActivity implements
     @BindView(R.id.register_out_btn)
     Button checkOutBtn;
     private GoogleApiClient googleApiClient;
-    ProgressDialog progressDialog;
     private int ACCESS_COARSE_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private boolean ON_RANGE = false;
     private Location idLocation = new Location("IDigital");
     private Location userLocation;
     private Map<String, Double> sortedDistancedMap;
+    ProgressDialogView progressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,7 +188,7 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
-    @OnClick({R.id.register_in_btn, R.id.register_out_btn})
+    @OnClick({R.id.register_in_btn, R.id.register_out_btn, R.id.see_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.register_in_btn:
@@ -199,6 +198,10 @@ public class RegisterActivity extends AppCompatActivity implements
             case R.id.register_out_btn:
 
                 sendRegisterToServer("salida");
+                break;
+            case R.id.see_btn:
+
+                startActivity(new Intent(getApplicationContext(), ReportActivity.class));
                 break;
         }
     }
@@ -249,11 +252,10 @@ public class RegisterActivity extends AppCompatActivity implements
     }
 
     public void showProgressDialog() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Obteniendo tu ubicación");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
+
+        progressView =  new ProgressDialogView(this);
+        progressView.setMessage("Obteniendo tu ubicación");
+        progressView.showProgressDialog();
     }
 
     private void postDelayedRegister(final String movement) {
@@ -263,7 +265,7 @@ public class RegisterActivity extends AppCompatActivity implements
             public void run() {
                 //progressDialog.dismiss();
                 if (ON_RANGE) {
-                    progressDialog.setMessage("Enviando registro");
+                    progressView.setMessage("Enviando registro");
                     registerEvent(movement);
 
                 } else {
@@ -314,16 +316,21 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
+    Place currentQuarter;
+
     private void registerEvent(String movement) {
 
         Map.Entry<String, Double> first = getFirstMapEntry();
         if (first == null)
             return;
-        Place place = getPlaceById(first.getKey());
-        if(place == null)
+        currentQuarter = getPlaceById(first.getKey());
+        if (currentQuarter == null)
             return;
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+
         IDigitalService service = IDigitalClient.getClubService();
-        Call<RegisterResponse> call = service.postRegistry("2", place.getIdHeadquarter(), DateUtil.getDateTime(),
+        Call<RegisterResponse> call = service.postRegistry(preferenceManager.getString(Constants.USER_ID, "invalid"),
+                currentQuarter.getIdHeadquarter(), DateUtil.getDateTime(),
                 movement, userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -331,14 +338,13 @@ public class RegisterActivity extends AppCompatActivity implements
 
                 Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, response.raw().toString());
-                progressDialog.dismiss();
-                startActivity(new Intent(getApplicationContext(), ReportActivity.class));
+                progressView.dismissDialog();
             }
 
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 t.printStackTrace();
-                progressDialog.dismiss();
+                progressView.dismissDialog();
             }
         });
     }
