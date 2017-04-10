@@ -1,4 +1,4 @@
-package com.idigital.asistenciasidigital.dstabase;
+package com.idigital.asistenciasidigital.database;
 
 import com.idigital.asistenciasidigital.model.Place;
 import com.j256.ormlite.dao.Dao;
@@ -25,7 +25,7 @@ public class PlaceDao {
     public void insertPlace(Place place) {
 
         try {
-            placeDao.create(place);
+            placeDao.createOrUpdate(place);
         } catch (SQLException e) {
             e.printStackTrace();
         }

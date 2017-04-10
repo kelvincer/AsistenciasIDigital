@@ -9,7 +9,7 @@ import android.content.Context;
 
 public class ProgressDialogView {
 
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     public ProgressDialogView(Context context){
 

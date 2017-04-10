@@ -27,8 +27,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
-import com.idigital.asistenciasidigital.dstabase.DatabaseHelper;
-import com.idigital.asistenciasidigital.dstabase.PlaceDao;
+import com.idigital.asistenciasidigital.database.DatabaseHelper;
+import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
 import com.idigital.asistenciasidigital.util.ConnectionUtil;
@@ -61,11 +61,14 @@ public class RegisterActivity extends AppCompatActivity implements
     Button checkOutBtn;
     private GoogleApiClient googleApiClient;
     private int ACCESS_COARSE_LOCATION_PERMISSION_REQUEST_CODE = 100;
-    private boolean ON_RANGE = false;
     private Location idLocation = new Location("IDigital");
     private Location userLocation;
     private Map<String, Double> sortedDistancedMap;
     ProgressDialogView progressView;
+    String movement;
+    Handler handler;
+    Runnable myRunnable;
+    Place currentQuarter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +88,8 @@ public class RegisterActivity extends AppCompatActivity implements
             createGoogleApiClient();
         }
 
-        idLocation.setLatitude(-12.0959996);
-        idLocation.setLongitude(-77.024008);
+        /*idLocation.setLatitude(-12.0959996);
+        idLocation.setLongitude(-77.024008);*/
 
         /*idLocation.setLatitude(-12.0954204);
         idLocation.setLongitude(-77.0261567);*/
@@ -145,10 +148,12 @@ public class RegisterActivity extends AppCompatActivity implements
         location1.setLatitude(location.getLatitude());
         location1.setLongitude(location.getLongitude());
 
-        calculateDistancesAndSorted(location);
-        //float distance = idLocation.distanceTo(location);
-        Map.Entry<String, Double> firstMapEntry = getFirstMapEntry();
-        Double mininDistance = firstMapEntry.getValue();
+        Double mininDistance = 0.0;
+        if (sortedDistancedMap == null) {
+            calculateDistancesAndSorted(location);
+            Map.Entry<String, Double> firstMapEntry = getFirstMapEntry();
+            mininDistance = firstMapEntry.getValue();
+        }
 
         /*float[] results = new float[1];
         Location.distanceBetween(
@@ -166,9 +171,9 @@ public class RegisterActivity extends AppCompatActivity implements
         Log.i(TAG, "Fourth distance " + SphericalUtil.computeDistanceBetween(latLng1, latLng2));*/
         //Toast.makeText(this, "location changed", Toast.LENGTH_SHORT).show();
         if (mininDistance.intValue() <= 20) {
+
             Log.i(TAG, "El usuario esta dentro de rango");
-            ON_RANGE = true;
-            userLocation = location;
+            setUpForSendRegister(location);
         } else {
             Log.i(TAG, "El usuario esta fuera de rango");
         }
@@ -192,21 +197,20 @@ public class RegisterActivity extends AppCompatActivity implements
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.register_in_btn:
-
-                sendRegisterToServer("entrada");
+                movement = "entrada";
+                sendRegisterToServer();
                 break;
             case R.id.register_out_btn:
-
-                sendRegisterToServer("salida");
+                movement = "salida";
+                sendRegisterToServer();
                 break;
             case R.id.see_btn:
-
                 startActivity(new Intent(getApplicationContext(), ReportActivity.class));
                 break;
         }
     }
 
-    private void sendRegisterToServer(String movement) {
+    private void sendRegisterToServer() {
 
         if (ConnectionUtil.checkWifiOnAndConnected(this)) {
 
@@ -217,7 +221,7 @@ public class RegisterActivity extends AppCompatActivity implements
                 if (googleApiClient != null && !googleApiClient.isConnected())
                     googleApiClient.connect();
 
-                postDelayedRegister(movement);
+                waitForUserLocation();
             } else {
                 showLocationSettingsAlert();
             }
@@ -253,29 +257,25 @@ public class RegisterActivity extends AppCompatActivity implements
 
     public void showProgressDialog() {
 
-        progressView =  new ProgressDialogView(this);
+        progressView = new ProgressDialogView(this);
         progressView.setMessage("Obteniendo tu ubicación");
         progressView.showProgressDialog();
     }
 
-    private void postDelayedRegister(final String movement) {
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+    private void waitForUserLocation() {
+
+        handler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
             public void run() {
-                //progressDialog.dismiss();
-                if (ON_RANGE) {
-                    progressView.setMessage("Enviando registro");
-                    registerEvent(movement);
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "Estás fuera de rango, no puedes registrarte", Toast.LENGTH_SHORT).show();
-                }
-
-                ON_RANGE = false;
                 googleApiClient.disconnect();
+                progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), "Estás fuera de rango, no puedes registrarte", Toast.LENGTH_SHORT).show();
             }
-        }, 20000);
+        };
+
+        handler.postDelayed(myRunnable, 20000);
     }
 
     private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
@@ -316,29 +316,29 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    Place currentQuarter;
-
     private void registerEvent(String movement) {
 
-        Map.Entry<String, Double> first = getFirstMapEntry();
-        if (first == null)
-            return;
-        currentQuarter = getPlaceById(first.getKey());
-        if (currentQuarter == null)
+        Map.Entry<String, Double> firstId = getFirstMapEntry();
+        if (firstId == null)
             return;
         PreferenceManager preferenceManager = new PreferenceManager(this);
-
+        String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getClubService();
-        Call<RegisterResponse> call = service.postRegistry(preferenceManager.getString(Constants.USER_ID, "invalid"),
-                currentQuarter.getIdHeadquarter(), DateUtil.getDateTime(),
+        Call<RegisterResponse> call = service.postRegistry( userId, firstId.getKey(), DateUtil.getDateTime(),
                 movement, userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
-                Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                Log.i(TAG, response.raw().toString());
                 progressView.dismissDialog();
+                if (response.isSuccessful()) {
+                    RegisterResponse registerResponse = response.body();
+                    if (!registerResponse.getError())
+                        Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getApplicationContext(), "Registro inválido", Toast.LENGTH_SHORT).show();
+                }
+                Log.i(TAG, response.raw().toString());
             }
 
             @Override
@@ -348,23 +348,6 @@ public class RegisterActivity extends AppCompatActivity implements
             }
         });
     }
-
-    private Place getPlaceById(String id) {
-
-        DatabaseHelper helper = new DatabaseHelper(this);
-        PlaceDao placeDao = new PlaceDao(helper);
-        List<Place> places = placeDao.getAllPlaces();
-
-        if (places != null) {
-            for (Place place : places) {
-                if (place.getIdHeadquarter().equals(id))
-                    return place;
-            }
-        }
-
-        return null;
-    }
-
 
     private void calculateDistancesAndSorted(Location myLocation) {
 
@@ -382,7 +365,16 @@ public class RegisterActivity extends AppCompatActivity implements
             double distance = myLocation.distanceTo(placeLocation);
             map.put(place.getIdHeadquarter(), distance);
         }
-        sortedDistancedMap = Util.sortByValue(map);
+        sortedDistancedMap = Util.sortMapByValue(map);
+    }
+
+    private void setUpForSendRegister(Location location) {
+
+        progressView.setMessage("Enviando registro");
+        userLocation = location;
+        registerEvent(movement);
+        handler.removeCallbacks(myRunnable);
+        googleApiClient.disconnect();
     }
 
     private Map.Entry<String, Double> getFirstMapEntry() {

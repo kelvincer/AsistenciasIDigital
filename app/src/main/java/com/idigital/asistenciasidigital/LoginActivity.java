@@ -80,6 +80,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (!loginResponse.getError()) {
                         saveLoginData(loginResponse);
                         gotoRegisterActivity();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

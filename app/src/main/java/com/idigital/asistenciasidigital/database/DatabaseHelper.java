@@ -1,4 +1,4 @@
-package com.idigital.asistenciasidigital.dstabase;
+package com.idigital.asistenciasidigital.database;
 
 import java.sql.SQLException;
 

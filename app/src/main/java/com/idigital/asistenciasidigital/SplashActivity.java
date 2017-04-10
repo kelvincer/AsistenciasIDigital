@@ -9,8 +9,8 @@ import android.widget.Toast;
 
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
-import com.idigital.asistenciasidigital.dstabase.DatabaseHelper;
-import com.idigital.asistenciasidigital.dstabase.PlaceDao;
+import com.idigital.asistenciasidigital.database.DatabaseHelper;
+import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.util.ConnectionUtil;

@@ -14,6 +14,7 @@ import com.idigital.asistenciasidigital.model.Report;
 import com.idigital.asistenciasidigital.response.ReportResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
+import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class ReportActivity extends AppCompatActivity {
 
     @BindView(R.id.ryv_report)
     RecyclerView ryvReport;
+    ProgressDialogView progressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,15 @@ public class ReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
 
+        showProgressDialog();
         fetchReport();
+    }
+
+    private void showProgressDialog(){
+
+        progressView =  new ProgressDialogView(this);
+        progressView.setMessage("Cargando reporte...");
+        progressView.showProgressDialog();
     }
 
     private void fetchReport() {
@@ -44,15 +54,19 @@ public class ReportActivity extends AppCompatActivity {
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String idUser = preferenceManager.getString(Constants.USER_ID, "invalid");
         IDigitalService service = IDigitalClient.getClubService();
-        Call<ReportResponse> call = service.getAllUserReport(idUser);
+        Call<ReportResponse> call = service.postAllUserReport(idUser);
         call.enqueue(new Callback<ReportResponse>() {
             @Override
             public void onResponse(Call<ReportResponse> call, Response<ReportResponse> response) {
-                if (response.isSuccessful()) {
 
+                progressView.dismissDialog();
+                if (response.isSuccessful()) {
                     ReportResponse responseList = response.body();
                     if(!responseList.getError())
                         fillRecyclerView(responseList.getData());
+                    else{
+                        Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 Log.i(TAG, response.raw().toString());
@@ -61,6 +75,7 @@ public class ReportActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ReportResponse> call, Throwable t) {
                 t.printStackTrace();
+                progressView.dismissDialog();
                 Toast.makeText(getApplicationContext(), "Error en servicio", Toast.LENGTH_SHORT).show();
             }
         });
