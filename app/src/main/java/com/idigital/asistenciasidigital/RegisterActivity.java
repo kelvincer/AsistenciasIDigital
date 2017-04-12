@@ -15,9 +15,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextClock;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +28,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.idigital.asistenciasidigital.adapter.RecyclerEventAdapter;
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
@@ -35,6 +39,7 @@ import com.idigital.asistenciasidigital.util.ConnectionUtil;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.DateUtil;
 import com.idigital.asistenciasidigital.util.LocationUtil;
+import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
@@ -59,6 +64,14 @@ public class RegisterActivity extends AppCompatActivity implements
     Button checkInBtn;
     @BindView(R.id.register_out_btn)
     Button checkOutBtn;
+    @BindView(R.id.event_ryv)
+    RecyclerView eventRyv;
+    @BindView(R.id.textClock)
+    TextClock textClock;
+    @BindView(R.id.delete_btn)
+    Button deleteBtn;
+    @BindView(R.id.copy_btn)
+    Button copyBtn;
     private GoogleApiClient googleApiClient;
     private int ACCESS_COARSE_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private Location idLocation = new Location("IDigital");
@@ -68,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity implements
     String movement;
     Handler handler;
     Runnable myRunnable;
-    Place currentQuarter;
+    RecyclerEventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +106,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
         /*idLocation.setLatitude(-12.0954204);
         idLocation.setLongitude(-77.0261567);*/
+        setUpEventsRecycleriew();
     }
 
     @Override
@@ -173,9 +187,13 @@ public class RegisterActivity extends AppCompatActivity implements
         if (mininDistance.intValue() <= 20) {
 
             Log.i(TAG, "El usuario esta dentro de rango");
+            eventAdapter.addNewEvent("Estas dentro del rango");
             setUpForSendRegister(location);
         } else {
             Log.i(TAG, "El usuario esta fuera de rango");
+            eventAdapter.addNewEvent("Estas a " + (mininDistance.intValue() - 20) + " metros");
+            //progressView.dismissDialog();
+            //googleApiClient.disconnect();
         }
     }
 
@@ -193,7 +211,7 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
-    @OnClick({R.id.register_in_btn, R.id.register_out_btn, R.id.see_btn})
+    @OnClick({R.id.register_in_btn, R.id.register_out_btn, R.id.see_btn, R.id.delete_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.register_in_btn:
@@ -207,13 +225,17 @@ public class RegisterActivity extends AppCompatActivity implements
             case R.id.see_btn:
                 startActivity(new Intent(getApplicationContext(), ReportActivity.class));
                 break;
+            case R.id.delete_btn:
+                eventAdapter.clearList();
+                break;
         }
     }
 
     private void registerMovement() {
 
-        if (ConnectionUtil.checkWifiOnAndConnected(this)) {
+        if (ConnectionUtil.haveNetworkConnection(this)) {
 
+            eventAdapter.addNewEvent("Tienes conexión");
             if (LocationUtil.isLocationServicesAvailable(this)) {
 
                 showProgressDialog();
@@ -226,7 +248,8 @@ public class RegisterActivity extends AppCompatActivity implements
                 showLocationSettingsAlert();
             }
         } else {
-            Toast.makeText(getApplicationContext(), "No hay conexión Wifi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
+            eventAdapter.addNewEvent("No hay conexión a internet");
         }
     }
 
@@ -271,7 +294,7 @@ public class RegisterActivity extends AppCompatActivity implements
             public void run() {
                 googleApiClient.disconnect();
                 progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "Estás fuera de rango, no puedes registrarte", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Estás fuera de rango, no puedes registrarte", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -333,10 +356,14 @@ public class RegisterActivity extends AppCompatActivity implements
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
-                    if (!registerResponse.getError())
+                    if (!registerResponse.getError()) {
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                    else
+                        eventAdapter.addNewEvent("Registro satisfactorio");
+                    } else {
                         Toast.makeText(getApplicationContext(), "Registro inválido", Toast.LENGTH_SHORT).show();
+                        eventAdapter.addNewEvent("Registro inválido");
+                    }
+
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -345,6 +372,7 @@ public class RegisterActivity extends AppCompatActivity implements
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 t.printStackTrace();
                 Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
+                eventAdapter.addNewEvent("Registro insatisfactorio");
                 progressView.dismissDialog();
             }
         });
@@ -384,5 +412,13 @@ public class RegisterActivity extends AppCompatActivity implements
             return null;
         Map.Entry<String, Double> firstEntry = sortedDistancedMap.entrySet().iterator().next();
         return firstEntry;
+    }
+
+    private void setUpEventsRecycleriew() {
+
+        eventAdapter = new RecyclerEventAdapter();
+        eventRyv.setAdapter(eventAdapter);
+        eventRyv.setLayoutManager(new LinearLayoutManager(this));
+        eventRyv.addItemDecoration(new SimpleDividerItemDecoration(this));
     }
 }

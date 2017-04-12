@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void getPlacesFromServer() {
 
-        if (!ConnectionUtil.isConnected(this)) {
+        if (!ConnectionUtil.haveNetworkConnection(this)) {
             Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
             return;
         }

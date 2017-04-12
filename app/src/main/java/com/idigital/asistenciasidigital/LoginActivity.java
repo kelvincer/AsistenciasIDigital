@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         if (v.getId() == R.id.login_btn) {
 
-            if (!ConnectionUtil.isConnected(this)) {
+            if (!ConnectionUtil.haveNetworkConnection(this)) {
                 Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -67,8 +67,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         showProgressDialog();
 
         IDigitalService service = IDigitalClient.getClubService();
-        //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
-        Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
+        Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
+        //Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
