@@ -54,6 +54,8 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
         TextView txvDate;
         @BindView(R.id.txv_movement)
         TextView txvMovement;
+        @BindView(R.id.txv_sede)
+        TextView txvSede;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
@@ -65,6 +67,7 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
             txvUser.setText(getUserFullName());
             txvDate.setText(item.getDateAdd());
             txvMovement.setText(item.getMovement());
+            txvSede.setText(item.getSede());
         }
 
         private String getUserFullName() {
@@ -72,7 +75,7 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
             PreferenceManager preferenceManager = new PreferenceManager(txvDate.getContext());
             String name = preferenceManager.getString(Constants.USER_NAME, "null");
             String lastName = preferenceManager.getString(Constants.USER_LAST_NAME, "null");
-            return name + " "  + lastName;
+            return name + " " + lastName;
         }
     }
 }

@@ -30,6 +30,9 @@ public class Report {
     @SerializedName("longitude")
     @Expose
     private String longitude;
+    @SerializedName("sede")
+    @Expose
+    private String sede;
 
     public String getIdAttendance() {
         return idAttendance;
@@ -85,5 +88,13 @@ public class Report {
 
     public void setLongitude(String longitude) {
         this.longitude = longitude;
+    }
+
+    public String getSede() {
+        return sede;
+    }
+
+    public void setSede(String sede) {
+        this.sede = sede;
     }
 }

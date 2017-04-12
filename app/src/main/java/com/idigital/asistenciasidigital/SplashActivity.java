@@ -1,6 +1,10 @@
 package com.idigital.asistenciasidigital;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,14 +35,6 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         getPlacesFromServer();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                finish();
-            }
-        }, 3000);
     }
 
     private void getPlacesFromServer() {
@@ -62,6 +58,7 @@ public class SplashActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Error en el servicio", Toast.LENGTH_SHORT).show();
                     } else {
                         saveDataListOnDatabase(placeResponse.getData());
+                        gotoLoginActivity();
                     }
                 }
             }
@@ -73,10 +70,31 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+    private void gotoLoginActivity() {
+
+        Log.i(TAG, "wifi name " + getWifiName(this));
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
     private void saveDataListOnDatabase(List<Place> data) {
 
         DatabaseHelper helper = new DatabaseHelper(this);
         PlaceDao placeDao = new PlaceDao(helper);
         placeDao.insertPlaceList(data);
+    }
+
+    public String getWifiName(Context context) {
+        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (manager.isWifiEnabled()) {
+            WifiInfo wifiInfo = manager.getConnectionInfo();
+            if (wifiInfo != null) {
+                NetworkInfo.DetailedState state = WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState());
+                if (state == NetworkInfo.DetailedState.CONNECTED || state == NetworkInfo.DetailedState.OBTAINING_IPADDR) {
+                    return wifiInfo.getSSID();
+                }
+            }
+        }
+        return null;
     }
 }

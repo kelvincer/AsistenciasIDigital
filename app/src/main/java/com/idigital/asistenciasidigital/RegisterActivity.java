@@ -198,11 +198,11 @@ public class RegisterActivity extends AppCompatActivity implements
         switch (view.getId()) {
             case R.id.register_in_btn:
                 movement = "entrada";
-                sendRegisterToServer();
+                registerMovement();
                 break;
             case R.id.register_out_btn:
                 movement = "salida";
-                sendRegisterToServer();
+                registerMovement();
                 break;
             case R.id.see_btn:
                 startActivity(new Intent(getApplicationContext(), ReportActivity.class));
@@ -210,7 +210,7 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
-    private void sendRegisterToServer() {
+    private void registerMovement() {
 
         if (ConnectionUtil.checkWifiOnAndConnected(this)) {
 
@@ -316,7 +316,7 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void registerEvent(String movement) {
+    private void sendMovementToServer(String movement) {
 
         Map.Entry<String, Double> firstId = getFirstMapEntry();
         if (firstId == null)
@@ -324,7 +324,7 @@ public class RegisterActivity extends AppCompatActivity implements
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getClubService();
-        Call<RegisterResponse> call = service.postRegistry( userId, firstId.getKey(), DateUtil.getDateTime(),
+        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), DateUtil.getDateTime(),
                 movement, userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -344,6 +344,7 @@ public class RegisterActivity extends AppCompatActivity implements
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 t.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
                 progressView.dismissDialog();
             }
         });
@@ -372,7 +373,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
         progressView.setMessage("Enviando registro");
         userLocation = location;
-        registerEvent(movement);
+        sendMovementToServer(movement);
         handler.removeCallbacks(myRunnable);
         googleApiClient.disconnect();
     }
