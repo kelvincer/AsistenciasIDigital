@@ -24,6 +24,7 @@ import android.widget.TextClock;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -70,10 +71,9 @@ public class RegisterActivity extends AppCompatActivity implements
     TextClock textClock;
     @BindView(R.id.delete_btn)
     Button deleteBtn;
-    @BindView(R.id.copy_btn)
-    Button copyBtn;
     private GoogleApiClient googleApiClient;
-    private int ACCESS_COARSE_LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private int ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
     private Location idLocation = new Location("IDigital");
     private Location userLocation;
     private Map<String, Double> sortedDistancedMap;
@@ -82,6 +82,9 @@ public class RegisterActivity extends AppCompatActivity implements
     Handler handler;
     Runnable myRunnable;
     RecyclerEventAdapter eventAdapter;
+    String closestPlaceId;
+    List<Place> places;
+    boolean hasPermissionAccessFineLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,39 +92,25 @@ public class RegisterActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            boolean hasPermissionAccessCoarseLocation = ContextCompat.checkSelfPermission(getApplicationContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-            if (!hasPermissionAccessCoarseLocation)
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_COARSE_LOCATION_PERMISSION_REQUEST_CODE);
-            else
-                createGoogleApiClient();
-        } else {
+        requestPermissionForLocation();
 
-            createGoogleApiClient();
-        }
+        setUpEventsRecyclerview();
 
-        /*idLocation.setLatitude(-12.0959996);
-        idLocation.setLongitude(-77.024008);*/
-
-        /*idLocation.setLatitude(-12.0954204);
-        idLocation.setLongitude(-77.0261567);*/
-        setUpEventsRecycleriew();
+        // This is optional
+        if(checkPlayServices())
+            Log.i(TAG, "tiene play service");
+        else
+            Log.i(TAG, "No tiene play service");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        /*if (googleApiClient != null && !googleApiClient.isConnected())
-            googleApiClient.connect();*/
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /*if (googleApiClient.isConnected())
-            googleApiClient.disconnect();*/
     }
 
     @Override
@@ -158,55 +147,35 @@ public class RegisterActivity extends AppCompatActivity implements
         Log.i(TAG, "lat changed " + location.getLatitude());
         Log.i(TAG, "lng changed " + location.getLongitude());
 
-        Location location1 = new Location("MyPosition");
-        location1.setLatitude(location.getLatitude());
-        location1.setLongitude(location.getLongitude());
+        calculateDistancesAndSorted(location);
+        Map.Entry<String, Double> firstMapEntry = getFirstMapEntry();
+        Double mininDistance = firstMapEntry.getValue();
+        closestPlaceId = firstMapEntry.getKey();
 
-        Double mininDistance = 0.0;
-        if (sortedDistancedMap == null) {
-            calculateDistancesAndSorted(location);
-            Map.Entry<String, Double> firstMapEntry = getFirstMapEntry();
-            mininDistance = firstMapEntry.getValue();
-        }
+        if (mininDistance.intValue() <= getRadiusFromClosestPlace()) {
 
-        /*float[] results = new float[1];
-        Location.distanceBetween(
-                idLocation.getLatitude(), idLocation.getLongitude(),
-                location.getLatitude(), location.getLongitude(), results);
-
-        Log.i(TAG, "Distance " + mininDistance);
-        Log.i(TAG, "Second distance " + results[0]);
-        Log.i(TAG, "Third distance " + meterDistanceBetweenPoints(idLocation.getLatitude(),
-                idLocation.getLongitude(), location.getLatitude(), location.getLongitude()));
-
-        LatLng latLng1 = new LatLng(location.getLatitude(), location1.getLongitude());
-        LatLng latLng2 = new LatLng(idLocation.getLatitude(), idLocation.getLongitude());
-
-        Log.i(TAG, "Fourth distance " + SphericalUtil.computeDistanceBetween(latLng1, latLng2));*/
-        //Toast.makeText(this, "location changed", Toast.LENGTH_SHORT).show();
-        if (mininDistance.intValue() <= 20) {
-
+            Log.i(TAG, "radius " + getRadiusFromClosestPlace());
             Log.i(TAG, "El usuario esta dentro de rango");
-            eventAdapter.addNewEvent("Estas dentro del rango");
+            eventAdapter.addNewEvent("Estas dentro de la sede: " + mininDistance.intValue() + " m. del centro");
             setUpForSendRegister(location);
         } else {
             Log.i(TAG, "El usuario esta fuera de rango");
-            eventAdapter.addNewEvent("Estas a " + (mininDistance.intValue() - 20) + " metros");
-            //progressView.dismissDialog();
-            //googleApiClient.disconnect();
+            eventAdapter.addNewEvent("Estas fuera de la sede: " + mininDistance.intValue() + " m. del centro");
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == ACCESS_COARSE_LOCATION_PERMISSION_REQUEST_CODE) {
+        if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //The External Storage Write Permission is granted to you... Continue your left job...
                 createGoogleApiClient();
+                hasPermissionAccessFineLocation = true;
                 //googleApiClient.connect();
             } else {
                 Log.d(TAG, "permission denied");
+                hasPermissionAccessFineLocation = false;
             }
         }
     }
@@ -215,7 +184,7 @@ public class RegisterActivity extends AppCompatActivity implements
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.register_in_btn:
-                movement = "entrada";
+                movement = "ingreso";
                 registerMovement();
                 break;
             case R.id.register_out_btn:
@@ -233,9 +202,15 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void registerMovement() {
 
-        if (ConnectionUtil.haveNetworkConnection(this)) {
+        if(!hasPermissionAccessFineLocation){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE);
+            return;
+        }
 
-            eventAdapter.addNewEvent("Tienes conexión");
+        //if (ConnectionUtil.haveNetworkConnection(this)) {
+        if(ConnectionUtil.isOnline()){
+
+            eventAdapter.addNewEvent("Hay conexión a internet");
             if (LocationUtil.isLocationServicesAvailable(this)) {
 
                 showProgressDialog();
@@ -243,7 +218,6 @@ public class RegisterActivity extends AppCompatActivity implements
                 if (googleApiClient != null && !googleApiClient.isConnected())
                     googleApiClient.connect();
 
-                waitForUserLocation();
             } else {
                 showLocationSettingsAlert();
             }
@@ -267,8 +241,8 @@ public class RegisterActivity extends AppCompatActivity implements
     private void startLocationUpdate() {
 
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(0);
-        //locationRequest.setFastestInterval(100);
+        locationRequest.setInterval(1000 * 6);
+        locationRequest.setFastestInterval(1000 * 3);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         try {
@@ -276,6 +250,8 @@ public class RegisterActivity extends AppCompatActivity implements
         } catch (SecurityException e) {
             e.printStackTrace();
         }
+
+        waitForUserLocation();
     }
 
     public void showProgressDialog() {
@@ -292,9 +268,9 @@ public class RegisterActivity extends AppCompatActivity implements
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                googleApiClient.disconnect();
+                eventAdapter.addNewEvent("Registro insatisfactorio");
+                stopLocationUpdates();
                 progressView.dismissDialog();
-                //Toast.makeText(getApplicationContext(), "Estás fuera de rango, no puedes registrarte", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -321,7 +297,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Localización");
-        alertDialog.setMessage("GPS no esta habilitado. Deseas ir al menú de configuración?");
+        alertDialog.setMessage("Localización no esta habilitado. ¿Deseas ir al menú de configuración?");
 
         alertDialog.setPositiveButton("Configuración", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -339,7 +315,7 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void sendMovementToServer(String movement) {
+    private void sendMovementToServer() {
 
         Map.Entry<String, Double> firstId = getFirstMapEntry();
         if (firstId == null)
@@ -358,12 +334,11 @@ public class RegisterActivity extends AppCompatActivity implements
                     RegisterResponse registerResponse = response.body();
                     if (!registerResponse.getError()) {
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro satisfactorio");
+                        eventAdapter.addNewEvent("Registro satisfactorio: " + movement);
                     } else {
                         Toast.makeText(getApplicationContext(), "Registro inválido", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro inválido");
+                        eventAdapter.addNewEvent("Registro insatisfactorio 1");
                     }
-
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -371,8 +346,8 @@ public class RegisterActivity extends AppCompatActivity implements
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
-                eventAdapter.addNewEvent("Registro insatisfactorio");
+                Toast.makeText(getApplicationContext(), "Registro fallido", Toast.LENGTH_SHORT).show();
+                eventAdapter.addNewEvent("Registro fallido");
                 progressView.dismissDialog();
             }
         });
@@ -380,9 +355,11 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void calculateDistancesAndSorted(Location myLocation) {
 
-        DatabaseHelper helper = new DatabaseHelper(this);
-        PlaceDao placeDao = new PlaceDao(helper);
-        List<Place> places = placeDao.getAllPlaces();
+        if (places == null) {
+            DatabaseHelper helper = new DatabaseHelper(this);
+            PlaceDao placeDao = new PlaceDao(helper);
+            places = placeDao.getAllPlaces();
+        }
 
         Map<String, Double> map = new HashMap<>();
 
@@ -399,11 +376,11 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void setUpForSendRegister(Location location) {
 
+        stopLocationUpdates();
         progressView.setMessage("Enviando registro");
         userLocation = location;
-        sendMovementToServer(movement);
+        sendMovementToServer();
         handler.removeCallbacks(myRunnable);
-        googleApiClient.disconnect();
     }
 
     private Map.Entry<String, Double> getFirstMapEntry() {
@@ -414,11 +391,84 @@ public class RegisterActivity extends AppCompatActivity implements
         return firstEntry;
     }
 
-    private void setUpEventsRecycleriew() {
+    private void setUpEventsRecyclerview() {
 
         eventAdapter = new RecyclerEventAdapter();
         eventRyv.setAdapter(eventAdapter);
         eventRyv.setLayoutManager(new LinearLayoutManager(this));
         eventRyv.addItemDecoration(new SimpleDividerItemDecoration(this));
+    }
+
+    private int getRadiusFromClosestPlace() {
+
+        for (Place p : places) {
+            if (p.getIdHeadquarter().equals(closestPlaceId)) {
+                String stringRadio = p.getRadio();
+                Double doubleRadio = Double.parseDouble(stringRadio);
+                return doubleRadio.intValue();
+            }
+        }
+
+        return 0;
+    }
+
+    public void stopLocationUpdates() {
+
+        if (googleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+            googleApiClient.disconnect();
+        }
+    }
+
+    private void requestPermissionForLocation() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            hasPermissionAccessFineLocation = ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+            if (!hasPermissionAccessFineLocation)
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE);
+            else
+                createGoogleApiClient();
+        } else {
+            hasPermissionAccessFineLocation = true;
+            createGoogleApiClient();
+        }
+    }
+
+    /*private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil
+                .isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "This device is not supported.", Toast.LENGTH_LONG)
+                        .show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }*/
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "This device is not supported.", Toast.LENGTH_LONG)
+                        .show();
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }

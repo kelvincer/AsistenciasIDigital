@@ -58,7 +58,7 @@ public class RecyclerEventAdapter extends RecyclerView.Adapter<RecyclerEventAdap
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.txv_event)
+        @BindView(R.id.event_txv)
         TextView txvEvent;
 
         public CustomViewHolder(View itemView) {

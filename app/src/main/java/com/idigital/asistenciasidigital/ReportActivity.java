@@ -12,6 +12,7 @@ import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.model.Report;
 import com.idigital.asistenciasidigital.response.ReportResponse;
+import com.idigital.asistenciasidigital.util.ConnectionUtil;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
@@ -38,7 +39,6 @@ public class ReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
 
-        showProgressDialog();
         fetchReport();
     }
 
@@ -51,6 +51,12 @@ public class ReportActivity extends AppCompatActivity {
 
     private void fetchReport() {
 
+        if(!ConnectionUtil.isOnline()){
+            Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        showProgressDialog();
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String idUser = preferenceManager.getString(Constants.USER_ID, "invalid");
         IDigitalService service = IDigitalClient.getClubService();
@@ -83,8 +89,13 @@ public class ReportActivity extends AppCompatActivity {
 
     private void fillRecyclerView(List<Report> data) {
 
+        if(data.size() == 0){
+            Toast.makeText(getApplicationContext(), "No hay reporte que mostrar", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         ryvReport.setLayoutManager(new LinearLayoutManager(this));
-        ryvReport.addItemDecoration(new SimpleDividerItemDecoration(this));
         ryvReport.setAdapter(new RecyclerReportAdapter(data));
+        ryvReport.addItemDecoration(new SimpleDividerItemDecoration(this));
     }
 }

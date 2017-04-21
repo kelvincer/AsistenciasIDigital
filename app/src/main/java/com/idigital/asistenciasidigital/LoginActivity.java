@@ -48,7 +48,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         if (v.getId() == R.id.login_btn) {
 
-            if (!ConnectionUtil.haveNetworkConnection(this)) {
+            /*if (!ConnectionUtil.haveNetworkConnection(this)) {
+                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+                return;
+            }*/
+            if (!ConnectionUtil.isOnline()) {
                 Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -59,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void loginRequest() {
 
-        if(!isValidUserInput()){
+        if (!isValidUserInput()) {
             Toast.makeText(this, "Llena los campos", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -67,8 +71,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         showProgressDialog();
 
         IDigitalService service = IDigitalClient.getClubService();
-        Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
-        //Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
+        //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
+        Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -80,7 +84,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (!loginResponse.getError()) {
                         saveLoginData(loginResponse);
                         gotoRegisterActivity();
-                    }else{
+                        finish();
+                    } else {
                         Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -107,12 +112,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());
     }
 
-    private boolean isValidUserInput(){
+    private boolean isValidUserInput() {
 
-        if(etxEmail.getText().toString().isEmpty())
+        if (etxEmail.getText().toString().isEmpty())
             return false;
 
-        if(etxPassword.getText().toString().isEmpty())
+        if (etxPassword.getText().toString().isEmpty())
             return false;
 
         return true;
@@ -120,8 +125,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public void showProgressDialog() {
 
-        progressView =  new ProgressDialogView(this);
-        progressView.setMessage("Conectando...");
+        progressView = new ProgressDialogView(this);
+        progressView.setMessage("Autenticando...");
         progressView.showProgressDialog();
     }
 }

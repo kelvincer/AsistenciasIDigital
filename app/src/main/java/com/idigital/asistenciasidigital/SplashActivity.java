@@ -1,11 +1,8 @@
 package com.idigital.asistenciasidigital;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,8 +36,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private void getPlacesFromServer() {
 
-        if (!ConnectionUtil.haveNetworkConnection(this)) {
-            Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+        if(!ConnectionUtil.isOnline()){
+            showInternetAlertDialog();
             return;
         }
 
@@ -72,7 +69,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void gotoLoginActivity() {
 
-        Log.i(TAG, "wifi name " + getWifiName(this));
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
@@ -84,17 +80,18 @@ public class SplashActivity extends AppCompatActivity {
         placeDao.insertPlaceList(data);
     }
 
-    public String getWifiName(Context context) {
-        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if (manager.isWifiEnabled()) {
-            WifiInfo wifiInfo = manager.getConnectionInfo();
-            if (wifiInfo != null) {
-                NetworkInfo.DetailedState state = WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState());
-                if (state == NetworkInfo.DetailedState.CONNECTED || state == NetworkInfo.DetailedState.OBTAINING_IPADDR) {
-                    return wifiInfo.getSSID();
-                }
+    public void showInternetAlertDialog() {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Internet");
+        alertDialog.setMessage("No tienes conexión a internet");
+
+        alertDialog.setPositiveButton("Cerrar App", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
             }
-        }
-        return null;
+        });
+
+        alertDialog.show();
     }
 }

@@ -2,6 +2,123 @@
 <items version="2" >
 
     <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\20cf53d849dc0942776657b6220ec71c192c1417\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="518768f3200963fbfec652f498da2c9d39245234">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_7078a6dd67d41636d1ff1e77137f0409edc11e5e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\fa2b4c82bd73fdb325045cf2947824186b07b60f\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c7626a9aa507bbbdc16188bc9a9f9bf3370c1ddd">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_702e4ed0e21c7b877721ae3f4b34e78a2484c54b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\d747100957cb5d5089763fe2955b340b101faeb7\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_9f300029f165cf1eb90234eb4059e6ac59829a6b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\3f9cb0fd92e0ff149eca540f9f6fbfc67a183c52\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="425c7b17887e5c3f8cbdf67ba171bc246f29b42c">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_1062f22633811c64a7852c0a8f5a3464392d1dfb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\76a1ed615c0ebe6e8c5a1490ee4158a2eeda337b\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bb115a110992b254f767f337da233071f6f940b8">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_3009d466ba6826fadab81ab8760534dda32e52ab.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\3ea62262c1237a91f9827fe48bcfeea07db179b0\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bdcc2a9572f18b8c90a3a157cab6cdfc97c6c736">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_deb910c8ced418562b1c21da1119b71d06ce66f5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\29e01ee725068d07020734f55e2ac5c826bca157\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="93c1199fcb0a34b980e6fff8350daff62e696ec2">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_f2360cd8a4061005bcc54d725d16ef64d0e8a678.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-android\4.48\afa06f539a4026c10b247386312aa67404b80a16\ormlite-android-4.48.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="afa06f539a4026c10b247386312aa67404b80a16">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\ormlite-android-4.48_6af6d7f1e4b3b25a481e1a524277656075ffdefa.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\AndroidStudioSDK\extras\m2repository\com\android\support\constraint\constraint-layout-solver\1.0.2\constraint-layout-solver-1.0.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\constraint-layout-solver-1.0.2_10b2267cb4d0eb7f0ffad9ea7608429653c10247.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\375fb1c9d756624f49ed3d55c2eb645f4dd449ae\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6003d64df88a6ce5e961fa2bad7f1b9b97689ac1">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_5ea8c93750be43a7ac826d19be586a58cdb34ca0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\8705c70ebdec57b1cf0d9e75f14db66b0ace53df\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="19696dc358ac668e341f28c41e3387d61ccdb81d">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_42ddb319a7d8440b468f07f9c6a93c5c7f7570d7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\48f5491f31a03df9bb058c7265996198c59819b3\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4b746ef0fd46acb5aaf3d9ab9a4cec22c28d3211">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_55381fac730ccb27f110c2d7d2cbba6bd693f41d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\d7436f46abbb0f32d5984f7c9b61b02145c51d6d\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="70f23cb87278f89aa51e6f57e8f0fd5266572d95">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_8a0d6cef6640dab2693fb2719d69abf996c84c79.jar" />
+    </item>
+    <item
         is-multidex="true"
         jar="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
@@ -11,22 +128,40 @@
         <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_1b6571b6ffc50f1535a1aa2c5a36e981d9d947d9\classes.dex" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\USUARIO\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-android\4.48\afa06f539a4026c10b247386312aa67404b80a16\ormlite-android-4.48.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\f264652a3f67468a18ad5fae776e1c1eeff7d210\output\jars\classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.2"
-        sha1="afa06f539a4026c10b247386312aa67404b80a16">
-        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\transforms\dex\debug\folders\1000\10\ormlite-android-4.48_6af6d7f1e4b3b25a481e1a524277656075ffdefa\classes.dex" />
+        sha1="5cc5ef8347a6bafa14556cbd35230aa9b3431bb0">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_172e8fe221b28858c556008ebd3fb7109a433042.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\USUARIO\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-core\4.48\e579bd2905d0399af5029aaaf9817d5fa0ca88a5\ormlite-core-4.48.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\2953b6b3718e7a7b6d208731e0bfd7249c28a3a7\output\jars\classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.2"
-        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
-        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\transforms\dex\debug\folders\1000\10\ormlite-core-4.48_8b051dbb272f6c2cf4df10b3a2f1c57ed5dcd4a7\classes.dex" />
+        sha1="4b1a7fac58cc85b115adee653a10b6300f90951a">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_b14db673213dedbdb4b0cf1b8edcdd4ef942a13a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\b47903a2b13c9e81dd513741c5af15ce8f1bc690\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_d49a30fe6ad36807b019ed8c2d803523220b9b4a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\07721ef5e93baf389e2e8aff3dbe4c6b850f5453\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a3e61044038fb54cddf6b8dc79f41d2b57f42caf">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_27edcb123857ed8e7384296685ac33c590e332fd.jar" />
     </item>
     <item
         is-multidex="true"
@@ -34,17 +169,44 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="7514cb2997d78e1189565e7f2d7f371d16600569">
+        sha1="280c2254844309ee67319a708a2dbc9bd73bd053">
         <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_4fcdd8e487b447a11011a87b0f2d75c48a83ceef\classes.dex" />
     </item>
     <item
-        is-multidex="true"
-        jar="C:\Users\USUARIO\.android\build-cache\07721ef5e93baf389e2e8aff3dbe4c6b850f5453\output\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\f90d664a2e9a2d2c07e5baf7fc4a33ac3015ebc1\output\jars\classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.2"
-        sha1="a3e61044038fb54cddf6b8dc79f41d2b57f42caf">
-        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_27edcb123857ed8e7384296685ac33c590e332fd\classes.dex" />
+        sha1="93c10d68ab5ea070f15782ae6d3a28d1f1d8f45e">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_865fec3d1e53dbde1f412006204664a5030f5b6b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.android\build-cache\27614cd0fdaf4e867e8134862ad575fdd8bca46b\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d6a04527c17597019dad82777c5094a3d60d1c33">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\classes_8be4593fe5160517110dc9e739245b652f519c63.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\AndroidStudioSDK\extras\android\m2repository\com\android\support\support-annotations\25.3.0\support-annotations-25.3.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="dd84903d2e1af25a6081ef9038ad863cb14ca3a0">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\support-annotations-25.3.0_eb117585dec94dafb1947ad2c3e6cf8c31ddffb1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\USUARIO\.gradle\caches\modules-2\files-2.1\com.j256.ormlite\ormlite-core\4.48\e579bd2905d0399af5029aaaf9817d5fa0ca88a5\ormlite-core-4.48.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
+        <dex dex="D:\AndroidStudioProjects\AsistenciasIDigital\app\build\intermediates\pre-dexed\debug\ormlite-core-4.48_8b051dbb272f6c2cf4df10b3a2f1c57ed5dcd4a7.jar" />
     </item>
 
 </items>
