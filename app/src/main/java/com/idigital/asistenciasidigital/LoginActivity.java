@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,19 +18,20 @@ import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
-    @BindView(R.id.login_btn)
-    Button button;
-    @BindView(R.id.etx_email)
+    @BindView(R.id.email_etx)
     EditText etxEmail;
-    @BindView(R.id.etx_password)
+    @BindView(R.id.password_etx)
     EditText etxPassword;
+    @BindView(R.id.login_btn)
+    Button loginBtn;
 
     ProgressDialogView progressView;
 
@@ -40,25 +40,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-
-        button.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.login_btn) {
+    @OnClick(R.id.login_btn)
+    public void onViewClicked() {
 
-            /*if (!ConnectionUtil.haveNetworkConnection(this)) {
-                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
-                return;
-            }*/
-            if (!ConnectionUtil.isOnline()) {
-                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            loginRequest();
+        if (!ConnectionUtil.isOnline()) {
+            Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        loginRequest();
     }
 
     private void loginRequest() {

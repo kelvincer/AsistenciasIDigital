@@ -454,6 +454,7 @@ public class RegisterActivity extends AppCompatActivity implements
     }*/
 
     private boolean checkPlayServices() {
+
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {

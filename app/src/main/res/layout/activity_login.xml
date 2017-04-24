@@ -10,7 +10,7 @@
 
 
     <TextView
-        android:id="@+id/txv_email"
+        android:id="@+id/email_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/etx_email"
+        android:id="@+id/email_etx"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -35,10 +35,10 @@
         android:layout_marginTop="11dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txv_email" />
+        app:layout_constraintTop_toBottomOf="@+id/email_txv" />
 
     <TextView
-        android:id="@+id/txv_password"
+        android:id="@+id/password_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -46,11 +46,11 @@
         android:layout_marginTop="15dp"
         android:text="Contraseña:"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etx_email" />
+        app:layout_constraintTop_toBottomOf="@+id/email_etx" />
 
 
     <EditText
-        android:id="@+id/etx_password"
+        android:id="@+id/password_etx"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -62,7 +62,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txv_password" />
+        app:layout_constraintTop_toBottomOf="@+id/password_txv" />
 
     <Button
         android:id="@+id/login_btn"
@@ -72,7 +72,7 @@
         android:text="Login"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etx_password" />
+        app:layout_constraintTop_toBottomOf="@+id/password_etx" />
 
 
 </android.support.constraint.ConstraintLayout>
