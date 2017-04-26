@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,12 +39,12 @@ import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
 import com.idigital.asistenciasidigital.util.ConnectionUtil;
 import com.idigital.asistenciasidigital.util.Constants;
-import com.idigital.asistenciasidigital.util.DateUtil;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity implements
         setUpEventsRecyclerview();
 
         // This is optional
-        if(checkPlayServices())
+        if (checkPlayServices())
             Log.i(TAG, "tiene play service");
         else
             Log.i(TAG, "No tiene play service");
@@ -202,18 +203,19 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void registerMovement() {
 
-        if(!hasPermissionAccessFineLocation){
+        if (!hasPermissionAccessFineLocation) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
 
+        /*showProgressDialog();
         //if (ConnectionUtil.haveNetworkConnection(this)) {
-        if(ConnectionUtil.isOnline()){
+        if (ConnectionUtil.isOnline()) {
 
             eventAdapter.addNewEvent("Hay conexión a internet");
             if (LocationUtil.isLocationServicesAvailable(this)) {
 
-                showProgressDialog();
+                progressView.setMessage("Obteniendo tu ubicación");
 
                 if (googleApiClient != null && !googleApiClient.isConnected())
                     googleApiClient.connect();
@@ -222,9 +224,58 @@ public class RegisterActivity extends AppCompatActivity implements
                 showLocationSettingsAlert();
             }
         } else {
+            progressView.dismissDialog();
             Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
             eventAdapter.addNewEvent("No hay conexión a internet");
-        }
+        }*/
+
+        showProgressDialog();
+
+        new AsyncTask<Void, Void, Void>() {
+
+            private boolean isOnline = false;
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                Runtime runtime = Runtime.getRuntime();
+                try {
+                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+                    int exitValue = ipProcess.waitFor();
+                    isOnline = (exitValue == 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if (!isOnline) {
+                    progressView.dismissDialog();
+                    Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
+                    eventAdapter.addNewEvent("No hay conexión a internet");
+                    return;
+                }
+
+                eventAdapter.addNewEvent("Hay conexión a internet");
+                if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
+
+                    progressView.setMessage("Obteniendo tu ubicación");
+
+                    if (googleApiClient != null && !googleApiClient.isConnected())
+                        googleApiClient.connect();
+
+                } else {
+                    progressView.dismissDialog();
+                    showLocationSettingsAlert();
+                }
+            }
+        }.execute();
     }
 
     private void createGoogleApiClient() {
@@ -257,7 +308,7 @@ public class RegisterActivity extends AppCompatActivity implements
     public void showProgressDialog() {
 
         progressView = new ProgressDialogView(this);
-        progressView.setMessage("Obteniendo tu ubicación");
+        progressView.setMessage("Conectando...");
         progressView.showProgressDialog();
     }
 
@@ -322,9 +373,9 @@ public class RegisterActivity extends AppCompatActivity implements
             return;
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
-        IDigitalService service = IDigitalClient.getClubService();
-        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), DateUtil.getDateTime(),
-                movement, userLocation.getLatitude(), userLocation.getLongitude());
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), movement,
+                userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
@@ -336,8 +387,8 @@ public class RegisterActivity extends AppCompatActivity implements
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
                         eventAdapter.addNewEvent("Registro satisfactorio: " + movement);
                     } else {
-                        Toast.makeText(getApplicationContext(), "Registro inválido", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro insatisfactorio 1");
+                        Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
+                        eventAdapter.addNewEvent("Registro insatisfactorio");
                     }
                 }
                 Log.i(TAG, response.raw().toString());

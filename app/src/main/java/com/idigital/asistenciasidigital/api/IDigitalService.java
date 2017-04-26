@@ -25,8 +25,8 @@ public interface IDigitalService {
     @FormUrlEncoded
     @POST("attendance_add")
     Call<RegisterResponse> postRegistry(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
-                                        @Field("date_add") String date, @Field("movement") String movement,
-                                        @Field("latitude") double latitude, @Field("longitude") double longitude);
+                                        @Field("movement") String movement, @Field("latitude") double latitude,
+                                        @Field("longitude") double longitude);
 
     @GET("attendance")
     Call<ReportResponse> getReport();

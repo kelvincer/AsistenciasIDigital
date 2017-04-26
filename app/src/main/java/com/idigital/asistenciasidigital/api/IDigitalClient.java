@@ -9,7 +9,7 @@ public class IDigitalClient {
     private static Retrofit retrofit;
     private final static String BASE_URL = "http://asistencia.juankuga.io/";
 
-    public static IDigitalService getClubService() {
+    public static IDigitalService getIDigitalService() {
         if (retrofit == null) {
 
             retrofit = new Retrofit.Builder()

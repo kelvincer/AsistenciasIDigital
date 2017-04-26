@@ -1,5 +1,6 @@
 package com.idigital.asistenciasidigital;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,21 +47,59 @@ public class ReportActivity extends AppCompatActivity {
     private void showProgressDialog(){
 
         progressView =  new ProgressDialogView(this);
-        progressView.setMessage("Cargando reporte...");
+        progressView.setMessage("Conectando...");
         progressView.showProgressDialog();
     }
 
     private void fetchReport() {
 
-        if(!ConnectionUtil.isOnline()){
+        /*if(!ConnectionUtil.isOnline()){
             Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
             return;
-        }
+        }*/
 
         showProgressDialog();
+        new AsyncTask<Void, Void, Void>() {
+
+            private boolean isOnline = false;
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                Runtime runtime = Runtime.getRuntime();
+                try {
+                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+                    int exitValue = ipProcess.waitFor();
+                    isOnline = (exitValue == 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if (!isOnline) {
+                    progressView.dismissDialog();
+                    Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                requestReport();
+            }
+        }.execute();
+    }
+
+    private void requestReport(){
+
+        progressView.setMessage("Cargando reporte...");
+
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String idUser = preferenceManager.getString(Constants.USER_ID, "invalid");
-        IDigitalService service = IDigitalClient.getClubService();
+        IDigitalService service = IDigitalClient.getIDigitalService();
         Call<ReportResponse> call = service.postAllUserReport(idUser);
         call.enqueue(new Callback<ReportResponse>() {
             @Override

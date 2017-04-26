@@ -2,6 +2,7 @@ package com.idigital.asistenciasidigital;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.util.ConnectionUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,12 +38,18 @@ public class SplashActivity extends AppCompatActivity {
 
     private void getPlacesFromServer() {
 
-        if(!ConnectionUtil.isOnline()){
+        /*
+        if (!ConnectionUtil.isOnline()) {
             showInternetAlertDialog();
             return;
-        }
+        }*/
 
-        IDigitalService service = IDigitalClient.getClubService();
+        new TestAndFetchAsyncTask().execute();
+    }
+
+    private void fetchPlaces() {
+
+        IDigitalService service = IDigitalClient.getIDigitalService();
         Call<PlaceResponse> call = service.getPlaces();
         call.enqueue(new Callback<PlaceResponse>() {
             @Override
@@ -93,5 +101,19 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         alertDialog.show();
+    }
+
+    private class TestAndFetchAsyncTask extends TestConnectionAsyncTask {
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            // Activity 1 GUI stuff
+            super.onPostExecute(result);
+            if (!result) {
+                showInternetAlertDialog();
+                return;
+            }
+            fetchPlaces();
+        }
     }
 }

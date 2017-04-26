@@ -12,7 +12,6 @@ import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.model.Login;
 import com.idigital.asistenciasidigital.response.LoginResponse;
-import com.idigital.asistenciasidigital.util.ConnectionUtil;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
@@ -45,26 +44,30 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.login_btn)
     public void onViewClicked() {
 
-        if (!ConnectionUtil.isOnline()) {
+        showProgressDialog();
+        new TestAndLoginAsyncTask().execute();
+
+       /*if (!ConnectionUtil.isOnline(progressView)) {
             Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        loginRequest();
+        loginRequest();*/
     }
 
     private void loginRequest() {
 
         if (!isValidUserInput()) {
+            progressView.dismissDialog();
             Toast.makeText(this, "Llena los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        showProgressDialog();
+        progressView.setMessage("Autenticando...");
 
-        IDigitalService service = IDigitalClient.getClubService();
-        //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
-        Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
+        //Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -118,7 +121,22 @@ public class LoginActivity extends AppCompatActivity {
     public void showProgressDialog() {
 
         progressView = new ProgressDialogView(this);
-        progressView.setMessage("Autenticando...");
+        progressView.setMessage("Conectando...");
         progressView.showProgressDialog();
+    }
+
+    private class TestAndLoginAsyncTask extends TestConnectionAsyncTask {
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            // Activity 1 GUI stuff
+            super.onPostExecute(result);
+            if (!result) {
+                progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            loginRequest();
+        }
     }
 }
