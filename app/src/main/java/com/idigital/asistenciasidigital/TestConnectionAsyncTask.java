@@ -10,8 +10,6 @@ import java.io.IOException;
 
 public abstract class TestConnectionAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
-    private boolean isOnline = false;
-
     @Override
     final protected Boolean doInBackground(Void... progress) {
         // do stuff, common to both activities in here
@@ -19,13 +17,13 @@ public abstract class TestConnectionAsyncTask extends AsyncTask<Void, Void, Bool
         try {
             Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
             int exitValue = ipProcess.waitFor();
-            isOnline = (exitValue == 0);
+            return  (exitValue == 0);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        return isOnline;
+        return false;
     }
 }

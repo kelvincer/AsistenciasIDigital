@@ -2,7 +2,6 @@ package com.idigital.asistenciasidigital;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,9 +14,8 @@ import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
-import com.idigital.asistenciasidigital.util.ConnectionUtil;
+import com.idigital.asistenciasidigital.util.Constants;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -63,7 +61,7 @@ public class SplashActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Error en el servicio", Toast.LENGTH_SHORT).show();
                     } else {
                         saveDataListOnDatabase(placeResponse.getData());
-                        gotoLoginActivity();
+                        navigateToActivity();
                     }
                 }
             }
@@ -75,9 +73,16 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    private void gotoLoginActivity() {
+    private void navigateToActivity() {
 
-        startActivity(new Intent(this, LoginActivity.class));
+        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+        boolean loggedIn = preferenceManager.getBoolean(Constants.LOGGED_IN, false);
+
+        if (loggedIn) {
+            startActivity(new Intent(this, RegisterActivity.class));
+        } else {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
         finish();
     }
 

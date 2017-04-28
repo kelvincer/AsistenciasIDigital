@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextClock;
@@ -181,6 +183,27 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.item1:
+                logoutAndClose();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @OnClick({R.id.register_in_btn, R.id.register_out_btn, R.id.see_btn, R.id.delete_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -230,52 +253,7 @@ public class RegisterActivity extends AppCompatActivity implements
         }*/
 
         showProgressDialog();
-
-        new AsyncTask<Void, Void, Void>() {
-
-            private boolean isOnline = false;
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                Runtime runtime = Runtime.getRuntime();
-                try {
-                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-                    int exitValue = ipProcess.waitFor();
-                    isOnline = (exitValue == 0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                if (!isOnline) {
-                    progressView.dismissDialog();
-                    Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
-                    eventAdapter.addNewEvent("No hay conexión a internet");
-                    return;
-                }
-
-                eventAdapter.addNewEvent("Hay conexión a internet");
-                if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
-
-                    progressView.setMessage("Obteniendo tu ubicación");
-
-                    if (googleApiClient != null && !googleApiClient.isConnected())
-                        googleApiClient.connect();
-
-                } else {
-                    progressView.dismissDialog();
-                    showLocationSettingsAlert();
-                }
-            }
-        }.execute();
+        new TestAndRegisterAsyncTask().execute();
     }
 
     private void createGoogleApiClient() {
@@ -522,5 +500,41 @@ public class RegisterActivity extends AppCompatActivity implements
             return false;
         }
         return true;
+    }
+
+    private class TestAndRegisterAsyncTask extends TestConnectionAsyncTask {
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (!aBoolean) {
+                progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
+                eventAdapter.addNewEvent("No hay conexión a internet");
+                return;
+            }
+
+            eventAdapter.addNewEvent("Hay conexión a internet");
+            if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
+
+                progressView.setMessage("Obteniendo tu ubicación");
+
+                if (googleApiClient != null && !googleApiClient.isConnected())
+                    googleApiClient.connect();
+
+            } else {
+                progressView.dismissDialog();
+                showLocationSettingsAlert();
+            }
+
+        }
+    }
+
+    private void logoutAndClose() {
+
+        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+        preferenceManager.putBoolean(Constants.LOGGED_IN, false);
+
+        finish();
     }
 }

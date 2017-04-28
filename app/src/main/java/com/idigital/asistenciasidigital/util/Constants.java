@@ -11,4 +11,6 @@ public class Constants {
     public static final String USER_LAST_NAME = "userLastName";
 
     public static final String SEDE_ID = "sedeId";
+
+    public static final String LOGGED_IN = "LoggedIn";
 }

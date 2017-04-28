@@ -66,8 +66,8 @@ public class LoginActivity extends AppCompatActivity {
         progressView.setMessage("Autenticando...");
 
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
-        //Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
+        //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
+        Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -105,6 +105,9 @@ public class LoginActivity extends AppCompatActivity {
         preferenceManager.putString(Constants.USER_ID, login.getIdUser());
         preferenceManager.putString(Constants.USER_NAME, login.getName());
         preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());
+
+        //save login
+        preferenceManager.putBoolean(Constants.LOGGED_IN, true);
     }
 
     private boolean isValidUserInput() {

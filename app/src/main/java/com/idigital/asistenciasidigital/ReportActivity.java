@@ -44,9 +44,9 @@ public class ReportActivity extends AppCompatActivity {
         fetchReport();
     }
 
-    private void showProgressDialog(){
+    private void showProgressDialog() {
 
-        progressView =  new ProgressDialogView(this);
+        progressView = new ProgressDialogView(this);
         progressView.setMessage("Conectando...");
         progressView.showProgressDialog();
     }
@@ -59,46 +59,13 @@ public class ReportActivity extends AppCompatActivity {
         }*/
 
         showProgressDialog();
-        new AsyncTask<Void, Void, Void>() {
-
-            private boolean isOnline = false;
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                Runtime runtime = Runtime.getRuntime();
-                try {
-                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-                    int exitValue = ipProcess.waitFor();
-                    isOnline = (exitValue == 0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                if (!isOnline) {
-                    progressView.dismissDialog();
-                    Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                requestReport();
-            }
-        }.execute();
+        new TestAndFetchReportAsyncTask().execute();
     }
 
-    private void requestReport(){
-
-        progressView.setMessage("Cargando reporte...");
+    private void requestReport() {
 
         PreferenceManager preferenceManager = new PreferenceManager(this);
-        String idUser = preferenceManager.getString(Constants.USER_ID, "invalid");
+        String idUser = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
         Call<ReportResponse> call = service.postAllUserReport(idUser);
         call.enqueue(new Callback<ReportResponse>() {
@@ -108,13 +75,12 @@ public class ReportActivity extends AppCompatActivity {
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     ReportResponse responseList = response.body();
-                    if(!responseList.getError())
+                    if (!responseList.getError())
                         fillRecyclerView(responseList.getData());
-                    else{
+                    else {
                         Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();
                     }
                 }
-
                 Log.i(TAG, response.raw().toString());
             }
 
@@ -122,14 +88,14 @@ public class ReportActivity extends AppCompatActivity {
             public void onFailure(Call<ReportResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "Error en servicio", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Fallas en servicio", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void fillRecyclerView(List<Report> data) {
 
-        if(data.size() == 0){
+        if (data.size() == 0) {
             Toast.makeText(getApplicationContext(), "No hay reporte que mostrar", Toast.LENGTH_LONG).show();
             return;
         }
@@ -137,5 +103,19 @@ public class ReportActivity extends AppCompatActivity {
         ryvReport.setLayoutManager(new LinearLayoutManager(this));
         ryvReport.setAdapter(new RecyclerReportAdapter(data));
         ryvReport.addItemDecoration(new SimpleDividerItemDecoration(this));
+    }
+
+    private class TestAndFetchReportAsyncTask extends TestConnectionAsyncTask {
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (!aBoolean) {
+                progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            requestReport();
+        }
     }
 }
