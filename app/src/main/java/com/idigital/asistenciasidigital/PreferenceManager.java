@@ -7,12 +7,11 @@ public class PreferenceManager {
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    private byte PRIVATE_MODE = 0;
     private static final String PREF_NAME = "IDigital";
 
     public PreferenceManager(Context context) {
 
-        pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 

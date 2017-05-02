@@ -526,7 +526,6 @@ public class RegisterActivity extends AppCompatActivity implements
                 progressView.dismissDialog();
                 showLocationSettingsAlert();
             }
-
         }
     }
 
