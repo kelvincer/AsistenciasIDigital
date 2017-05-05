@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,14 +38,12 @@ import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
-import com.idigital.asistenciasidigital.util.ConnectionUtil;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,9 +74,8 @@ public class RegisterActivity extends AppCompatActivity implements
     private GoogleApiClient googleApiClient;
     private int ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private Location idLocation = new Location("IDigital");
     private Location userLocation;
-    private Map<String, Double> sortedDistancedMap;
+    private Map<String, Double> sortedDistanceMap;
     ProgressDialogView progressView;
     String movement;
     Handler handler;
@@ -150,20 +146,29 @@ public class RegisterActivity extends AppCompatActivity implements
         Log.i(TAG, "lat changed " + location.getLatitude());
         Log.i(TAG, "lng changed " + location.getLongitude());
 
-        calculateDistancesAndSorted(location);
+        calculateDistancesAndSort(location);
         Map.Entry<String, Double> firstMapEntry = getFirstMapEntry();
         Double mininDistance = firstMapEntry.getValue();
         closestPlaceId = firstMapEntry.getKey();
 
-        if (mininDistance.intValue() <= getRadiusFromClosestPlace()) {
+        Log.i(TAG, "Provider " + location.getProvider());
 
-            Log.i(TAG, "radius " + getRadiusFromClosestPlace());
+        Place place = getClosestPlace();
+        if (place == null) {
+            Toast.makeText(this, "Error on place", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Double placeRadio = Double.parseDouble(place.getRadio());
+        if (mininDistance.intValue() <= placeRadio.intValue()) {
+
+            Log.i(TAG, "radius " + placeRadio.intValue());
             Log.i(TAG, "El usuario esta dentro de rango");
-            eventAdapter.addNewEvent("Estas dentro de la sede: " + mininDistance.intValue() + " m. del centro");
+            eventAdapter.addNewEvent("Dentro de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
             setUpForSendRegister(location);
         } else {
             Log.i(TAG, "El usuario esta fuera de rango");
-            eventAdapter.addNewEvent("Estas fuera de la sede: " + mininDistance.intValue() + " m. del centro");
+            eventAdapter.addNewEvent("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
         }
     }
 
@@ -192,7 +197,7 @@ public class RegisterActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             case R.id.item1:
                 logoutAndClose();
@@ -382,7 +387,7 @@ public class RegisterActivity extends AppCompatActivity implements
         });
     }
 
-    private void calculateDistancesAndSorted(Location myLocation) {
+    private void calculateDistancesAndSort(Location myLocation) {
 
         if (places == null) {
             DatabaseHelper helper = new DatabaseHelper(this);
@@ -400,7 +405,11 @@ public class RegisterActivity extends AppCompatActivity implements
             double distance = myLocation.distanceTo(placeLocation);
             map.put(place.getIdHeadquarter(), distance);
         }
-        sortedDistancedMap = Util.sortMapByValue(map);
+        sortedDistanceMap = new HashMap<>();
+        sortedDistanceMap = Util.sortMapByValue(map);
+        for (Map.Entry<String, Double> entry : sortedDistanceMap.entrySet()) {
+            Log.i(TAG, entry.getKey() + "/" + entry.getValue());
+        }
     }
 
     private void setUpForSendRegister(Location location) {
@@ -414,9 +423,9 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private Map.Entry<String, Double> getFirstMapEntry() {
 
-        if (sortedDistancedMap == null)
+        if (sortedDistanceMap == null)
             return null;
-        Map.Entry<String, Double> firstEntry = sortedDistancedMap.entrySet().iterator().next();
+        Map.Entry<String, Double> firstEntry = sortedDistanceMap.entrySet().iterator().next();
         return firstEntry;
     }
 
@@ -428,17 +437,14 @@ public class RegisterActivity extends AppCompatActivity implements
         eventRyv.addItemDecoration(new SimpleDividerItemDecoration(this));
     }
 
-    private int getRadiusFromClosestPlace() {
+    private Place getClosestPlace() {
 
         for (Place p : places) {
             if (p.getIdHeadquarter().equals(closestPlaceId)) {
-                String stringRadio = p.getRadio();
-                Double doubleRadio = Double.parseDouble(stringRadio);
-                return doubleRadio.intValue();
+                return p;
             }
         }
-
-        return 0;
+        return null;
     }
 
     public void stopLocationUpdates() {

@@ -102,6 +102,8 @@ public class LoginActivity extends AppCompatActivity {
 
         Login login = response.getData();
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+        preferenceManager.putString(Constants.USER_PASSWORD, login.getPasswd());
+        preferenceManager.putString(Constants.USER_EMAIL, login.getEmail());
         preferenceManager.putString(Constants.USER_ID, login.getIdUser());
         preferenceManager.putString(Constants.USER_NAME, login.getName());
         preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());

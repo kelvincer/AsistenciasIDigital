@@ -13,6 +13,7 @@ import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
+import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 
@@ -60,8 +61,8 @@ public class SplashActivity extends AppCompatActivity {
                     if (placeResponse.getError()) {
                         Toast.makeText(getApplicationContext(), "Error en el servicio", Toast.LENGTH_SHORT).show();
                     } else {
+                        checkLoguedIn();
                         saveDataListOnDatabase(placeResponse.getData());
-                        navigateToActivity();
                     }
                 }
             }
@@ -73,17 +74,17 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    private void navigateToActivity() {
+    private void checkLoguedIn() {
 
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         boolean loggedIn = preferenceManager.getBoolean(Constants.LOGGED_IN, false);
 
         if (loggedIn) {
-            startActivity(new Intent(this, RegisterActivity.class));
+            automaticLogin();
         } else {
             startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
-        finish();
     }
 
     private void saveDataListOnDatabase(List<Place> data) {
@@ -120,5 +121,47 @@ public class SplashActivity extends AppCompatActivity {
             }
             fetchPlaces();
         }
+    }
+
+    private void automaticLogin() {
+
+        final PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+        String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
+        String email = preferenceManager.getString(Constants.USER_EMAIL, "");
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        Call<LoginResponse> call = service.postLogin(email, password);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+
+                Log.i(TAG, response.raw().toString());
+                if (response.isSuccessful()) {
+                    LoginResponse loginResponse = response.body();
+                    if (!loginResponse.getError()) {
+                        navigateToRegisterActivity();
+                    } else {
+                        preferenceManager.putBoolean(Constants.LOGGED_IN, false);
+                        navigateToLoginActivity();
+                        Toast.makeText(getApplicationContext(), "Autenticación interna incorrecta", Toast.LENGTH_SHORT).show();
+                    }
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void navigateToLoginActivity() {
+
+        startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    private void navigateToRegisterActivity() {
+
+        startActivity(new Intent(this, RegisterActivity.class));
     }
 }
