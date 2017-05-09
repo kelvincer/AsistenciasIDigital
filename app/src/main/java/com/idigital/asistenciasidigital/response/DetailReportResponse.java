@@ -2,37 +2,36 @@ package com.idigital.asistenciasidigital.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.idigital.asistenciasidigital.model.Login;
-import com.idigital.asistenciasidigital.model.Report;
+import com.idigital.asistenciasidigital.model.DetailReport;
 
 import java.util.List;
 
 /**
- * Created by USUARIO on 05/04/2017.
+ * Created by USUARIO on 09/05/2017.
  */
 
-public class LoginResponse {
+public class DetailReportResponse {
 
     @SerializedName("data")
     @Expose
-    private Login data;
+    private List<DetailReport> data = null;
     @SerializedName("error")
     @Expose
-    private boolean error;
+    private Boolean error;
 
-    public Login getData() {
+    public List<DetailReport> getData() {
         return data;
     }
 
-    public void setData(Login data) {
+    public void setData(List<DetailReport> data) {
         this.data = data;
     }
 
-    public boolean getError() {
+    public Boolean getError() {
         return error;
     }
 
-    public void setError(boolean error) {
+    public void setError(Boolean error) {
         this.error = error;
     }
 }

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -78,8 +77,6 @@ public class RegisterActivity extends AppCompatActivity implements
     private Map<String, Double> sortedDistanceMap;
     ProgressDialogView progressView;
     String movement;
-    Handler handler;
-    Runnable myRunnable;
     RecyclerEventAdapter eventAdapter;
     String closestPlaceId;
     List<Place> places;
@@ -90,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
-
+        getSupportActionBar().setTitle(getResources().getString(R.string.registro));
         requestPermissionForLocation();
 
         setUpEventsRecyclerview();
@@ -162,14 +159,29 @@ public class RegisterActivity extends AppCompatActivity implements
         Double placeRadio = Double.parseDouble(place.getRadio());
         if (mininDistance.intValue() <= placeRadio.intValue()) {
 
-            Log.i(TAG, "radius " + placeRadio.intValue());
-            Log.i(TAG, "El usuario esta dentro de rango");
-            eventAdapter.addNewEvent("Dentro de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+            handleUserInRange(place, mininDistance);
             setUpForSendRegister(location);
         } else {
-            Log.i(TAG, "El usuario esta fuera de rango");
-            eventAdapter.addNewEvent("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+
+            handleUserOutOfRange(place, mininDistance);
         }
+    }
+
+    private void handleUserInRange(Place place, Double mininDistance) {
+        Log.i(TAG, "El usuario esta dentro de rango");
+        Double placeRadio = Double.parseDouble(place.getRadio());
+        stopLocationUpdates();
+        eventAdapter.addNewEvent("Dentro de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+    }
+
+    private void handleUserOutOfRange(Place place, Double mininDistance) {
+
+        Log.i(TAG, "El usuario esta fuera de rango");
+        Double placeRadio = Double.parseDouble(place.getRadio());
+        stopLocationUpdates();
+        eventAdapter.addNewEvent("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+        eventAdapter.addNewEvent("Registro insatisfactorio");
+        progressView.dismissDialog();
     }
 
     @Override
@@ -236,32 +248,11 @@ public class RegisterActivity extends AppCompatActivity implements
             return;
         }
 
-        /*showProgressDialog();
-        //if (ConnectionUtil.haveNetworkConnection(this)) {
-        if (ConnectionUtil.isOnline()) {
-
-            eventAdapter.addNewEvent("Hay conexión a internet");
-            if (LocationUtil.isLocationServicesAvailable(this)) {
-
-                progressView.setMessage("Obteniendo tu ubicación");
-
-                if (googleApiClient != null && !googleApiClient.isConnected())
-                    googleApiClient.connect();
-
-            } else {
-                showLocationSettingsAlert();
-            }
-        } else {
-            progressView.dismissDialog();
-            Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
-            eventAdapter.addNewEvent("No hay conexión a internet");
-        }*/
-
         showProgressDialog();
         new TestAndRegisterAsyncTask().execute();
     }
 
-    private void createGoogleApiClient() {
+    private synchronized void createGoogleApiClient() {
         Log.d(TAG, "createGoogleApiClient()");
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -284,8 +275,6 @@ public class RegisterActivity extends AppCompatActivity implements
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-
-        waitForUserLocation();
     }
 
     public void showProgressDialog() {
@@ -293,38 +282,6 @@ public class RegisterActivity extends AppCompatActivity implements
         progressView = new ProgressDialogView(this);
         progressView.setMessage("Conectando...");
         progressView.showProgressDialog();
-    }
-
-
-    private void waitForUserLocation() {
-
-        handler = new Handler();
-        myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                eventAdapter.addNewEvent("Registro insatisfactorio");
-                stopLocationUpdates();
-                progressView.dismissDialog();
-            }
-        };
-
-        handler.postDelayed(myRunnable, 20000);
-    }
-
-    private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
-        float pk = (float) (180.f / Math.PI);
-
-        double a1 = lat_a / pk;
-        double a2 = lng_a / pk;
-        double b1 = lat_b / pk;
-        double b2 = lng_b / pk;
-
-        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
-        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
-        double t3 = Math.sin(a1) * Math.sin(b1);
-        double tt = Math.acos(t1 + t2 + t3);
-
-        return 6366000 * tt;
     }
 
     public void showLocationSettingsAlert() {
@@ -414,11 +371,9 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void setUpForSendRegister(Location location) {
 
-        stopLocationUpdates();
         progressView.setMessage("Enviando registro");
         userLocation = location;
         sendMovementToServer();
-        handler.removeCallbacks(myRunnable);
     }
 
     private Map.Entry<String, Double> getFirstMapEntry() {
@@ -539,7 +494,6 @@ public class RegisterActivity extends AppCompatActivity implements
 
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
-
         finish();
     }
 }

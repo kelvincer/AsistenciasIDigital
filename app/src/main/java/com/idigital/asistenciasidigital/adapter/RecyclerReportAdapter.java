@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
-import com.idigital.asistenciasidigital.model.Report;
-import com.idigital.asistenciasidigital.response.ReportResponse;
+import com.idigital.asistenciasidigital.listener.OnItemClickListener;
+import com.idigital.asistenciasidigital.model.ShortReport;
 import com.idigital.asistenciasidigital.util.Constants;
 
 import java.util.List;
@@ -23,10 +23,12 @@ import butterknife.ButterKnife;
 
 public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAdapter.CustomViewHolder> {
 
-    List<Report> data;
+    List<ShortReport> data;
+    OnItemClickListener listener;
 
-    public RecyclerReportAdapter(List<Report> data) {
+    public RecyclerReportAdapter(List<ShortReport> data, OnItemClickListener listener) {
         this.data = data;
+        this.listener = listener;
     }
 
     @Override
@@ -48,34 +50,34 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.txv_user)
-        TextView txvUser;
-        @BindView(R.id.txv_date)
-        TextView txvDate;
-        @BindView(R.id.txv_movement)
-        TextView txvMovement;
-        @BindView(R.id.txv_sede)
-        TextView txvSede;
+        @BindView(R.id.user_txv)
+        TextView userTxv;
+        @BindView(R.id.date_txv)
+        TextView dateTxv;
+        @BindView(R.id.movement_txv)
+        TextView movementTxv;
+        @BindView(R.id.total_time_txv)
+        TextView totalTimeTxv;
+        View view;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            view = itemView;
         }
 
-        private void bindItem(Report item) {
+        private void bindItem(final ShortReport item) {
 
-            txvUser.setText(getUserFullName());
-            txvDate.setText(item.getDateAdd());
-            txvMovement.setText(item.getMovement());
-            txvSede.setText(item.getSede());
-        }
-
-        private String getUserFullName() {
-
-            PreferenceManager preferenceManager = new PreferenceManager(txvDate.getContext());
-            String name = preferenceManager.getString(Constants.USER_NAME, "null");
-            String lastName = preferenceManager.getString(Constants.USER_LAST_NAME, "null");
-            return name + " " + lastName;
+            userTxv.setText(item.getNombre());
+            dateTxv.setText(item.getFecha());
+            movementTxv.setText(item.getMovimientos());
+            totalTimeTxv.setText(item.getTotalHoras());
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(item);
+                }
+            });
         }
     }
 }

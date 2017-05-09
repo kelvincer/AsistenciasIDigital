@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/labelNameQuarter_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sede: "/>
+
+    <TextView
+        android:id="@+id/nameQuarter_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Idigital"
+        android:layout_toRightOf="@id/labelNameQuarter_txv"/>
+
+    <TextView
+        android:id="@+id/labelEnter_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Entrada: "
+        android:layout_below="@id/labelNameQuarter_txv"/>
+
+    <TextView
+        android:id="@+id/enter_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8:50 a.m"
+        android:layout_toRightOf="@id/labelEnter_txv"
+        android:layout_below="@id/labelNameQuarter_txv" />
+
+    <TextView
+        android:id="@+id/labelExit_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Salida: "
+        android:layout_below="@id/labelEnter_txv"/>
+
+    <TextView
+        android:id="@+id/exit_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8:50 p.m"
+        android:layout_toRightOf="@id/labelExit_txv"
+        android:layout_below="@id/labelEnter_txv" />
+
+    <TextView
+        android:id="@+id/labelHora_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hora bruta: "
+        android:layout_below="@id/labelExit_txv"/>
+
+    <TextView
+        android:id="@+id/hora_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8:50 p.m"
+        android:layout_toRightOf="@id/labelHora_txv"
+        android:layout_below="@id/labelExit_txv" />
+
+</RelativeLayout>

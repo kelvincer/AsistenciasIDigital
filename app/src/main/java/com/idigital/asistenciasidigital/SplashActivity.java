@@ -102,6 +102,7 @@ public class SplashActivity extends AppCompatActivity {
 
         alertDialog.setPositiveButton("Cerrar App", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
                 finish();
             }
         });
@@ -140,12 +141,12 @@ public class SplashActivity extends AppCompatActivity {
                     if (!loginResponse.getError()) {
                         navigateToRegisterActivity();
                     } else {
-                        preferenceManager.putBoolean(Constants.LOGGED_IN, false);
+                        updatePreferenceManager();
                         navigateToLoginActivity();
                         Toast.makeText(getApplicationContext(), "Autenticación interna incorrecta", Toast.LENGTH_SHORT).show();
                     }
-                    finish();
                 }
+                finish();
             }
 
             @Override
@@ -163,5 +164,12 @@ public class SplashActivity extends AppCompatActivity {
     private void navigateToRegisterActivity() {
 
         startActivity(new Intent(this, RegisterActivity.class));
+    }
+
+    private void updatePreferenceManager(){
+        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+        preferenceManager.putBoolean(Constants.LOGGED_IN, false);
+        preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
+        preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
     }
 }

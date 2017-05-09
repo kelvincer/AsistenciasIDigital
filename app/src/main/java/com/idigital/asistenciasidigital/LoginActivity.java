@@ -26,48 +26,43 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     @BindView(R.id.email_etx)
-    EditText etxEmail;
+    EditText emailEtx;
     @BindView(R.id.password_etx)
-    EditText etxPassword;
+    EditText passwordEtx;
     @BindView(R.id.login_btn)
     Button loginBtn;
 
     ProgressDialogView progressView;
+    private int loginAttempNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        getSupportActionBar().setTitle(getResources().getString(R.string.autenticacion));
     }
 
     @OnClick(R.id.login_btn)
     public void onViewClicked() {
 
-        showProgressDialog();
-        new TestAndLoginAsyncTask().execute();
-
-       /*if (!ConnectionUtil.isOnline(progressView)) {
-            Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        loginRequest();*/
-    }
-
-    private void loginRequest() {
-
         if (!isValidUserInput()) {
-            progressView.dismissDialog();
             Toast.makeText(this, "Llena los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        showProgressDialog();
+        new TestAndLoginAsyncTask().execute();
+    }
+
+    private void loginRequest() {
+
+        loginAttempNumber++;
         progressView.setMessage("Autenticando...");
 
         IDigitalService service = IDigitalClient.getIDigitalService();
         //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
-        Call<LoginResponse> call = service.postLogin(etxEmail.getText().toString(), etxPassword.getText().toString());
+        Call<LoginResponse> call = service.postLogin(emailEtx.getText().toString(), passwordEtx.getText().toString());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -78,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                     LoginResponse loginResponse = response.body();
                     if (!loginResponse.getError()) {
                         saveLoginData(loginResponse);
-                        gotoRegisterActivity();
+                        navigateToRegisterActivity();
                         finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
@@ -94,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void gotoRegisterActivity() {
+    private void navigateToRegisterActivity() {
         startActivity(new Intent(this, RegisterActivity.class));
     }
 
@@ -114,10 +109,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isValidUserInput() {
 
-        if (etxEmail.getText().toString().isEmpty())
+        if (emailEtx.getText().toString().isEmpty())
             return false;
 
-        if (etxPassword.getText().toString().isEmpty())
+        if (passwordEtx.getText().toString().isEmpty())
             return false;
 
         return true;

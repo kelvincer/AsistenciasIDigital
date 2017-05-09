@@ -9,22 +9,22 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/txv_user"
+        android:id="@+id/user_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:id="@+id/txv_date"
+        android:id="@+id/date_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/txv_movement"
+        android:id="@+id/movement_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/txv_sede"
+        android:id="@+id/total_time_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@+id/email_txv" />
 
     <TextView
-        android:id="@+id/password_txv"
+            android:id="@+id/password_txv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AsistenciasIDigital</string>
+    <string name="reporte">Reporte</string>
+    <string name="detalle">Detalle Asistencia</string>
+    <string name="registro">Registro</string>
+    <string name="autenticacion">Autenticación</string>
 </resources>

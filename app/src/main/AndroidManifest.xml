@@ -23,11 +23,13 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".AndroidGPSTrackingActivity" />
-        <activity android:name=".ReportActivity"></activity>
+        <activity android:name=".ReportActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity android:name=".DetailReportActivity"></activity>
     </application>
 
 </manifest>
