@@ -56,10 +56,8 @@ public class DetailReportActivity extends AppCompatActivity {
     private void postDetailFromCloud() {
 
         progressView.setMessage("Obteniendo reporte...");
-        PreferenceManager preferenceManager = new PreferenceManager(this);
-        String idUser = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<DetailReportResponse> call = service.postAttendanceDetail(idUser, "07/05/2017");
+        Call<DetailReportResponse> call = service.postAttendanceDetail(shortReport.getIdUser(), shortReport.getFecha());
         call.enqueue(new Callback<DetailReportResponse>() {
             @Override
             public void onResponse(Call<DetailReportResponse> call, Response<DetailReportResponse> response) {

@@ -40,22 +40,16 @@
         android:layout_marginTop="32dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        app:layout_constraintHorizontal_bias="0.833"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textClock">
 
         <Button
-            android:id="@+id/register_in_btn"
+            android:id="@+id/register_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ingreso" />
-
-        <Button
-            android:id="@+id/register_out_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="salida" />
 
         <Button
             android:id="@+id/see_btn"
@@ -68,7 +62,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_ryv"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="200dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="10dp"

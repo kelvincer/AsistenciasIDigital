@@ -45,7 +45,6 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
 
     @Override
     public void onItemClick(ShortReport shortReport) {
-        Log.i(TAG, "Horas " + shortReport.getTotalHoras());
         Intent intent = new Intent(this, DetailReportActivity.class);
         intent.putExtra(Constants.shortReport, shortReport);
         startActivity(intent);

@@ -60,10 +60,8 @@ public class RegisterActivity extends AppCompatActivity implements
         LocationListener {
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
-    @BindView(R.id.register_in_btn)
-    Button checkInBtn;
-    @BindView(R.id.register_out_btn)
-    Button checkOutBtn;
+    @BindView(R.id.register_btn)
+    Button registerBtn;
     @BindView(R.id.event_ryv)
     RecyclerView eventRyv;
     @BindView(R.id.textClock)
@@ -91,6 +89,10 @@ public class RegisterActivity extends AppCompatActivity implements
         requestPermissionForLocation();
 
         setUpEventsRecyclerview();
+
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+        String movement = preferenceManager.getString(Constants.MOVEMENT_TYPE, "INGRESO");
+        registerBtn.setText(movement);
 
         // This is optional
         if (checkPlayServices())
@@ -221,15 +223,10 @@ public class RegisterActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.register_in_btn, R.id.register_out_btn, R.id.see_btn, R.id.delete_btn})
+    @OnClick({R.id.register_btn, R.id.see_btn, R.id.delete_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.register_in_btn:
-                movement = "ingreso";
-                registerMovement();
-                break;
-            case R.id.register_out_btn:
-                movement = "salida";
+            case R.id.register_btn:
                 registerMovement();
                 break;
             case R.id.see_btn:
@@ -243,13 +240,27 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void registerMovement() {
 
+        if(registerBtn.getText().toString().equalsIgnoreCase("ingreso")){
+            registerEnterMovement();
+        }else{
+            registerExitMovement();
+        }
+    }
+
+    private void registerExitMovement() {
+
+        showProgressDialog();
+    }
+
+    private void registerEnterMovement() {
+
         if (!hasPermissionAccessFineLocation) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
 
         showProgressDialog();
-        new TestAndRegisterAsyncTask().execute();
+        new TestAndEnterRegisterAsyncTask().execute();
     }
 
     private synchronized void createGoogleApiClient() {
@@ -314,7 +325,7 @@ public class RegisterActivity extends AppCompatActivity implements
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), movement,
+        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(),
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -463,7 +474,34 @@ public class RegisterActivity extends AppCompatActivity implements
         return true;
     }
 
-    private class TestAndRegisterAsyncTask extends TestConnectionAsyncTask {
+    private class TestAndEnterRegisterAsyncTask extends TestConnectionAsyncTask {
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (!aBoolean) {
+                progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
+                eventAdapter.addNewEvent("No hay conexión a internet");
+                return;
+            }
+
+            eventAdapter.addNewEvent("Hay conexión a internet");
+            if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
+
+                progressView.setMessage("Obteniendo tu ubicación");
+
+                if (googleApiClient != null && !googleApiClient.isConnected())
+                    googleApiClient.connect();
+
+            } else {
+                progressView.dismissDialog();
+                showLocationSettingsAlert();
+            }
+        }
+    }
+
+    private class TestAndExitRegisterAsyncTask extends TestConnectionAsyncTask {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {

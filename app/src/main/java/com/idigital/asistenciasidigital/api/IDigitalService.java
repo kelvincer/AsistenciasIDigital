@@ -6,6 +6,7 @@ import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
 import com.idigital.asistenciasidigital.response.ShortReportResponse;
+import com.idigital.asistenciasidigital.response.UpdateResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -23,32 +24,35 @@ public interface IDigitalService {
     Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password);
 
     @FormUrlEncoded
-    @POST("inactive_user")
+    @POST("inactive-user")
     Call<InactiveResponse> postInactiveUser(@Field("id_user") String idUser);
 
     @FormUrlEncoded
-    @POST("attendance_add")
+    @POST("attendance-add")
     Call<RegisterResponse> postRegistry(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
-                                        @Field("movement") String movement, @Field("latitude") double latitude,
-                                        @Field("longitude") double longitude);
+                                        @Field("latitude") double latitude, @Field("longitude") double longitude);
 
     @GET("attendance")
     Call<ShortReportResponse> getReport();
 
     @FormUrlEncoded
-    @POST("attendance_place")
+    @POST("attendance-place")
     Call<ShortReportResponse> postUserReport(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter);
 
     @FormUrlEncoded
-    @POST("attendance_allplaces")
+    @POST("attendance-allplaces")
     Call<ShortReportResponse> postAllUserReport(@Field("id_user") String idUser);
 
     @FormUrlEncoded
-    @POST("attendance_allheader_user")
+    @POST("attendance-allheader-user")
     Call<ShortReportResponse> postAttendanceUser(@Field("id_user") String idUser);
 
     @FormUrlEncoded
-    @POST("attendance_detailheader_user")
+    @POST("attendance-detailheader-user")
     Call<DetailReportResponse> postAttendanceDetail(@Field("id_user") String idUser,
                                                     @Field("date_show_in") String date);
+
+    @FormUrlEncoded
+    @POST("attendance-upd")
+    Call<UpdateResponse> postUpdateMovement(@Field("id_user") String idUser);
 }

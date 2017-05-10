@@ -15,6 +15,7 @@ public class Constants {
 
     public static final String SEDE_ID = "sedeId";
     public static final String LOGGED_IN = "LoggedIn";
+    public static final String MOVEMENT_TYPE = "movementType";
 
     public static String shortReport = "shortReport";
 }

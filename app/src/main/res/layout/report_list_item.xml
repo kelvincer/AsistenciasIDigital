@@ -3,29 +3,79 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
+    android:layout_marginEnd="10dp"
     android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     android:layout_marginStart="10dp"
     android:layout_marginTop="10dp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/user_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/date_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/user_txv"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="ladislao" />
 
-    <TextView
-        android:id="@+id/movement_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/movement_lrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical">
 
-    <TextView
-        android:id="@+id/total_time_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/label_movement_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Movimientos: " />
+
+            <TextView
+                android:id="@+id/movement_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/label_movement_txv"
+                android:text="5"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/date_txv"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/movement_lrl"
+            android:text="12/34/23" />
+
+
+        <LinearLayout
+            android:id="@+id/time_lrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/label_total_time_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total horas: " />
+
+            <TextView
+                android:id="@+id/total_time_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="3:40" />
+
+        </LinearLayout>
+    </TableRow>
 
 </LinearLayout>
