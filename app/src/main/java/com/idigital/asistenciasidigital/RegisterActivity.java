@@ -37,6 +37,7 @@ import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
+import com.idigital.asistenciasidigital.response.UpdateResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
@@ -74,7 +75,6 @@ public class RegisterActivity extends AppCompatActivity implements
     private Location userLocation;
     private Map<String, Double> sortedDistanceMap;
     ProgressDialogView progressView;
-    String movement;
     RecyclerEventAdapter eventAdapter;
     String closestPlaceId;
     List<Place> places;
@@ -240,27 +240,13 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void registerMovement() {
 
-        if(registerBtn.getText().toString().equalsIgnoreCase("ingreso")){
-            registerEnterMovement();
-        }else{
-            registerExitMovement();
-        }
-    }
-
-    private void registerExitMovement() {
-
-        showProgressDialog();
-    }
-
-    private void registerEnterMovement() {
-
         if (!hasPermissionAccessFineLocation) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
 
         showProgressDialog();
-        new TestAndEnterRegisterAsyncTask().execute();
+        new TestAndGetLocationAsyncTask().execute();
     }
 
     private synchronized void createGoogleApiClient() {
@@ -317,7 +303,7 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void sendMovementToServer() {
+    private void sendEnterMovementToServer() {
 
         Map.Entry<String, Double> firstId = getFirstMapEntry();
         if (firstId == null)
@@ -336,7 +322,8 @@ public class RegisterActivity extends AppCompatActivity implements
                     RegisterResponse registerResponse = response.body();
                     if (!registerResponse.getError()) {
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro satisfactorio: " + movement);
+                        eventAdapter.addNewEvent("Registro satisfactorio: Ingreso");
+                        updateButton("SALIDA");
                     } else {
                         Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
                         eventAdapter.addNewEvent("Registro insatisfactorio");
@@ -353,6 +340,13 @@ public class RegisterActivity extends AppCompatActivity implements
                 progressView.dismissDialog();
             }
         });
+    }
+
+    private void updateButton(String movement) {
+
+        registerBtn.setText(movement);
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+        preferenceManager.putString(Constants.MOVEMENT_TYPE, movement);
     }
 
     private void calculateDistancesAndSort(Location myLocation) {
@@ -384,7 +378,46 @@ public class RegisterActivity extends AppCompatActivity implements
 
         progressView.setMessage("Enviando registro");
         userLocation = location;
-        sendMovementToServer();
+        if(registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
+            sendEnterMovementToServer();
+        else
+            sendExitMovementToServer();
+    }
+
+    private void sendExitMovementToServer() {
+
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+        String userId = preferenceManager.getString(Constants.USER_ID, "null");
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        Call<UpdateResponse> call = service.postUpdateMovement(userId, userLocation.getLatitude(),
+                userLocation.getLongitude());
+        call.enqueue(new Callback<UpdateResponse>() {
+            @Override
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+
+                progressView.dismissDialog();
+                if (response.isSuccessful()) {
+                    UpdateResponse registerResponse = response.body();
+                    if (!registerResponse.getError()) {
+                        Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
+                        eventAdapter.addNewEvent("Registro satisfactorio: Salida");
+                        updateButton("INGRESO");
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
+                        eventAdapter.addNewEvent("Registro insatisfactorio");
+                    }
+                }
+                Log.i(TAG, response.raw().toString());
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Registro fallido", Toast.LENGTH_SHORT).show();
+                eventAdapter.addNewEvent("Registro fallido");
+                progressView.dismissDialog();
+            }
+        });
     }
 
     private Map.Entry<String, Double> getFirstMapEntry() {
@@ -474,34 +507,7 @@ public class RegisterActivity extends AppCompatActivity implements
         return true;
     }
 
-    private class TestAndEnterRegisterAsyncTask extends TestConnectionAsyncTask {
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            if (!aBoolean) {
-                progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
-                eventAdapter.addNewEvent("No hay conexión a internet");
-                return;
-            }
-
-            eventAdapter.addNewEvent("Hay conexión a internet");
-            if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
-
-                progressView.setMessage("Obteniendo tu ubicación");
-
-                if (googleApiClient != null && !googleApiClient.isConnected())
-                    googleApiClient.connect();
-
-            } else {
-                progressView.dismissDialog();
-                showLocationSettingsAlert();
-            }
-        }
-    }
-
-    private class TestAndExitRegisterAsyncTask extends TestConnectionAsyncTask {
+    private class TestAndGetLocationAsyncTask extends TestConnectionAsyncTask {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {

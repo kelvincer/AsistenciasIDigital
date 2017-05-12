@@ -2,6 +2,7 @@ package com.idigital.asistenciasidigital.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.idigital.asistenciasidigital.model.Update;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class UpdateResponse {
 
     @SerializedName("data")
     @Expose
-    private List<Object> data = null;
+    private Update data;
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -24,11 +25,11 @@ public class UpdateResponse {
     @Expose
     private String message;
 
-    public List<Object> getData() {
+    public Update getData() {
         return data;
     }
 
-    public void setData(List<Object> data) {
+    public void setData(Update data) {
         this.data = data;
     }
 

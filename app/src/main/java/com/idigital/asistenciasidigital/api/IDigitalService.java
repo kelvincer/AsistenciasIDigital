@@ -54,5 +54,6 @@ public interface IDigitalService {
 
     @FormUrlEncoded
     @POST("attendance-upd")
-    Call<UpdateResponse> postUpdateMovement(@Field("id_user") String idUser);
+    Call<UpdateResponse> postUpdateMovement(@Field("id_user") String idUser,@Field("latitude2") double latitude,
+                                            @Field("longitude2") double longitude);
 }
