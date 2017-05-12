@@ -13,7 +13,9 @@ import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.listener.OnItemClickListener;
 import com.idigital.asistenciasidigital.model.ShortReport;
+import com.idigital.asistenciasidigital.model.ShortReport2;
 import com.idigital.asistenciasidigital.response.ShortReportResponse;
+import com.idigital.asistenciasidigital.response.ShortReportResponse2;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
@@ -68,7 +70,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
         new TestAndFetchReportAsyncTask().execute();
     }
 
-    private void requestReport() {
+    /*private void requestReport() {
 
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String idUser = preferenceManager.getString(Constants.USER_ID, "null");
@@ -97,9 +99,40 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
                 Toast.makeText(getApplicationContext(), "Fallas en servicio", Toast.LENGTH_SHORT).show();
             }
         });
+    }*/
+
+    private void requestReport() {
+
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+        String idUser = preferenceManager.getString(Constants.USER_ID, "null");
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        Call<ShortReportResponse2> call = service.postAllUserReport(idUser);
+        call.enqueue(new Callback<ShortReportResponse2>() {
+            @Override
+            public void onResponse(Call<ShortReportResponse2> call, Response<ShortReportResponse2> response) {
+
+                progressView.dismissDialog();
+                if (response.isSuccessful()) {
+                    ShortReportResponse2 responseList = response.body();
+                    if (responseList.getError() == 0)
+                        fillRecyclerView(responseList.getData());
+                    else {
+                        Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                Log.i(TAG, response.raw().toString());
+            }
+
+            @Override
+            public void onFailure(Call<ShortReportResponse2> call, Throwable t) {
+                t.printStackTrace();
+                progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), "Fallas en servicio", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void fillRecyclerView(List<ShortReport> data) {
+    private void fillRecyclerView(List<ShortReport2> data) {
 
         if (data.size() == 0) {
             Toast.makeText(getApplicationContext(), "No hay reporte que mostrar", Toast.LENGTH_LONG).show();

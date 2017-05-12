@@ -4,10 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by USUARIO on 11/05/2017.
+ * Created by USUARIO on 12/05/2017.
  */
 
-public class Update {
+public class User {
 
     @SerializedName("id_user")
     @Expose
@@ -21,9 +21,12 @@ public class Update {
     @SerializedName("longitude")
     @Expose
     private String longitude;
-    @SerializedName("date_show_in")
+    @SerializedName("movement")
     @Expose
-    private String dateShowIn;
+    private String movement;
+    @SerializedName("date_show")
+    @Expose
+    private String dateShow;
     @SerializedName("date_add")
     @Expose
     private String dateAdd;
@@ -72,12 +75,20 @@ public class Update {
         this.longitude = longitude;
     }
 
-    public String getDateShowIn() {
-        return dateShowIn;
+    public String getMovement() {
+        return movement;
     }
 
-    public void setDateShowIn(String dateShowIn) {
-        this.dateShowIn = dateShowIn;
+    public void setMovement(String movement) {
+        this.movement = movement;
+    }
+
+    public String getDateShow() {
+        return dateShow;
+    }
+
+    public void setDateShow(String dateShow) {
+        this.dateShow = dateShow;
     }
 
     public String getDateAdd() {

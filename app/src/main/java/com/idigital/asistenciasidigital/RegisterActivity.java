@@ -37,7 +37,6 @@ import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
-import com.idigital.asistenciasidigital.response.UpdateResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
@@ -303,15 +302,16 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void sendEnterMovementToServer() {
+    private void sendMovementToServer(final String movement) {
 
         Map.Entry<String, Double> firstId = getFirstMapEntry();
         if (firstId == null)
             return;
+
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(),
+        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), movement,
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -320,10 +320,10 @@ public class RegisterActivity extends AppCompatActivity implements
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
-                    if (!registerResponse.getError()) {
+                    if (registerResponse.getError() == 0) {
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
                         eventAdapter.addNewEvent("Registro satisfactorio: Ingreso");
-                        updateButton("SALIDA");
+                        updateButton(movement);
                     } else {
                         Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
                         eventAdapter.addNewEvent("Registro insatisfactorio");
@@ -344,7 +344,10 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void updateButton(String movement) {
 
-        registerBtn.setText(movement);
+        if(movement.equalsIgnoreCase("ingreso"))
+            registerBtn.setText("Salida");
+        else
+            registerBtn.setText("Ingreso");
         PreferenceManager preferenceManager = new PreferenceManager(this);
         preferenceManager.putString(Constants.MOVEMENT_TYPE, movement);
     }
@@ -379,45 +382,9 @@ public class RegisterActivity extends AppCompatActivity implements
         progressView.setMessage("Enviando registro");
         userLocation = location;
         if(registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
-            sendEnterMovementToServer();
+            sendMovementToServer("ingreso");
         else
-            sendExitMovementToServer();
-    }
-
-    private void sendExitMovementToServer() {
-
-        PreferenceManager preferenceManager = new PreferenceManager(this);
-        String userId = preferenceManager.getString(Constants.USER_ID, "null");
-        IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<UpdateResponse> call = service.postUpdateMovement(userId, userLocation.getLatitude(),
-                userLocation.getLongitude());
-        call.enqueue(new Callback<UpdateResponse>() {
-            @Override
-            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
-
-                progressView.dismissDialog();
-                if (response.isSuccessful()) {
-                    UpdateResponse registerResponse = response.body();
-                    if (!registerResponse.getError()) {
-                        Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro satisfactorio: Salida");
-                        updateButton("INGRESO");
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro insatisfactorio");
-                    }
-                }
-                Log.i(TAG, response.raw().toString());
-            }
-
-            @Override
-            public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                t.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Registro fallido", Toast.LENGTH_SHORT).show();
-                eventAdapter.addNewEvent("Registro fallido");
-                progressView.dismissDialog();
-            }
-        });
+            sendMovementToServer("salida");
     }
 
     private Map.Entry<String, Double> getFirstMapEntry() {

@@ -2,50 +2,42 @@ package com.idigital.asistenciasidigital.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.idigital.asistenciasidigital.model.Update;
+import com.idigital.asistenciasidigital.model.ShortReport2;
 
 import java.util.List;
 
 /**
- * Created by USUARIO on 10/05/2017.
+ * Created by USUARIO on 12/05/2017.
  */
 
-public class UpdateResponse {
+public class ShortReportResponse2 {
 
     @SerializedName("data")
     @Expose
-    private Update data;
-    @SerializedName("id")
-    @Expose
-    private Integer id;
+    private List<ShortReport2> data = null;
     @SerializedName("error")
     @Expose
-    private Boolean error;
+    private Integer error;
     @SerializedName("message")
     @Expose
     private String message;
+    @SerializedName("blocking")
+    @Expose
+    private Boolean blocking;
 
-    public Update getData() {
+    public List<ShortReport2> getData() {
         return data;
     }
 
-    public void setData(Update data) {
+    public void setData(List<ShortReport2> data) {
         this.data = data;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Boolean getError() {
+    public Integer getError() {
         return error;
     }
 
-    public void setError(Boolean error) {
+    public void setError(Integer error) {
         this.error = error;
     }
 
@@ -56,4 +48,13 @@ public class UpdateResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public Boolean getBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(Boolean blocking) {
+        this.blocking = blocking;
+    }
+
 }
