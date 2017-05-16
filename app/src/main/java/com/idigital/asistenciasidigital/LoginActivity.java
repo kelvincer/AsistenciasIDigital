@@ -46,6 +46,11 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.login_btn)
     public void onViewClicked() {
 
+        if(loginAttempNumber >= 2){
+            Toast.makeText(this, "Numero de intentos máximo alcanzado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!isValidUserInput()) {
             Toast.makeText(this, "Llena los campos", Toast.LENGTH_SHORT).show();
             return;
@@ -77,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else {
                         Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
+                        loginAttempNumber++;
                     }
                 }
             }

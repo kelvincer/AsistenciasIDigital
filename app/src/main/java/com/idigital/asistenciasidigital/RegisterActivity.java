@@ -78,6 +78,7 @@ public class RegisterActivity extends AppCompatActivity implements
     String closestPlaceId;
     List<Place> places;
     boolean hasPermissionAccessFineLocation;
+    private int attempNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,10 +147,8 @@ public class RegisterActivity extends AppCompatActivity implements
 
         calculateDistancesAndSort(location);
         Map.Entry<String, Double> firstMapEntry = getFirstMapEntry();
-        Double mininDistance = firstMapEntry.getValue();
+        Double minimDistance = firstMapEntry.getValue();
         closestPlaceId = firstMapEntry.getKey();
-
-        Log.i(TAG, "Provider " + location.getProvider());
 
         Place place = getClosestPlace();
         if (place == null) {
@@ -158,13 +157,20 @@ public class RegisterActivity extends AppCompatActivity implements
         }
 
         Double placeRadio = Double.parseDouble(place.getRadio());
-        if (mininDistance.intValue() <= placeRadio.intValue()) {
+        if (minimDistance.intValue() <= placeRadio.intValue()) {
 
-            handleUserInRange(place, mininDistance);
+            handleUserInRange(place, minimDistance);
             setUpForSendRegister(location);
+            attempNumber = 0;
         } else {
 
-            handleUserOutOfRange(place, mininDistance);
+            handleUserOutOfRange(place, minimDistance);
+            if (attempNumber == 2) {
+                setUpForSendRegister(location);
+                attempNumber = 0;
+            }else {
+                attempNumber++;
+            }
         }
     }
 
@@ -181,8 +187,10 @@ public class RegisterActivity extends AppCompatActivity implements
         Double placeRadio = Double.parseDouble(place.getRadio());
         stopLocationUpdates();
         eventAdapter.addNewEvent("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
-        eventAdapter.addNewEvent("Registro insatisfactorio");
-        progressView.dismissDialog();
+        if (attempNumber < 2) {
+            eventAdapter.addNewEvent("Registro insatisfactorio");
+            progressView.dismissDialog();
+        }
     }
 
     @Override
@@ -322,7 +330,7 @@ public class RegisterActivity extends AppCompatActivity implements
                     RegisterResponse registerResponse = response.body();
                     if (registerResponse.getError() == 0) {
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro satisfactorio: Ingreso");
+                        eventAdapter.addNewEvent("Registro satisfactorio: " + movement);
                         updateButton(movement);
                     } else {
                         Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
@@ -344,7 +352,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void updateButton(String movement) {
 
-        if(movement.equalsIgnoreCase("ingreso"))
+        if (movement.equalsIgnoreCase("ingreso"))
             registerBtn.setText("Salida");
         else
             registerBtn.setText("Ingreso");
@@ -372,16 +380,16 @@ public class RegisterActivity extends AppCompatActivity implements
         }
         sortedDistanceMap = new HashMap<>();
         sortedDistanceMap = Util.sortMapByValue(map);
-        for (Map.Entry<String, Double> entry : sortedDistanceMap.entrySet()) {
+        /*for (Map.Entry<String, Double> entry : sortedDistanceMap.entrySet()) {
             Log.i(TAG, entry.getKey() + "/" + entry.getValue());
-        }
+        }*/
     }
 
     private void setUpForSendRegister(Location location) {
 
         progressView.setMessage("Enviando registro");
         userLocation = location;
-        if(registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
+        if (registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
             sendMovementToServer("ingreso");
         else
             sendMovementToServer("salida");
