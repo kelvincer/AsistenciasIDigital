@@ -1,7 +1,9 @@
 package com.idigital.asistenciasidigital;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
@@ -62,7 +64,8 @@ public class LoginActivity extends AppCompatActivity {
 
         IDigitalService service = IDigitalClient.getIDigitalService();
         //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
-        Call<LoginResponse> call = service.postLogin(emailEtx.getText().toString(), passwordEtx.getText().toString());
+        Call<LoginResponse> call = service.postLogin(emailEtx.getText().toString(),
+                passwordEtx.getText().toString(), BuildConfig.VERSION_CODE);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -71,12 +74,13 @@ public class LoginActivity extends AppCompatActivity {
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
-                    if (!loginResponse.getError()) {
+                    if (loginResponse.getError() == 0) {
                         saveLoginData(loginResponse);
                         navigateToRegisterActivity();
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
+                        showInternetAlertDialog(loginResponse.getMessage());
                     }
                 }
             }
@@ -138,5 +142,20 @@ public class LoginActivity extends AppCompatActivity {
             }
             loginRequest();
         }
+    }
+
+    public void showInternetAlertDialog(String message) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Mensaje");
+        alertDialog.setMessage(message);
+
+        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 }

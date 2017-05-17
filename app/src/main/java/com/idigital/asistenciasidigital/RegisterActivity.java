@@ -1,6 +1,7 @@
 package com.idigital.asistenciasidigital;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -190,6 +191,8 @@ public class RegisterActivity extends AppCompatActivity implements
         if (attempNumber < 2) {
             eventAdapter.addNewEvent("Registro insatisfactorio");
             progressView.dismissDialog();
+            showInternetAlertDialog("Estas afuera del radio de la sede. Estas a "
+                    + (mininDistance.intValue() - placeRadio.intValue()) + "m.");
         }
     }
 
@@ -328,12 +331,14 @@ public class RegisterActivity extends AppCompatActivity implements
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
                     if (registerResponse.getError() == 0) {
-                        Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro satisfactorio: Ingreso");
+                        Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        eventAdapter.addNewEvent(registerResponse.getMessage());
+                        showInternetAlertDialog(registerResponse.getMessage());
                         updateButton("SALIDA");
                     } else {
-                        Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro insatisfactorio");
+                        Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        eventAdapter.addNewEvent(registerResponse.getMessage());
+                        showInternetAlertDialog(registerResponse.getMessage());
                     }
                 }
                 Log.i(TAG, response.raw().toString());
@@ -411,12 +416,14 @@ public class RegisterActivity extends AppCompatActivity implements
                         Toast.makeText(RegisterActivity.this, "Blocking", Toast.LENGTH_SHORT).show();
                     } else {
                         if (registerResponse.getError() == 0) {
-                            Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                            eventAdapter.addNewEvent("Registro satisfactorio: Salida");
+                            Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            eventAdapter.addNewEvent(registerResponse.getMessage());
+                            showInternetAlertDialog(registerResponse.getMessage());
                             updateButton("INGRESO");
                         } else {
                             Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
                             eventAdapter.addNewEvent(registerResponse.getMessage());
+                            showInternetAlertDialog(registerResponse.getMessage());
                         }
                     }
                 }
@@ -552,5 +559,20 @@ public class RegisterActivity extends AppCompatActivity implements
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         finish();
+    }
+
+    public void showInternetAlertDialog(String message) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Mensaje");
+        alertDialog.setMessage(message);
+
+        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 }

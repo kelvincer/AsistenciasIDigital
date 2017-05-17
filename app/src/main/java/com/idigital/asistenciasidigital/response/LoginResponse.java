@@ -18,7 +18,13 @@ public class LoginResponse {
     private Login data;
     @SerializedName("error")
     @Expose
-    private boolean error;
+    private Integer error;
+    @SerializedName("message")
+    @Expose
+    private String message;
+    @SerializedName("blocking")
+    @Expose
+    private Boolean blocking;
 
     public Login getData() {
         return data;
@@ -28,11 +34,27 @@ public class LoginResponse {
         this.data = data;
     }
 
-    public boolean getError() {
+    public Integer getError() {
         return error;
     }
 
-    public void setError(boolean error) {
+    public void setError(Integer error) {
         this.error = error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(Boolean blocking) {
+        this.blocking = blocking;
     }
 }

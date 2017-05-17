@@ -20,7 +20,8 @@ public interface IDigitalService {
 
     @FormUrlEncoded
     @POST("login")
-    Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password);
+    Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password,
+                                  @Field("version") int version);
 
     @FormUrlEncoded
     @POST("inactive-user")

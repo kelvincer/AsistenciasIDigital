@@ -1,5 +1,6 @@
 package com.idigital.asistenciasidigital;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.util.Constants;
+import com.idigital.asistenciasidigital.util.Util;
 
 import java.util.List;
 
@@ -36,12 +38,6 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void getPlacesFromServer() {
-
-        /*
-        if (!ConnectionUtil.isOnline()) {
-            showInternetAlertDialog();
-            return;
-        }*/
 
         new TestAndFetchAsyncTask().execute();
     }
@@ -94,22 +90,6 @@ public class SplashActivity extends AppCompatActivity {
         placeDao.insertPlaceList(data);
     }
 
-    public void showInternetAlertDialog() {
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Internet");
-        alertDialog.setMessage("No tienes conexión a internet");
-
-        alertDialog.setPositiveButton("Cerrar App", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-
-        alertDialog.show();
-    }
-
     private class TestAndFetchAsyncTask extends TestConnectionAsyncTask {
 
         @Override
@@ -117,7 +97,7 @@ public class SplashActivity extends AppCompatActivity {
             // Activity 1 GUI stuff
             super.onPostExecute(result);
             if (!result) {
-                showInternetAlertDialog();
+                showInternetAlertDialog("No tienes conexión a internet");
                 return;
             }
             fetchPlaces();
@@ -130,7 +110,7 @@ public class SplashActivity extends AppCompatActivity {
         String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
         String email = preferenceManager.getString(Constants.USER_EMAIL, "");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<LoginResponse> call = service.postLogin(email, password);
+        Call<LoginResponse> call = service.postLogin(email, password, BuildConfig.VERSION_CODE);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -138,7 +118,7 @@ public class SplashActivity extends AppCompatActivity {
                 Log.i(TAG, response.raw().toString());
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
-                    if (!loginResponse.getError()) {
+                    if (loginResponse.getError() == 0) {
                         navigateToRegisterActivity();
                     } else {
                         updatePreferenceManager();
@@ -171,5 +151,20 @@ public class SplashActivity extends AppCompatActivity {
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
+    }
+
+    public void showInternetAlertDialog(String message) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Mensaje");
+        alertDialog.setMessage(message);
+
+        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 }
