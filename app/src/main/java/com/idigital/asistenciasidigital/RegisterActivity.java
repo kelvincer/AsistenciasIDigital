@@ -37,7 +37,6 @@ import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
-import com.idigital.asistenciasidigital.response.UpdateResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
@@ -79,6 +78,7 @@ public class RegisterActivity extends AppCompatActivity implements
     String closestPlaceId;
     List<Place> places;
     boolean hasPermissionAccessFineLocation;
+    private int attempNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,10 +162,15 @@ public class RegisterActivity extends AppCompatActivity implements
         if (mininDistance.intValue() <= placeRadio.intValue()) {
 
             handleUserInRange(place, mininDistance);
-            setUpForSendRegister(location);
+            setUpForSendRegister(location, 0);
         } else {
 
             handleUserOutOfRange(place, mininDistance);
+            if (attempNumber == 2) {
+                setUpForSendRegister(location, 1);
+            } else {
+                attempNumber++;
+            }
         }
     }
 
@@ -182,8 +187,10 @@ public class RegisterActivity extends AppCompatActivity implements
         Double placeRadio = Double.parseDouble(place.getRadio());
         stopLocationUpdates();
         eventAdapter.addNewEvent("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
-        eventAdapter.addNewEvent("Registro insatisfactorio");
-        progressView.dismissDialog();
+        if (attempNumber < 2) {
+            eventAdapter.addNewEvent("Registro insatisfactorio");
+            progressView.dismissDialog();
+        }
     }
 
     @Override
@@ -303,7 +310,7 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void sendEnterMovementToServer() {
+    private void sendEnterMovementToServer(int flag) {
 
         Map.Entry<String, Double> firstId = getFirstMapEntry();
         if (firstId == null)
@@ -311,7 +318,7 @@ public class RegisterActivity extends AppCompatActivity implements
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(),
+        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), flag,
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -320,7 +327,7 @@ public class RegisterActivity extends AppCompatActivity implements
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
-                    if (!registerResponse.getError()) {
+                    if (registerResponse.getError() == 0) {
                         Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
                         eventAdapter.addNewEvent("Registro satisfactorio: Ingreso");
                         updateButton("SALIDA");
@@ -374,44 +381,50 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
-    private void setUpForSendRegister(Location location) {
+    private void setUpForSendRegister(Location location, int flag) {
 
         progressView.setMessage("Enviando registro");
         userLocation = location;
-        if(registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
-            sendEnterMovementToServer();
+        attempNumber = 0;
+        if (registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
+            sendEnterMovementToServer(flag);
         else
-            sendExitMovementToServer();
+            sendExitMovementToServer(flag);
     }
 
-    private void sendExitMovementToServer() {
+    private void sendExitMovementToServer(int flag) {
 
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<UpdateResponse> call = service.postUpdateMovement(userId, userLocation.getLatitude(),
+        Call<RegisterResponse> call = service.postUpdateMovement(userId, flag, userLocation.getLatitude(),
                 userLocation.getLongitude());
-        call.enqueue(new Callback<UpdateResponse>() {
+        call.enqueue(new Callback<RegisterResponse>() {
             @Override
-            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
-                    UpdateResponse registerResponse = response.body();
-                    if (!registerResponse.getError()) {
-                        Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro satisfactorio: Salida");
-                        updateButton("INGRESO");
+                    RegisterResponse registerResponse = response.body();
+
+                    if (registerResponse.getBlocking()) {
+                        Toast.makeText(RegisterActivity.this, "Blocking", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Registro insatisfactorio", Toast.LENGTH_SHORT).show();
-                        eventAdapter.addNewEvent("Registro insatisfactorio");
+                        if (registerResponse.getError() == 0) {
+                            Toast.makeText(getApplicationContext(), "Registro satisfactorio", Toast.LENGTH_SHORT).show();
+                            eventAdapter.addNewEvent("Registro satisfactorio: Salida");
+                            updateButton("INGRESO");
+                        } else {
+                            Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            eventAdapter.addNewEvent(registerResponse.getMessage());
+                        }
                     }
                 }
                 Log.i(TAG, response.raw().toString());
             }
 
             @Override
-            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+            public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 t.printStackTrace();
                 Toast.makeText(getApplicationContext(), "Registro fallido", Toast.LENGTH_SHORT).show();
                 eventAdapter.addNewEvent("Registro fallido");

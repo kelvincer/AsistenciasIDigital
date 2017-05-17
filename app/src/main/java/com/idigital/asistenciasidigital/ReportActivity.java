@@ -81,7 +81,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     ShortReportResponse responseList = response.body();
-                    if (!responseList.getError())
+                    if (responseList.getError() == 0)
                         fillRecyclerView(responseList.getData());
                     else {
                         Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();

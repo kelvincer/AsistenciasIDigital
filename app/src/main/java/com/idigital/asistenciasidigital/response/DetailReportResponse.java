@@ -17,7 +17,7 @@ public class DetailReportResponse {
     private List<DetailReport> data = null;
     @SerializedName("error")
     @Expose
-    private Boolean error;
+    private Integer error;
 
     public List<DetailReport> getData() {
         return data;
@@ -27,11 +27,11 @@ public class DetailReportResponse {
         this.data = data;
     }
 
-    public Boolean getError() {
+    public Integer getError() {
         return error;
     }
 
-    public void setError(Boolean error) {
+    public void setError(Integer error) {
         this.error = error;
     }
 }

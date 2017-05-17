@@ -54,8 +54,6 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
         TextView userTxv;
         @BindView(R.id.date_txv)
         TextView dateTxv;
-        @BindView(R.id.movement_txv)
-        TextView movementTxv;
         @BindView(R.id.total_time_txv)
         TextView totalTimeTxv;
         View view;
@@ -70,7 +68,6 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
 
             userTxv.setText(item.getNombre());
             dateTxv.setText(item.getFecha());
-            movementTxv.setText(item.getMovimientos());
             totalTimeTxv.setText(item.getTotalHoras());
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

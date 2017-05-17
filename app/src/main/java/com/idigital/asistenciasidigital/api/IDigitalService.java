@@ -6,7 +6,6 @@ import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
 import com.idigital.asistenciasidigital.response.ShortReportResponse;
-import com.idigital.asistenciasidigital.response.UpdateResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -30,6 +29,7 @@ public interface IDigitalService {
     @FormUrlEncoded
     @POST("attendance-add")
     Call<RegisterResponse> postRegistry(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
+                                        @Field("flag_obs") int flag,
                                         @Field("latitude") double latitude, @Field("longitude") double longitude);
 
     @GET("attendance")
@@ -54,6 +54,6 @@ public interface IDigitalService {
 
     @FormUrlEncoded
     @POST("attendance-upd")
-    Call<UpdateResponse> postUpdateMovement(@Field("id_user") String idUser,@Field("latitude2") double latitude,
-                                            @Field("longitude2") double longitude);
+    Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser, @Field("flag_obs") int flag,
+                                              @Field("latitude") double latitude, @Field("longitude") double longitude);
 }

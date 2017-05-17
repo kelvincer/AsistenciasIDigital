@@ -11,9 +11,6 @@ import java.io.Serializable;
 
 public class ShortReport implements Serializable {
 
-    @SerializedName("id_attendance")
-    @Expose
-    private String idAttendance;
     @SerializedName("id_user")
     @Expose
     private String idUser;
@@ -23,20 +20,9 @@ public class ShortReport implements Serializable {
     @SerializedName("nombre")
     @Expose
     private String nombre;
-    @SerializedName("movimientos")
-    @Expose
-    private String movimientos;
     @SerializedName("total_horas")
     @Expose
     private String totalHoras;
-
-    public String getIdAttendance() {
-        return idAttendance;
-    }
-
-    public void setIdAttendance(String idAttendance) {
-        this.idAttendance = idAttendance;
-    }
 
     public String getIdUser() {
         return idUser;
@@ -60,14 +46,6 @@ public class ShortReport implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getMovimientos() {
-        return movimientos;
-    }
-
-    public void setMovimientos(String movimientos) {
-        this.movimientos = movimientos;
     }
 
     public String getTotalHoras() {

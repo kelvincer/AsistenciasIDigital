@@ -65,7 +65,7 @@ public class DetailReportActivity extends AppCompatActivity {
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     DetailReportResponse responseList = response.body();
-                    if (!responseList.getError())
+                    if (responseList.getError() == 0)
                         fillRecyclerView(responseList.getData());
                     else {
                         Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();

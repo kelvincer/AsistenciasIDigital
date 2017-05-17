@@ -9,15 +9,48 @@ import com.google.gson.annotations.SerializedName;
 
 public class RegisterResponse {
 
+    @SerializedName("data")
+    @Expose
+    private Object data;
     @SerializedName("error")
     @Expose
-    private Boolean error;
+    private Integer error;
+    @SerializedName("message")
+    @Expose
+    private String message;
+    @SerializedName("blocking")
+    @Expose
+    private Boolean blocking;
 
-    public Boolean getError() {
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    public Integer getError() {
         return error;
     }
 
-    public void setError(Boolean error) {
+    public void setError(Integer error) {
         this.error = error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(Boolean blocking) {
+        this.blocking = blocking;
     }
 }

@@ -21,12 +21,6 @@ public class DetailReport {
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("latitude")
-    @Expose
-    private Object latitude;
-    @SerializedName("longitude")
-    @Expose
-    private Object longitude;
     @SerializedName("fecha")
     @Expose
     private String fecha;
@@ -72,22 +66,6 @@ public class DetailReport {
         this.name = name;
     }
 
-    public Object getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Object latitude) {
-        this.latitude = latitude;
-    }
-
-    public Object getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Object longitude) {
-        this.longitude = longitude;
-    }
-
     public String getFecha() {
         return fecha;
     }
@@ -119,5 +97,4 @@ public class DetailReport {
     public void setHorabruta(String horabruta) {
         this.horabruta = horabruta;
     }
-
 }
