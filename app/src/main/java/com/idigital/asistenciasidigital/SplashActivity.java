@@ -156,7 +156,7 @@ public class SplashActivity extends AppCompatActivity {
     public void showInternetAlertDialog(String message) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Mensaje");
+        alertDialog.setTitle("Alerta");
         alertDialog.setMessage(message);
 
         alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {

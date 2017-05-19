@@ -35,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
     Button loginBtn;
 
     ProgressDialogView progressView;
-    private int loginAttempNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onViewClicked() {
 
         if (!isValidUserInput()) {
-            Toast.makeText(this, "Llena los campos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Completa los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -59,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginRequest() {
 
-        loginAttempNumber++;
         progressView.setMessage("Autenticando...");
 
         IDigitalService service = IDigitalClient.getIDigitalService();
@@ -147,9 +145,8 @@ public class LoginActivity extends AppCompatActivity {
     public void showInternetAlertDialog(String message) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Mensaje");
+        alertDialog.setTitle("Alerta");
         alertDialog.setMessage(message);
-
         alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

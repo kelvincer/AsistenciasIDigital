@@ -558,13 +558,15 @@ public class RegisterActivity extends AppCompatActivity implements
 
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
+        preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
+        preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         finish();
     }
 
     public void showInternetAlertDialog(String message) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Mensaje");
+        alertDialog.setTitle("Alerta");
         alertDialog.setMessage(message);
 
         alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
