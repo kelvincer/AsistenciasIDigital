@@ -1,7 +1,6 @@
 package com.idigital.asistenciasidigital;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements
     List<Place> places;
     boolean hasPermissionAccessFineLocation;
     private int attempNumber = 0;
+    PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,19 +87,33 @@ public class RegisterActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         getSupportActionBar().setTitle(getResources().getString(R.string.registro));
-        requestPermissionForLocation();
 
         setUpEventsRecyclerview();
 
-        PreferenceManager preferenceManager = new PreferenceManager(this);
+        preferenceManager = new PreferenceManager(this);
         String movement = preferenceManager.getString(Constants.MOVEMENT_TYPE, "INGRESO");
         registerBtn.setText(movement);
+
+        checkPassLogin();
 
         // This is optional
         if (checkPlayServices())
             Log.i(TAG, "tiene play service");
         else
             Log.i(TAG, "No tiene play service");
+    }
+
+    private void checkPassLogin() {
+
+        boolean passLogin = getIntent().getBooleanExtra(Constants.PASS_FOR_LOGIN, false);
+
+        if (passLogin) {
+            requestPermissionForLocation();
+        } else {
+            String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
+            if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
+                showUpdateAppVersionDialog();
+        }
     }
 
     @Override
@@ -163,12 +177,12 @@ public class RegisterActivity extends AppCompatActivity implements
         if (mininDistance.intValue() <= placeRadio.intValue()) {
 
             handleUserInRange(place, mininDistance);
-            setUpForSendRegister(location, 0);
+            setUpForSendRegister(location, 0, mininDistance.intValue());
         } else {
 
             handleUserOutOfRange(place, mininDistance);
             if (attempNumber == 2) {
-                setUpForSendRegister(location, 1);
+                setUpForSendRegister(location, 1, mininDistance.intValue());
             } else {
                 attempNumber++;
             }
@@ -313,15 +327,14 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void sendEnterMovementToServer(int flag) {
+    private void sendEnterMovementToServer(int flag, int distance) {
 
         Map.Entry<String, Double> firstId = getFirstMapEntry();
         if (firstId == null)
             return;
-        PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), flag,
+        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), flag, distance,
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -330,7 +343,7 @@ public class RegisterActivity extends AppCompatActivity implements
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
-                    if (registerResponse.getError() == 0) {
+                    if (registerResponse.getCode() == 0) {
                         Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
                         eventAdapter.addNewEvent(registerResponse.getMessage());
                         showInternetAlertDialog(registerResponse.getMessage());
@@ -357,7 +370,6 @@ public class RegisterActivity extends AppCompatActivity implements
     private void updateButton(String movement) {
 
         registerBtn.setText(movement);
-        PreferenceManager preferenceManager = new PreferenceManager(this);
         preferenceManager.putString(Constants.MOVEMENT_TYPE, movement);
     }
 
@@ -386,24 +398,23 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
-    private void setUpForSendRegister(Location location, int flag) {
+    private void setUpForSendRegister(Location location, int flag, int distance) {
 
         progressView.setMessage("Enviando registro");
         userLocation = location;
         attempNumber = 0;
         if (registerBtn.getText().toString().equalsIgnoreCase("ingreso"))
-            sendEnterMovementToServer(flag);
+            sendEnterMovementToServer(flag, distance);
         else
-            sendExitMovementToServer(flag);
+            sendExitMovementToServer(flag, distance);
     }
 
-    private void sendExitMovementToServer(int flag) {
+    private void sendExitMovementToServer(int flag, int distance) {
 
-        PreferenceManager preferenceManager = new PreferenceManager(this);
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postUpdateMovement(userId, flag, userLocation.getLatitude(),
-                userLocation.getLongitude());
+        Call<RegisterResponse> call = service.postUpdateMovement(userId, flag, distance,
+                userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
@@ -415,7 +426,7 @@ public class RegisterActivity extends AppCompatActivity implements
                     if (registerResponse.getBlocking()) {
                         Toast.makeText(RegisterActivity.this, "Blocking", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (registerResponse.getError() == 0) {
+                        if (registerResponse.getCode() == 0) {
                             Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
                             eventAdapter.addNewEvent(registerResponse.getMessage());
                             showInternetAlertDialog(registerResponse.getMessage());
@@ -556,7 +567,6 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void logoutAndClose() {
 
-        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
         preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
@@ -572,6 +582,29 @@ public class RegisterActivity extends AppCompatActivity implements
         alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
+
+    private void showUpdateAppVersionDialog() {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Alerta");
+        alertDialog.setMessage(R.string.alert_update_version);
+        alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                requestPermissionForLocation();
+            }
+        });
+
+        alertDialog.setNegativeButton(R.string.alert_aceptar, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                requestPermissionForLocation();
             }
         });
 

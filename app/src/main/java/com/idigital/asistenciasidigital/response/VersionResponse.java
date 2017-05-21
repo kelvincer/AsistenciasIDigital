@@ -2,20 +2,17 @@ package com.idigital.asistenciasidigital.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.idigital.asistenciasidigital.model.Place;
-import com.idigital.asistenciasidigital.model.Report;
-
-import java.util.List;
+import com.idigital.asistenciasidigital.model.Version;
 
 /**
- * Created by USUARIO on 05/04/2017.
+ * Created by Kelvin on 20/05/2017.
  */
 
-public class PlaceResponse {
+public class VersionResponse {
 
     @SerializedName("data")
     @Expose
-    private List<Place> data = null;
+    private Version data;
     @SerializedName("code")
     @Expose
     private Integer code;
@@ -26,11 +23,11 @@ public class PlaceResponse {
     @Expose
     private Boolean blocking;
 
-    public List<Place> getData() {
+    public Version getData() {
         return data;
     }
 
-    public void setData(List<Place> data) {
+    public void setData(Version data) {
         this.data = data;
     }
 
@@ -57,5 +54,4 @@ public class PlaceResponse {
     public void setBlocking(Boolean blocking) {
         this.blocking = blocking;
     }
-
 }

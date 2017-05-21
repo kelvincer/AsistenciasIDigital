@@ -1,6 +1,5 @@
 package com.idigital.asistenciasidigital;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -16,8 +15,8 @@ import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
+import com.idigital.asistenciasidigital.response.VersionResponse;
 import com.idigital.asistenciasidigital.util.Constants;
-import com.idigital.asistenciasidigital.util.Util;
 
 import java.util.List;
 
@@ -54,11 +53,12 @@ public class SplashActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
 
                     PlaceResponse placeResponse = response.body();
-                    if (placeResponse.getError()) {
-                        Toast.makeText(getApplicationContext(), "Error en el servicio", Toast.LENGTH_SHORT).show();
-                    } else {
-                        checkLoguedIn();
+                    if (placeResponse.getCode() == 0) {
+
                         saveDataListOnDatabase(placeResponse.getData());
+                        fetchVersion();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error en el servicio places", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -166,5 +166,35 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         alertDialog.show();
+    }
+
+    private void fetchVersion(){
+
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        Call<VersionResponse> call = service.getVersion();
+        call.enqueue(new Callback<VersionResponse>() {
+            @Override
+            public void onResponse(Call<VersionResponse> call, Response<VersionResponse> response) {
+                if(response.isSuccessful()){
+
+                    VersionResponse versionResponse = response.body();
+                    if(versionResponse.getCode() == 0){
+
+                        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+                        preferenceManager.putString(Constants.ACTUAL_VERSION, versionResponse.getData().getValue());
+                        checkLoguedIn();
+
+                    }else{
+                        Toast.makeText(SplashActivity.this, "Error en fetch version", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VersionResponse> call, Throwable t) {
+
+                t.printStackTrace();
+            }
+        });
     }
 }

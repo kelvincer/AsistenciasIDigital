@@ -12,9 +12,9 @@ public class RegisterResponse {
     @SerializedName("data")
     @Expose
     private Object data;
-    @SerializedName("error")
+    @SerializedName("code")
     @Expose
-    private Integer error;
+    private Integer code;
     @SerializedName("message")
     @Expose
     private String message;
@@ -30,12 +30,12 @@ public class RegisterResponse {
         this.data = data;
     }
 
-    public Integer getError() {
-        return error;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setError(Integer error) {
-        this.error = error;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public String getMessage() {

@@ -4,4 +4,8 @@
     <string name="detalle">Detalle Asistencia</string>
     <string name="registro">Registro</string>
     <string name="autenticacion">Autenticación</string>
+    <string name="alert.update.version">Existe una version nueva de la aplicación.¿Deseas actualizarla?</string>
+    <string name="alert_cancelar">Cancelar</string>
+    <string name="alert_aceptar">Aceptar</string>
+    <string name="authentication_title">Autenticación</string>
 </resources>

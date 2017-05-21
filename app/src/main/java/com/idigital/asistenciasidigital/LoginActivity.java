@@ -41,7 +41,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle(getResources().getString(R.string.autenticacion));
+        getSupportActionBar().setTitle(R.string.authentication_title);
+
+        PreferenceManager preferenceManager = new PreferenceManager(this);
+        String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
+        if(!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
+            showUpdateAppVersionDialog();
     }
 
     @OnClick(R.id.login_btn)
@@ -92,7 +97,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToRegisterActivity() {
-        startActivity(new Intent(this, RegisterActivity.class));
+
+        Intent intent = new Intent(this, RegisterActivity.class);
+        intent.putExtra(Constants.PASS_FOR_LOGIN, true);
+        startActivity(intent);
     }
 
     private void saveLoginData(LoginResponse response) {
@@ -150,6 +158,27 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
+
+    private void showUpdateAppVersionDialog(){
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Alerta");
+        alertDialog.setMessage(R.string.alert_update_version);
+        alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.setNegativeButton(R.string.alert_aceptar, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
             }
         });
 
