@@ -329,12 +329,9 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void sendEnterMovementToServer(int flag, int distance) {
 
-        Map.Entry<String, Double> firstId = getFirstMapEntry();
-        if (firstId == null)
-            return;
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, firstId.getKey(), flag, distance,
+        Call<RegisterResponse> call = service.postRegistry(userId, closestPlaceId, flag, distance,
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -413,7 +410,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postUpdateMovement(userId, flag, distance,
+        Call<RegisterResponse> call = service.postUpdateMovement(userId, closestPlaceId, flag, distance,
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override

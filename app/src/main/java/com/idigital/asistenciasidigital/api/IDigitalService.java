@@ -56,8 +56,8 @@ public interface IDigitalService {
 
     @FormUrlEncoded
     @POST("attendance-upd")
-    Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser, @Field("flag_obs") int flag,
-                                              @Field("distance") int distance,
+    Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser,  @Field("id_headquarter") String idQuarter,
+                                              @Field("flag_obs") int flag, @Field("distance") int distance,
                                               @Field("latitude") double latitude, @Field("longitude") double longitude);
     @GET("android-version")
     Call<VersionResponse> getVersion();
