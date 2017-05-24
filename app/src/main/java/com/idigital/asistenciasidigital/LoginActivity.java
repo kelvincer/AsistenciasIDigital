@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.model.Login;
+import com.idigital.asistenciasidigital.register.ui.*;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
         PreferenceManager preferenceManager = new PreferenceManager(this);
         String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
-        if(!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
+        if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
             showUpdateAppVersionDialog();
     }
 
@@ -99,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToRegisterActivity() {
 
-        Intent intent = new Intent(this, RegisterActivity.class);
+        Intent intent = new Intent(this, com.idigital.asistenciasidigital.register.ui.RegisterActivity.class);
         intent.putExtra(Constants.PASS_FOR_LOGIN, true);
         startActivity(intent);
     }
@@ -165,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void showUpdateAppVersionDialog(){
+    private void showUpdateAppVersionDialog() {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");

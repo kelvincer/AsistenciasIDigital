@@ -11,7 +11,7 @@ public class ProgressDialogView {
 
     private ProgressDialog progressDialog;
 
-    public ProgressDialogView(Context context){
+    public ProgressDialogView(Context context) {
 
         progressDialog = new ProgressDialog(context);
         progressDialog.setIndeterminate(true);
@@ -19,19 +19,20 @@ public class ProgressDialogView {
         progressDialog.setCanceledOnTouchOutside(false);
     }
 
-    public void setMessage(String message){
+    public void setMessage(String message) {
 
         progressDialog.setMessage(message);
     }
 
-    public void showProgressDialog(){
+    public void showProgressDialog() {
 
-        progressDialog.show();
+        if (!progressDialog.isShowing())
+            progressDialog.show();
     }
 
-    public void dismissDialog(){
+    public void dismissDialog() {
 
-        if(progressDialog.isShowing())
+        if (progressDialog.isShowing())
             progressDialog.dismiss();
     }
 }

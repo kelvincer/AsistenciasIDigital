@@ -13,6 +13,7 @@ import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
+import com.idigital.asistenciasidigital.register.ui.*;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.VersionResponse;
@@ -143,7 +144,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void navigateToRegisterActivity() {
 
-        startActivity(new Intent(this, RegisterActivity.class));
+        startActivity(new Intent(this, com.idigital.asistenciasidigital.register.ui.RegisterActivity.class));
     }
 
     private void updatePreferenceManager(){
