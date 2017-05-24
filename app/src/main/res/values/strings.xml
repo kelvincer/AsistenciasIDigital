@@ -8,4 +8,7 @@
     <string name="alert_cancelar">Cancelar</string>
     <string name="alert_aceptar">Aceptar</string>
     <string name="authentication_title">Autenticación</string>
+    <string name="splash_dialog">No tienes conexión a internet</string>
+    <string name="no_internet">No estás conectado a internet</string>
+    <string name="service_failed">Registro fallido</string>
 </resources>

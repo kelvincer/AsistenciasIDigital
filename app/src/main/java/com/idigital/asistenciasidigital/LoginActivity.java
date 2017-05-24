@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else {
                         //Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
-                        showInternetAlertDialog(loginResponse.getMessage());
+                        showAlertDialog(loginResponse.getMessage());
                     }
                 }
             }
@@ -92,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressView.dismissDialog();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_failed), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -143,14 +144,14 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(result);
             if (!result) {
                 progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
                 return;
             }
             loginRequest();
         }
     }
 
-    public void showInternetAlertDialog(String message) {
+    public void showAlertDialog(String message) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");

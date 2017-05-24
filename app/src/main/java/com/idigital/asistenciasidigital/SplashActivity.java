@@ -97,7 +97,7 @@ public class SplashActivity extends AppCompatActivity {
             // Activity 1 GUI stuff
             super.onPostExecute(result);
             if (!result) {
-                showInternetAlertDialog("No tienes conexión a internet");
+                showInternetAlertDialog(getResources().getString(R.string.splash_dialog));
                 return;
             }
             fetchPlaces();

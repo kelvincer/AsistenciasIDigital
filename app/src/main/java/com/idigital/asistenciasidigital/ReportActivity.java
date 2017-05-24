@@ -94,7 +94,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
             public void onFailure(Call<ShortReportResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "Fallas en servicio", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_failed), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -120,7 +120,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
             super.onPostExecute(aBoolean);
             if (!aBoolean) {
                 progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
                 return;
             }
             requestReport();

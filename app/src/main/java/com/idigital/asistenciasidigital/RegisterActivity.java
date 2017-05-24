@@ -113,6 +113,8 @@ public class RegisterActivity extends AppCompatActivity implements
             String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
             if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
                 showUpdateAppVersionDialog();
+            else
+                requestPermissionForLocation();
         }
     }
 
@@ -218,7 +220,7 @@ public class RegisterActivity extends AppCompatActivity implements
                 //The External Storage Write Permission is granted to you... Continue your left job...
                 createGoogleApiClient();
                 hasPermissionAccessFineLocation = true;
-                //googleApiClient.connect();
+
             } else {
                 Log.d(TAG, "permission denied");
                 hasPermissionAccessFineLocation = false;
@@ -441,8 +443,8 @@ public class RegisterActivity extends AppCompatActivity implements
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Registro fallido", Toast.LENGTH_SHORT).show();
-                eventAdapter.addNewEvent("Registro fallido");
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.service_failed), Toast.LENGTH_SHORT).show();
+                eventAdapter.addNewEvent(getResources().getString(R.string.service_failed));
                 progressView.dismissDialog();
             }
         });
@@ -542,7 +544,7 @@ public class RegisterActivity extends AppCompatActivity implements
             super.onPostExecute(aBoolean);
             if (!aBoolean) {
                 progressView.dismissDialog();
-                Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
                 eventAdapter.addNewEvent("No hay conexión a internet");
                 return;
             }
@@ -575,7 +577,6 @@ public class RegisterActivity extends AppCompatActivity implements
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");
         alertDialog.setMessage(message);
-
         alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
