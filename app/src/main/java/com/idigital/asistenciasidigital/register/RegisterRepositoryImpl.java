@@ -1,13 +1,13 @@
 package com.idigital.asistenciasidigital.register;
 
 import android.location.Location;
+import com.idigital.asistenciasidigital.register.events.RegisterEvent;
 import android.util.Log;
 
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.lib.EventBus;
 import com.idigital.asistenciasidigital.lib.GreenRobotEventBus;
-import com.idigital.asistenciasidigital.register.events.RegisterEvent;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
 
 import retrofit2.Call;

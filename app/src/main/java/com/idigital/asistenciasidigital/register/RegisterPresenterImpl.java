@@ -39,7 +39,6 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     private List<Place> places;
     private Map<String, Double> sortedDistanceMap;
     private String closestPlaceId;
-    private Location userLocation;
     private int attempNumber = 0;
     private String movement;
     private PreferenceManager preferenceManager;
@@ -132,17 +131,16 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         if (mininDistance.intValue() <= placeRadio.intValue()) {
 
             handleUserInRange(place, mininDistance);
-            setUpForSendRegister(location, 0, mininDistance.intValue());
+            setUpForSendRegister(location, Constants.NORMAL, mininDistance.intValue());
         } else {
 
             handleUserOutOfRange(place, mininDistance);
             if (attempNumber == 2) {
-                setUpForSendRegister(location, 1, mininDistance.intValue());
+                setUpForSendRegister(location, Constants.OBSERVATION, mininDistance.intValue());
             } else {
                 attempNumber++;
             }
         }
-
     }
 
     @Override
@@ -152,6 +150,7 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     }
 
     private void onBlocking() {
+        Log.i(TAG, "user blocking");
     }
 
     private void onRegisterFailure() {
@@ -169,16 +168,15 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
 
         registerView.updateList(message);
         registerView.showAlert(message);
-        registerView.updateButton("Entrada");
+        registerView.updateButton(Constants.INGRESO);
     }
 
     private void onEnterRegisterSuccess(String message) {
 
         registerView.updateList(message);
         registerView.showAlert(message);
-        registerView.updateButton("Salida");
+        registerView.updateButton(Constants.SALIDA);
     }
-
 
     private void calculateDistancesAndSort(Location myLocation) {
 
@@ -233,13 +231,10 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     private void setUpForSendRegister(Location location, int flag, int distance) {
 
         registerView.setProgressMessage("Enviando registro");
-        userLocation = location;
         attempNumber = 0;
         if (movement.equalsIgnoreCase("ingreso")) {
-            //sendEnterMovementToServer(flag, distance);
             registerInteractor.sendEnterRegister(getUserId(), closestPlaceId, flag, distance, location);
         } else {
-            //sendExitMovementToServer(flag, distance);
             registerInteractor.sendExitRegister(getUserId(), closestPlaceId, flag, distance, location);
         }
     }

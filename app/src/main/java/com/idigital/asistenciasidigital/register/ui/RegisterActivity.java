@@ -4,12 +4,10 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -26,40 +24,23 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.idigital.asistenciasidigital.BuildConfig;
 import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.ReportActivity;
 import com.idigital.asistenciasidigital.TestConnectionAsyncTask;
 import com.idigital.asistenciasidigital.adapter.RecyclerEventAdapter;
-import com.idigital.asistenciasidigital.api.IDigitalClient;
-import com.idigital.asistenciasidigital.api.IDigitalService;
-import com.idigital.asistenciasidigital.database.DatabaseHelper;
-import com.idigital.asistenciasidigital.database.PlaceDao;
-import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.register.RegisterPresenter;
 import com.idigital.asistenciasidigital.register.RegisterPresenterImpl;
-import com.idigital.asistenciasidigital.response.RegisterResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterView {
 
@@ -106,19 +87,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             Log.i(TAG, "No tiene play service");
     }
 
-    private void checkPassLogin() {
-
-        boolean passLogin = getIntent().getBooleanExtra(Constants.PASS_FOR_LOGIN, false);
-
-        if (passLogin) {
-            requestPermissionForLocation();
-        } else {
-            String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
-            if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
-                showUpdateAppVersionDialog();
-            else
-                requestPermissionForLocation();
-        }
+    @Override
+    protected void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
     }
 
     @Override
@@ -366,5 +338,20 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         });
 
         alertDialog.show();
+    }
+
+    private void checkPassLogin() {
+
+        boolean passLogin = getIntent().getBooleanExtra(Constants.PASS_FOR_LOGIN, false);
+
+        if (passLogin) {
+            requestPermissionForLocation();
+        } else {
+            String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
+            if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
+                showUpdateAppVersionDialog();
+            else
+                requestPermissionForLocation();
+        }
     }
 }

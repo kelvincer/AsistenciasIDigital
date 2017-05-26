@@ -18,6 +18,10 @@ public class Constants {
     public static final String MOVEMENT_TYPE = "movementType";
     public static final String ACTUAL_VERSION = "ACTUAL_VERSION";
     public static final String PASS_FOR_LOGIN = "passForLogin";
+    public static final String INGRESO = "Ingreso";
+    public static final String SALIDA = "Salida";
+    public static final int NORMAL = 0;
+    public static final int OBSERVATION = 1;
 
     public static String shortReport = "shortReport";
 }
