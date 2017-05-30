@@ -317,11 +317,11 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         finish();
     }
 
-    private void showUpdateAppVersionDialog() {
+    private void showUpdateAppVersionDialog(String message) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(R.string.alert_update_version);
+        alertDialog.setMessage(message);
         alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -347,11 +347,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         if (passLogin) {
             requestPermissionForLocation();
         } else {
-            String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
-            if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
-                showUpdateAppVersionDialog();
-            else
+            boolean versionUpdated = preferenceManager.getBoolean(Constants.VERSION_UPDATE, true);
+            if (!versionUpdated) {
+                String message = getIntent().getStringExtra(Constants.FETCH_VERSION_MESSAGE);
+                showUpdateAppVersionDialog(message);
+            } else {
                 requestPermissionForLocation();
+            }
         }
     }
 }

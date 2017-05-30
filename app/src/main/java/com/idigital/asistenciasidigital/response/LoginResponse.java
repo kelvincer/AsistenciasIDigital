@@ -3,9 +3,6 @@ package com.idigital.asistenciasidigital.response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.idigital.asistenciasidigital.model.Login;
-import com.idigital.asistenciasidigital.model.Report;
-
-import java.util.List;
 
 /**
  * Created by USUARIO on 05/04/2017.
@@ -16,9 +13,9 @@ public class LoginResponse {
     @SerializedName("data")
     @Expose
     private Login data;
-    @SerializedName("error")
+    @SerializedName("code")
     @Expose
-    private Integer error;
+    private Integer code;
     @SerializedName("message")
     @Expose
     private String message;
@@ -34,12 +31,12 @@ public class LoginResponse {
         this.data = data;
     }
 
-    public Integer getError() {
-        return error;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setError(Integer error) {
-        this.error = error;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public String getMessage() {

@@ -40,7 +40,6 @@
         android:layout_marginTop="32dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textClock">
@@ -57,7 +56,6 @@
             android:layout_height="wrap_content"
             android:text="reporte" />
     </LinearLayout>
-
 
 
     <android.support.v7.widget.RecyclerView
@@ -78,24 +76,24 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="0.0" />
 
+
     <LinearLayout
-        android:layout_width="348dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/event_ryv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_ryv">
 
         <Button
             android:id="@+id/delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Borrar"/>
+            android:text="Borrar" />
 
     </LinearLayout>
-
 </android.support.constraint.ConstraintLayout>

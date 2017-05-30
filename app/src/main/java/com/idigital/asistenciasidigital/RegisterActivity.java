@@ -333,7 +333,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
         String userId = preferenceManager.getString(Constants.USER_ID, "null");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, closestPlaceId, flag, distance,
+        Call<RegisterResponse> call = service.postMovement(userId, closestPlaceId, flag, distance,
                 userLocation.getLatitude(), userLocation.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override

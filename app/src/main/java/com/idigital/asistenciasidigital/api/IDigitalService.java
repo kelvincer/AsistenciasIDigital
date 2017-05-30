@@ -1,5 +1,6 @@
 package com.idigital.asistenciasidigital.api;
 
+import com.idigital.asistenciasidigital.register.RegisterPresenter;
 import com.idigital.asistenciasidigital.response.DetailReportResponse;
 import com.idigital.asistenciasidigital.response.InactiveResponse;
 import com.idigital.asistenciasidigital.response.LoginResponse;
@@ -21,8 +22,7 @@ public interface IDigitalService {
 
     @FormUrlEncoded
     @POST("login")
-    Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password,
-                                  @Field("version") int version);
+    Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password);
 
     @FormUrlEncoded
     @POST("inactive-user")
@@ -30,7 +30,7 @@ public interface IDigitalService {
 
     @FormUrlEncoded
     @POST("attendance-add")
-    Call<RegisterResponse> postRegistry(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
+    Call<RegisterResponse> postMovement(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
                                         @Field("flag_obs") int flag, @Field("distance") int distance,
                                         @Field("latitude") double latitude, @Field("longitude") double longitude);
 
@@ -59,6 +59,6 @@ public interface IDigitalService {
     Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser,  @Field("id_headquarter") String idQuarter,
                                               @Field("flag_obs") int flag, @Field("distance") int distance,
                                               @Field("latitude") double latitude, @Field("longitude") double longitude);
-    @GET("android-version")
-    Call<VersionResponse> getVersion();
+    @POST("android-version")
+    Call<VersionResponse> postVersion(@Field("android_version") int version);
 }

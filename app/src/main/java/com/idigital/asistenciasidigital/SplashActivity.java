@@ -13,7 +13,6 @@ import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.model.Place;
-import com.idigital.asistenciasidigital.register.ui.*;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.VersionResponse;
@@ -28,6 +27,7 @@ import retrofit2.Response;
 public class SplashActivity extends AppCompatActivity {
 
     private final String TAG = SplashActivity.class.getSimpleName();
+    private String fetchVersionServerMessage = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class SplashActivity extends AppCompatActivity {
                         saveDataListOnDatabase(placeResponse.getData());
                         fetchVersion();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Error en el servicio places", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), placeResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -79,7 +79,10 @@ public class SplashActivity extends AppCompatActivity {
         if (loggedIn) {
             automaticLogin();
         } else {
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent = new Intent(this, LoginActivity.class);
+            if (!fetchVersionServerMessage.isEmpty())
+                intent.putExtra(Constants.FETCH_VERSION_MESSAGE, fetchVersionServerMessage);
+            startActivity(intent);
             finish();
         }
     }
@@ -111,7 +114,7 @@ public class SplashActivity extends AppCompatActivity {
         String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
         String email = preferenceManager.getString(Constants.USER_EMAIL, "");
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<LoginResponse> call = service.postLogin(email, password, BuildConfig.VERSION_CODE);
+        Call<LoginResponse> call = service.postLogin(email, password);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -119,12 +122,18 @@ public class SplashActivity extends AppCompatActivity {
                 Log.i(TAG, response.raw().toString());
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
-                    if (loginResponse.getError() == 0) {
-                        navigateToRegisterActivity();
-                    } else {
-                        updatePreferenceManager();
-                        navigateToLoginActivity();
-                        Toast.makeText(getApplicationContext(), "Autenticación interna incorrecta", Toast.LENGTH_SHORT).show();
+
+                    if (!loginResponse.getBlocking()) {
+
+                        if (loginResponse.getCode() == 5) {
+                            navigateToRegisterActivity();
+                        } else if (loginResponse.getCode() == 6) {
+                            updatePreferenceManager();
+                            navigateToLoginActivity();
+                            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.i(TAG, loginResponse.getMessage());
+                        }
                     }
                 }
                 finish();
@@ -139,15 +148,21 @@ public class SplashActivity extends AppCompatActivity {
 
     private void navigateToLoginActivity() {
 
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent intent = new Intent(this, LoginActivity.class);
+        if (!fetchVersionServerMessage.isEmpty())
+            intent.putExtra(Constants.FETCH_VERSION_MESSAGE, fetchVersionServerMessage);
+        startActivity(intent);
     }
 
     private void navigateToRegisterActivity() {
 
-        startActivity(new Intent(this, com.idigital.asistenciasidigital.register.ui.RegisterActivity.class));
+        Intent intent = new Intent(this, com.idigital.asistenciasidigital.register.ui.RegisterActivity.class);
+        if (!fetchVersionServerMessage.isEmpty())
+            intent.putExtra(Constants.FETCH_VERSION_MESSAGE, fetchVersionServerMessage);
+        startActivity(intent);
     }
 
-    private void updatePreferenceManager(){
+    private void updatePreferenceManager() {
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
@@ -169,24 +184,30 @@ public class SplashActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void fetchVersion(){
+    private void fetchVersion() {
 
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<VersionResponse> call = service.getVersion();
+        Call<VersionResponse> call = service.postVersion(BuildConfig.VERSION_CODE);
         call.enqueue(new Callback<VersionResponse>() {
             @Override
             public void onResponse(Call<VersionResponse> call, Response<VersionResponse> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     VersionResponse versionResponse = response.body();
-                    if(versionResponse.getCode() == 0){
+                    if (versionResponse.getCode() == 2) {
 
                         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
-                        preferenceManager.putString(Constants.ACTUAL_VERSION, versionResponse.getData().getValue());
+                        preferenceManager.putBoolean(Constants.VERSION_UPDATE, true);
+                        fetchVersionServerMessage = "";
                         checkLoguedIn();
 
-                    }else{
-                        Toast.makeText(SplashActivity.this, "Error en fetch version", Toast.LENGTH_SHORT).show();
+                    } else if (versionResponse.getCode() == 3) {
+                        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+                        preferenceManager.putBoolean(Constants.VERSION_UPDATE, false);
+                        fetchVersionServerMessage = versionResponse.getMessage();
+                        checkLoguedIn();
+                    } else {
+                        Log.i(TAG, versionResponse.getMessage());
                     }
                 }
             }

@@ -26,7 +26,7 @@ class RegisterRepositoryImpl implements RegisterRepository {
     public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location) {
 
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postRegistry(userId, idQuarter, flag, distance,
+        Call<RegisterResponse> call = service.postMovement(userId, idQuarter, flag, distance,
                 location.getLatitude(), location.getLongitude());
         call.enqueue(new Callback<RegisterResponse>() {
             @Override

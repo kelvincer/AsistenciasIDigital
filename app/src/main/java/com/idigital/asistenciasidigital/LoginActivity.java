@@ -45,9 +45,11 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.authentication_title);
 
         PreferenceManager preferenceManager = new PreferenceManager(this);
-        String version = preferenceManager.getString(Constants.ACTUAL_VERSION, "");
-        if (!version.equals(Integer.toString(BuildConfig.VERSION_CODE)))
-            showUpdateAppVersionDialog();
+        boolean versionUpdated = preferenceManager.getBoolean(Constants.VERSION_UPDATE, true);
+        if (!versionUpdated) {
+            String message = getIntent().getStringExtra(Constants.FETCH_VERSION_MESSAGE);
+            showUpdateAppVersionDialog(message);
+        }
     }
 
     @OnClick(R.id.login_btn)
@@ -69,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         IDigitalService service = IDigitalClient.getIDigitalService();
         //Call<LoginResponse> call = service.postLogin("kcervan@idteam.pe", "123456");
         Call<LoginResponse> call = service.postLogin(emailEtx.getText().toString(),
-                passwordEtx.getText().toString(), BuildConfig.VERSION_CODE);
+                passwordEtx.getText().toString());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -78,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
-                    if (loginResponse.getError() == 0) {
+                    if (loginResponse.getCode() == 5) {
                         saveLoginData(loginResponse);
                         navigateToRegisterActivity();
                         finish();
@@ -166,11 +168,11 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void showUpdateAppVersionDialog() {
+    private void showUpdateAppVersionDialog(String message) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(R.string.alert_update_version);
+        alertDialog.setMessage(message);
         alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
