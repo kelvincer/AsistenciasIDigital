@@ -16,6 +16,7 @@ import com.idigital.asistenciasidigital.model.ShortReport;
 import com.idigital.asistenciasidigital.response.ShortReportResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.List;
@@ -59,11 +60,6 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
 
     private void fetchReport() {
 
-        /*if(!ConnectionUtil.isOnline()){
-            Toast.makeText(getApplicationContext(), "No estás conectado a internet", Toast.LENGTH_SHORT).show();
-            return;
-        }*/
-
         showProgressDialog();
         new TestAndFetchReportAsyncTask().execute();
     }
@@ -81,11 +77,13 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     ShortReportResponse responseList = response.body();
-                    if (responseList.getError() == 0)
-                        fillRecyclerView(responseList.getData());
+                    if (responseList.getCode() == 0)
+                        fillRecyclerView(responseList.getData(), responseList.getMessage());
                     else {
-                        Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.report_error, Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Log.i(TAG, response.message());
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -99,10 +97,10 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
         });
     }
 
-    private void fillRecyclerView(List<ShortReport> data) {
+    private void fillRecyclerView(List<ShortReport> data, String message) {
 
         if (data.size() == 0) {
-            Toast.makeText(getApplicationContext(), "No hay reporte que mostrar", Toast.LENGTH_LONG).show();
+            AlertDialogView.showInternetAlertDialog(this, message);
             return;
         }
 
@@ -110,7 +108,6 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
         ryvReport.setAdapter(new RecyclerReportAdapter(data, this));
         ryvReport.addItemDecoration(new SimpleDividerItemDecoration(this));
     }
-
 
 
     private class TestAndFetchReportAsyncTask extends TestConnectionAsyncTask {

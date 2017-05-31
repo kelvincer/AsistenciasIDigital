@@ -9,5 +9,6 @@
     <string name="authentication_title">Autenticación</string>
     <string name="splash_dialog">No tienes conexión a internet</string>
     <string name="no_internet">No estás conectado a internet</string>
-    <string name="service_failed">Registro fallido</string>
+    <string name="service_failed">Existe errores en el servicio</string>
+    <string name="report_error">Error cargando reporte</string>
 </resources>

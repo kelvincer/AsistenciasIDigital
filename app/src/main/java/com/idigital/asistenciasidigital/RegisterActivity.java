@@ -41,6 +41,7 @@ import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.util.Util;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.HashMap;
@@ -436,6 +437,8 @@ public class RegisterActivity extends AppCompatActivity implements
                             showInternetAlertDialog(registerResponse.getMessage());
                         }
                     }
+                }else{
+                    showInternetAlertDialog(response.message());
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -573,24 +576,14 @@ public class RegisterActivity extends AppCompatActivity implements
     }
 
     public void showInternetAlertDialog(String message) {
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(message);
-        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
+        AlertDialogView.showInternetAlertDialog(this, message);
     }
 
     private void showUpdateAppVersionDialog() {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(R.string.alert_update_version);
+        //alertDialog.setMessage(R.string.alert_update_version);
         alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

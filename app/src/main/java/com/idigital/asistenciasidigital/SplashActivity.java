@@ -17,6 +17,7 @@ import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.VersionResponse;
 import com.idigital.asistenciasidigital.util.Constants;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 
 import java.util.List;
 
@@ -28,12 +29,13 @@ public class SplashActivity extends AppCompatActivity {
 
     private final String TAG = SplashActivity.class.getSimpleName();
     private String fetchVersionServerMessage = "";
+    PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        preferenceManager = new PreferenceManager(getApplicationContext());
         getPlacesFromServer();
     }
 
@@ -61,6 +63,8 @@ public class SplashActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), placeResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -73,7 +77,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void checkLoguedIn() {
 
-        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         boolean loggedIn = preferenceManager.getBoolean(Constants.LOGGED_IN, false);
 
         if (loggedIn) {
@@ -101,16 +104,19 @@ public class SplashActivity extends AppCompatActivity {
             // Activity 1 GUI stuff
             super.onPostExecute(result);
             if (!result) {
-                showInternetAlertDialog(getResources().getString(R.string.splash_dialog));
+                showInternetDialog();
                 return;
             }
             fetchPlaces();
         }
     }
 
+    private void showInternetDialog() {
+        AlertDialogView.showInternetAlertDialog(this, getResources().getString(R.string.splash_dialog));
+    }
+
     private void automaticLogin() {
 
-        final PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
         String email = preferenceManager.getString(Constants.USER_EMAIL, "");
         IDigitalService service = IDigitalClient.getIDigitalService();
@@ -134,6 +140,8 @@ public class SplashActivity extends AppCompatActivity {
                         } else {
                             Log.i(TAG, loginResponse.getMessage());
                         }
+                    } else {
+                        Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 finish();
@@ -163,25 +171,9 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void updatePreferenceManager() {
-        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
-    }
-
-    public void showInternetAlertDialog(String message) {
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(message);
-
-        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
     }
 
     private void fetchVersion() {
@@ -195,17 +187,14 @@ public class SplashActivity extends AppCompatActivity {
 
                     VersionResponse versionResponse = response.body();
                     if (versionResponse.getCode() == 2) {
-
-                        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
                         preferenceManager.putBoolean(Constants.VERSION_UPDATE, true);
-                        fetchVersionServerMessage = "";
                         checkLoguedIn();
 
                     } else if (versionResponse.getCode() == 3) {
-                        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
                         preferenceManager.putBoolean(Constants.VERSION_UPDATE, false);
                         fetchVersionServerMessage = versionResponse.getMessage();
                         checkLoguedIn();
+
                     } else {
                         Log.i(TAG, versionResponse.getMessage());
                     }

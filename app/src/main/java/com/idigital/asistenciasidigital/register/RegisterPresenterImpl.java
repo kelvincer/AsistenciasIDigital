@@ -17,6 +17,7 @@ import com.idigital.asistenciasidigital.register.location.LocationManager;
 import com.idigital.asistenciasidigital.register.ui.RegisterView;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.Util;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 
 import org.greenrobot.eventbus.Subscribe;
 

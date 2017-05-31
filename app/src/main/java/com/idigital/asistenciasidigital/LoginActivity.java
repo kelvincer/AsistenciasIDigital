@@ -16,6 +16,7 @@ import com.idigital.asistenciasidigital.model.Login;
 import com.idigital.asistenciasidigital.register.ui.*;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.util.Constants;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import butterknife.BindView;
@@ -78,15 +79,17 @@ public class LoginActivity extends AppCompatActivity {
 
                 Log.i(TAG, response.raw().toString());
                 progressView.dismissDialog();
+
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
-                    if (loginResponse.getCode() == 5) {
-                        saveLoginData(loginResponse);
-                        navigateToRegisterActivity();
-                        finish();
-                    } else {
-                        //Toast.makeText(getApplicationContext(), "Autenticación incorrecta", Toast.LENGTH_SHORT).show();
-                        showAlertDialog(loginResponse.getMessage());
+                    if (!loginResponse.getBlocking()) {
+                        if (loginResponse.getCode() == 5) {
+                            saveLoginData(loginResponse);
+                            navigateToRegisterActivity();
+                            finish();
+                        } else {
+                            showAlertDialog(loginResponse.getMessage());
+                        }
                     }
                 }
             }
@@ -155,17 +158,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void showAlertDialog(String message) {
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(message);
-        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
+        AlertDialogView.showInternetAlertDialog(this, message);
     }
 
     private void showUpdateAppVersionDialog(String message) {

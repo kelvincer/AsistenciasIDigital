@@ -1,7 +1,9 @@
 package com.idigital.asistenciasidigital.register;
 
 import android.location.Location;
+
 import com.idigital.asistenciasidigital.register.events.RegisterEvent;
+
 import android.util.Log;
 
 import com.idigital.asistenciasidigital.api.IDigitalClient;
@@ -38,12 +40,14 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     if (registerResponse.getBlocking()) {
                         postEvent(RegisterEvent.onUserBlocking);
                     } else {
-                        if (registerResponse.getCode() == 0) {
+                        if (registerResponse.getCode() == 9 || registerResponse.getCode() == 10) {
                             postEvent(RegisterEvent.onSendEnterRegisterSuccess, registerResponse.getMessage());
-                        } else {
+                        } else if (registerResponse.getCode() == 7 || registerResponse.getCode() == 8) {
                             postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage());
                         }
                     }
+                } else {
+                    postEvent(RegisterEvent.onSendRegisterError, response.message());
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -72,12 +76,14 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     if (registerResponse.getBlocking()) {
                         postEvent(RegisterEvent.onUserBlocking);
                     } else {
-                        if (registerResponse.getCode() == 0) {
+                        if (registerResponse.getCode() == 11 || registerResponse.getCode() == 12) {
                             postEvent(RegisterEvent.onSendExitRegisterSuccess, registerResponse.getMessage());
-                        } else {
+                        } else if (registerResponse.getCode() == 13 || registerResponse.getCode() == 8) {
                             postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage());
                         }
                     }
+                } else {
+                    postEvent(RegisterEvent.onSendRegisterError, response.message());
                 }
                 Log.i(TAG, response.raw().toString());
             }

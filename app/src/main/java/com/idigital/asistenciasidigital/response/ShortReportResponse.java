@@ -2,7 +2,6 @@ package com.idigital.asistenciasidigital.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.idigital.asistenciasidigital.model.Report;
 import com.idigital.asistenciasidigital.model.ShortReport;
 
 import java.util.List;
@@ -16,9 +15,9 @@ public class ShortReportResponse {
     @SerializedName("data")
     @Expose
     private List<ShortReport> data = null;
-    @SerializedName("error")
+    @SerializedName("code")
     @Expose
-    private Integer error;
+    private Integer code;
     @SerializedName("message")
     @Expose
     private String message;
@@ -34,12 +33,12 @@ public class ShortReportResponse {
         this.data = data;
     }
 
-    public Integer getError() {
-        return error;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setError(Integer error) {
-        this.error = error;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public String getMessage() {

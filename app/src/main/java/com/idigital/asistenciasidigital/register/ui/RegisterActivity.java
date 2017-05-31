@@ -36,6 +36,7 @@ import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
 import com.idigital.asistenciasidigital.util.Util;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import butterknife.BindView;
@@ -49,16 +50,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     Button registerBtn;
     @BindView(R.id.event_ryv)
     RecyclerView eventRyv;
-    @BindView(R.id.textClock)
-    TextClock textClock;
     @BindView(R.id.delete_btn)
     Button deleteBtn;
     private int ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    ProgressDialogView progressView;
-    RecyclerEventAdapter eventAdapter;
-    boolean hasPermissionAccessFineLocation;
-    PreferenceManager preferenceManager;
+    private ProgressDialogView progressView;
+    private RecyclerEventAdapter eventAdapter;
+    private boolean hasPermissionAccessFineLocation;
+    private PreferenceManager preferenceManager;
     private RegisterPresenter presenter;
 
     @Override
@@ -98,8 +97,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //The External Storage Write Permission is granted to you... Continue your left job...
-                //createGoogleApiClient();
                 presenter.createGoogleApiClient();
                 hasPermissionAccessFineLocation = true;
 
@@ -174,16 +171,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     @Override
     public void showAlert(String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Alerta");
-        alertDialog.setMessage(message);
-        alertDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
+        AlertDialogView.showInternetAlertDialog(this, message);
     }
 
     @Override
@@ -213,14 +201,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         alertDialog.show();
     }
 
-
     @Override
     public void updateButton(String movement) {
 
         registerBtn.setText(movement);
         preferenceManager.putString(Constants.MOVEMENT_TYPE, movement);
     }
-
 
     private void setUpEventsRecyclerview() {
 
