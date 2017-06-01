@@ -14,10 +14,16 @@ public class DetailReportResponse {
 
     @SerializedName("data")
     @Expose
-    private List<DetailReport> data = null;
-    @SerializedName("error")
+    private List<DetailReport> data;
+    @SerializedName("code")
     @Expose
-    private Integer error;
+    private Integer code;
+    @SerializedName("message")
+    @Expose
+    private String message;
+    @SerializedName("blocking")
+    @Expose
+    private Boolean blocking;
 
     public List<DetailReport> getData() {
         return data;
@@ -27,11 +33,27 @@ public class DetailReportResponse {
         this.data = data;
     }
 
-    public Integer getError() {
-        return error;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setError(Integer error) {
-        this.error = error;
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(Boolean blocking) {
+        this.blocking = blocking;
     }
 }

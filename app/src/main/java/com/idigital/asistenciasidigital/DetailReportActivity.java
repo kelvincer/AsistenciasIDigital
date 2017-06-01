@@ -16,6 +16,7 @@ import com.idigital.asistenciasidigital.model.ShortReport;
 import com.idigital.asistenciasidigital.response.DetailReportResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
+import com.idigital.asistenciasidigital.view.AlertDialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.List;
@@ -62,16 +63,24 @@ public class DetailReportActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<DetailReportResponse> call, Response<DetailReportResponse> response) {
 
+                Log.i(TAG, response.raw().toString());
                 progressView.dismissDialog();
                 if (response.isSuccessful()) {
                     DetailReportResponse responseList = response.body();
-                    if (responseList.getError() == 0)
-                        fillRecyclerView(responseList.getData());
-                    else {
-                        Toast.makeText(getApplicationContext(), "Error cargando reporte", Toast.LENGTH_SHORT).show();
+                    if (!responseList.getBlocking()) {
+                        if (responseList.getCode() == 0)
+                            fillRecyclerView(responseList.getData());
+                        else if (responseList.getCode() == 1) {
+                            showAlertDialog(responseList.getMessage());
+                        } else {
+                            Log.i(TAG, "Error cargando reporte");
+                        }
+                    } else {
+                        showAlertDialog(responseList.getMessage());
                     }
+                } else {
+                    showAlertDialog(response.message());
                 }
-                Log.i(TAG, response.raw().toString());
             }
 
             @Override
@@ -110,5 +119,9 @@ public class DetailReportActivity extends AppCompatActivity {
             }
             postDetailFromCloud();
         }
+    }
+
+    private void showAlertDialog(String message) {
+        AlertDialogView.showInternetAlertDialog(this, message);
     }
 }

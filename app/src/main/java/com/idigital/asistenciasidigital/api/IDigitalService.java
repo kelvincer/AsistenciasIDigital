@@ -1,8 +1,6 @@
 package com.idigital.asistenciasidigital.api;
 
-import com.idigital.asistenciasidigital.register.RegisterPresenter;
 import com.idigital.asistenciasidigital.response.DetailReportResponse;
-import com.idigital.asistenciasidigital.response.InactiveResponse;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
@@ -23,10 +21,6 @@ public interface IDigitalService {
     @FormUrlEncoded
     @POST("login")
     Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password);
-
-    @FormUrlEncoded
-    @POST("inactive-user")
-    Call<InactiveResponse> postInactiveUser(@Field("id_user") String idUser);
 
     @FormUrlEncoded
     @POST("attendance-add")

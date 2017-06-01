@@ -79,7 +79,9 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
                     ShortReportResponse responseList = response.body();
                     if (responseList.getCode() == 0)
                         fillRecyclerView(responseList.getData(), responseList.getMessage());
-                    else {
+                    else if (responseList.getCode() == 1) {
+                        showAlertDialog(responseList.getMessage());
+                    } else {
                         Toast.makeText(getApplicationContext(), R.string.report_error, Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -96,6 +98,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
             }
         });
     }
+
 
     private void fillRecyclerView(List<ShortReport> data, String message) {
 
@@ -122,5 +125,9 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
             }
             requestReport();
         }
+    }
+
+    private void showAlertDialog(String message) {
+        AlertDialogView.showInternetAlertDialog(this, message);
     }
 }

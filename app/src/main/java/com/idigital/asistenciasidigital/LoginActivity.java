@@ -90,7 +90,11 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             showAlertDialog(loginResponse.getMessage());
                         }
+                    } else {
+                        showAlertDialog(loginResponse.getMessage());
                     }
+                } else {
+                    showAlertDialog(response.message());
                 }
             }
 

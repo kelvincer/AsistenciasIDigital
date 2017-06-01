@@ -8,8 +8,6 @@ import com.idigital.asistenciasidigital.register.events.RegisterEvent;
 
 public interface RegisterPresenter {
 
-    void onPause();
-    void onResume();
     void onCreate();
     void onDestroy();
 

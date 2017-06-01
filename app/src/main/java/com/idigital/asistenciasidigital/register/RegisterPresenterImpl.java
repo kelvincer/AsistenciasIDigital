@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.idigital.asistenciasidigital.PreferenceManager;
+import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.lib.EventBus;
@@ -52,16 +53,6 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         this.registerInteractor = new RegisterInteractorImpl();
         locationManager = new LocationManager(context, this);
         preferenceManager = new PreferenceManager(context);
-    }
-
-    @Override
-    public void onPause() {
-
-    }
-
-    @Override
-    public void onResume() {
-
     }
 
     @Override
@@ -156,7 +147,7 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
 
     private void onRegisterFailure() {
 
-        registerView.updateList("Registro Fallido");
+        registerView.updateList(context.getResources().getString(R.string.register_failed));
     }
 
     private void onRegisterError(String message) {
@@ -247,10 +238,9 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         locationManager.stopLocationUpdates();
         registerView.updateList("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
         if (attempNumber < 2) {
-            registerView.updateList("Registro insatisfactorio");
+            registerView.updateList(context.getResources().getString(R.string.register_unsuccessful));
             registerView.hideProgressDialog();
-            registerView.showAlert("Estas afuera del radio de la sede. Estas a "
-                    + (mininDistance.intValue() - placeRadio.intValue()) + "m.");
+            registerView.showAlert(String.format(context.getResources().getString(R.string.out_of_range), mininDistance.intValue() - placeRadio.intValue()));
         }
     }
 

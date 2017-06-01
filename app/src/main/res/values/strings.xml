@@ -11,4 +11,7 @@
     <string name="no_internet">No estás conectado a internet</string>
     <string name="service_failed">Existe errores en el servicio</string>
     <string name="report_error">Error cargando reporte</string>
+    <string name="register_unsuccessful">Registro insatisfactorio</string>
+    <string name="out_of_range">Estas afuera del radio de la sede. Estas a %01d m.</string>
+    <string name="register_failed">Registro Fallido</string>
 </resources>
