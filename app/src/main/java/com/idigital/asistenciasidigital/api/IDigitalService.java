@@ -26,7 +26,8 @@ public interface IDigitalService {
     @POST("attendance-add")
     Call<RegisterResponse> postMovement(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
                                         @Field("flag_obs") int flag, @Field("distance") int distance,
-                                        @Field("latitude") double latitude, @Field("longitude") double longitude);
+                                        @Field("latitude") double latitude, @Field("longitude") double longitude,
+                                        @Field("id_attendance_category") int category);
 
     @GET("attendance")
     Call<ShortReportResponse> getReport();
@@ -52,7 +53,8 @@ public interface IDigitalService {
     @POST("attendance-upd")
     Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser,  @Field("id_headquarter") String idQuarter,
                                               @Field("flag_obs") int flag, @Field("distance") int distance,
-                                              @Field("latitude") double latitude, @Field("longitude") double longitude);
+                                              @Field("latitude") double latitude, @Field("longitude") double longitude,
+                                              @Field("id_attendance_category") int category);
     @FormUrlEncoded
     @POST("android-version")
     Call<VersionResponse> postVersion(@Field("android_version") int version);

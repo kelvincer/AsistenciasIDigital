@@ -8,7 +8,7 @@ import android.location.Location;
 
 public interface RegisterInteractor {
 
-    void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location);
-    void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location);
+    void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location, int category);
+    void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location, int category);
 
 }

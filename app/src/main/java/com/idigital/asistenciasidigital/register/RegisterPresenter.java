@@ -11,7 +11,7 @@ public interface RegisterPresenter {
     void onCreate();
     void onDestroy();
 
-    void sendRegister(String movement);
+    void sendRegister(String movement, int category);
     void onEventMainThread(RegisterEvent event);
 
     void createGoogleApiClient();

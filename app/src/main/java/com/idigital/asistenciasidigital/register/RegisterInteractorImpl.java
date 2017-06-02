@@ -15,12 +15,12 @@ class RegisterInteractorImpl implements RegisterInteractor {
     }
 
     @Override
-    public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location) {
-        registerRepository.sendEnterRegister(userId, idQuarter, flag, distance, location);
+    public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location, int category) {
+        registerRepository.sendEnterRegister(userId, idQuarter, flag, distance, location,category);
     }
 
     @Override
-    public void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location) {
-        registerRepository.sendExitRegister(userId, idQuarter, flag, distance, location);
+    public void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location, int category) {
+        registerRepository.sendExitRegister(userId, idQuarter, flag, distance, location, category);
     }
 }

@@ -10,6 +10,5 @@ public interface RegisterView {
     void hideProgressDialog();
     void setProgressMessage(String message);
     void showAlert(String message);
-    void updateButton(String message);
     void updateList(String message);
 }

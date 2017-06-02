@@ -24,6 +24,8 @@ public class Constants {
     public static final int OBSERVATION = 1;
     public static final String VERSION_UPDATE = "VERSION_UPDATE";
     public static final String FETCH_VERSION_MESSAGE = "fetchVersionMessage";
+    public static final int LABORAL = 1;
+    public static final int ALMUERZO = 2;
 
     public static String shortReport = "shortReport";
 }

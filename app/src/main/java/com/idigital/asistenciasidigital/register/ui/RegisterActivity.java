@@ -46,8 +46,6 @@ import butterknife.OnClick;
 public class RegisterActivity extends AppCompatActivity implements RegisterView {
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
-    @BindView(R.id.register_btn)
-    Button registerBtn;
     @BindView(R.id.event_ryv)
     RecyclerView eventRyv;
     @BindView(R.id.delete_btn)
@@ -59,11 +57,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private boolean hasPermissionAccessFineLocation;
     private PreferenceManager preferenceManager;
     private RegisterPresenter presenter;
+    private int category;
+    private String movement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_register_2);
         ButterKnife.bind(this);
         getSupportActionBar().setTitle(getResources().getString(R.string.registro));
         setUpEventsRecyclerview();
@@ -71,8 +71,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         presenter.onCreate();
 
         preferenceManager = new PreferenceManager(this);
-        String movement = preferenceManager.getString(Constants.MOVEMENT_TYPE, "INGRESO");
-        registerBtn.setText(movement);
 
         progressView = new ProgressDialogView(this);
         progressView.setMessage("Conectando...");
@@ -128,14 +126,28 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.register_btn, R.id.see_btn, R.id.delete_btn})
+    @OnClick({R.id.enter_btn, R.id.enter_launch_btn, R.id.exit_launch_btn, R.id.exit_btn, R.id.delete_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.register_btn:
+            case R.id.exit_btn:
                 registerMovement();
+                movement = Constants.SALIDA;
+                category = Constants.LABORAL;
                 break;
-            case R.id.see_btn:
-                startActivity(new Intent(getApplicationContext(), ReportActivity.class));
+            case R.id.enter_btn:
+                registerMovement();
+                movement = Constants.INGRESO;
+                category = Constants.LABORAL;
+                break;
+            case R.id.enter_launch_btn:
+                registerMovement();
+                movement = Constants.INGRESO;
+                category = Constants.ALMUERZO;
+                break;
+            case R.id.exit_launch_btn:
+                registerMovement();
+                movement = Constants.SALIDA;
+                category = Constants.ALMUERZO;
                 break;
             case R.id.delete_btn:
                 eventAdapter.clearList();
@@ -199,13 +211,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         });
 
         alertDialog.show();
-    }
-
-    @Override
-    public void updateButton(String movement) {
-
-        registerBtn.setText(movement);
-        preferenceManager.putString(Constants.MOVEMENT_TYPE, movement);
     }
 
     private void setUpEventsRecyclerview() {
@@ -286,7 +291,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
 
                 progressView.setMessage("Obteniendo tu ubicación");
-                presenter.sendRegister(registerBtn.getText().toString());
+                presenter.sendRegister(movement, category);
 
             } else {
                 progressView.dismissDialog();

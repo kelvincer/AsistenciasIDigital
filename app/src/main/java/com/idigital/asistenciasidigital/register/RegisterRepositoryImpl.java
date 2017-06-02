@@ -25,11 +25,11 @@ class RegisterRepositoryImpl implements RegisterRepository {
     private static final String TAG = RegisterRepositoryImpl.class.getSimpleName();
 
     @Override
-    public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location) {
+    public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location, int category) {
 
         IDigitalService service = IDigitalClient.getIDigitalService();
         Call<RegisterResponse> call = service.postMovement(userId, idQuarter, flag, distance,
-                location.getLatitude(), location.getLongitude());
+                location.getLatitude(), location.getLongitude(), category);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
@@ -61,11 +61,11 @@ class RegisterRepositoryImpl implements RegisterRepository {
     }
 
     @Override
-    public void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location) {
+    public void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location, int category) {
 
         IDigitalService service = IDigitalClient.getIDigitalService();
         Call<RegisterResponse> call = service.postUpdateMovement(userId, idQuarter, flag, distance,
-                location.getLatitude(), location.getLongitude());
+                location.getLatitude(), location.getLongitude(), category);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {

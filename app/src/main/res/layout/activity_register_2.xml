@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp">
+
+    <TextClock
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:format12Hour="h:mm:ss aa"
+        android:format24Hour="H:mm:ss"
+        android:textSize="45sp" />
+
+    <LinearLayout
+        android:id="@+id/buttons_lrl"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/clock">
+
+        <Button
+            android:id="@+id/enter_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="E" />
+
+        <Button
+            android:id="@+id/enter_launch_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/ic_room_service_black_24dp"
+            android:text="E" />
+
+        <Button
+            android:id="@+id/exit_launch_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/ic_room_service_black_24dp"
+            android:text="S" />
+
+        <Button
+            android:id="@+id/exit_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="S" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/text_lrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttons_lrl"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/time_enter_txv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="9:20 a.m" />
+
+        <TextView
+            android:id="@+id/time_enter_launch_txv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="1:10 p.m" />
+
+        <TextView
+            android:id="@+id/time_exit_launch_txv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="2:10 p.m" />
+
+        <TextView
+            android:id="@+id/time_exit_txv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="6:20 p.m" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/event_ryv"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/text_lrl"
+        android:layout_marginTop="15dp"
+        android:addStatesFromChildren="false" />
+
+    <Button
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_ryv"
+        android:layout_marginTop="5dp"
+        android:text="Borrar" />
+
+</RelativeLayout>
