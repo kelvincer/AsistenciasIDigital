@@ -116,14 +116,21 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
         switch (item.getItemId()) {
 
-            case R.id.item1:
+            case R.id.item_1:
                 logoutAndClose();
+                break;
+            case R.id.item_2:
+                navigateToReportActivity();
                 break;
             default:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void navigateToReportActivity() {
+        startActivity(new Intent(this, ReportActivity.class));
     }
 
     @OnClick({R.id.enter_btn, R.id.enter_launch_btn, R.id.exit_launch_btn, R.id.exit_btn, R.id.delete_btn})
@@ -289,10 +296,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
             eventAdapter.addNewEvent("Hay conexión a internet");
             if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
-
                 progressView.setMessage("Obteniendo tu ubicación");
                 presenter.sendRegister(movement, category);
-
             } else {
                 progressView.dismissDialog();
                 showLocationSettingsAlert();

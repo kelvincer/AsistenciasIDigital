@@ -38,7 +38,7 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     RegisterResponse registerResponse = response.body();
 
                     if (registerResponse.getBlocking()) {
-                        postEvent(RegisterEvent.onUserBlocking);
+                        postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage());
                     } else {
                         if (registerResponse.getCode() == 9 || registerResponse.getCode() == 10) {
                             postEvent(RegisterEvent.onSendEnterRegisterSuccess, registerResponse.getMessage());
@@ -74,7 +74,7 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     RegisterResponse registerResponse = response.body();
 
                     if (registerResponse.getBlocking()) {
-                        postEvent(RegisterEvent.onUserBlocking);
+                        postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage());
                     } else {
                         if (registerResponse.getCode() == 11 || registerResponse.getCode() == 12) {
                             postEvent(RegisterEvent.onSendExitRegisterSuccess, registerResponse.getMessage());

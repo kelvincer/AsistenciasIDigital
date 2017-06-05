@@ -97,7 +97,7 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
                 onRegisterFailure();
                 break;
             case RegisterEvent.onUserBlocking:
-                onBlocking();
+                onBlocking(event.getMessage());
                 break;
             default:
                 throw new IllegalArgumentException("Event type Invalid");
@@ -123,17 +123,9 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
 
         Double placeRadio = Double.parseDouble(place.getRadio());
         if (mininDistance.intValue() <= placeRadio.intValue()) {
-
-            handleUserInRange(place, mininDistance);
-            setUpForSendRegister(location, Constants.NORMAL, mininDistance.intValue());
+            handleUserInRange(place, mininDistance, location);
         } else {
-
-            handleUserOutOfRange(place, mininDistance);
-            if (attempNumber == 2) {
-                setUpForSendRegister(location, Constants.OBSERVATION, mininDistance.intValue());
-            } else {
-                attempNumber++;
-            }
+            handleUserOutOfRange(place, mininDistance, location);
         }
     }
 
@@ -143,8 +135,9 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
             locationManager.createGoogleApiClient();
     }
 
-    private void onBlocking() {
+    private void onBlocking(String message) {
         Log.i(TAG, "user blocking");
+        registerView.updateList(message);
     }
 
     private void onRegisterFailure() {
@@ -213,25 +206,26 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         return null;
     }
 
-    private void handleUserInRange(Place place, Double mininDistance) {
+    private void handleUserInRange(Place place, Double mininDistance, Location location) {
         Log.i(TAG, "El usuario esta dentro de rango");
         Double placeRadio = Double.parseDouble(place.getRadio());
         locationManager.stopLocationUpdates();
         registerView.updateList("Dentro de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+        setUpForSendRegister(location, Constants.NORMAL, mininDistance.intValue());
     }
 
     private void setUpForSendRegister(Location location, int flag, int distance) {
 
         registerView.setProgressMessage("Enviando registro");
         attempNumber = 0;
-        if (movement.equalsIgnoreCase("ingreso")) {
+        if (movement.equalsIgnoreCase(Constants.INGRESO)) {
             registerInteractor.sendEnterRegister(getUserId(), closestPlaceId, flag, distance, location, category);
         } else {
             registerInteractor.sendExitRegister(getUserId(), closestPlaceId, flag, distance, location, category);
         }
     }
 
-    private void handleUserOutOfRange(Place place, Double mininDistance) {
+    private void handleUserOutOfRange(Place place, Double mininDistance, Location location) {
 
         Log.i(TAG, "El usuario esta fuera de rango");
         Double placeRadio = Double.parseDouble(place.getRadio());
@@ -241,6 +235,11 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
             registerView.updateList(context.getResources().getString(R.string.register_unsuccessful));
             registerView.hideProgressDialog();
             registerView.showAlert(String.format(context.getResources().getString(R.string.out_of_range), mininDistance.intValue() - placeRadio.intValue()));
+            attempNumber++;
+        } else if (attempNumber == 2) {
+            setUpForSendRegister(location, Constants.OBSERVATION, mininDistance.intValue());
+        } else {
+            throw new IllegalArgumentException("Illegal attempNumber value");
         }
     }
 
