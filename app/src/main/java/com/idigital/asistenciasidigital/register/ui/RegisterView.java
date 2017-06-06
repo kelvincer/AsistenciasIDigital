@@ -11,4 +11,6 @@ public interface RegisterView {
     void setProgressMessage(String message);
     void showAlert(String message);
     void updateList(String message);
+    void updateTextView(String time);
+    void enableButton();
 }

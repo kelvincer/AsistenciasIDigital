@@ -18,7 +18,6 @@ import com.idigital.asistenciasidigital.register.location.LocationManager;
 import com.idigital.asistenciasidigital.register.ui.RegisterView;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.Util;
-import com.idigital.asistenciasidigital.view.AlertDialogView;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -85,10 +84,10 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
 
         switch (event.getEventType()) {
             case RegisterEvent.onSendEnterRegisterSuccess:
-                onEnterRegisterSuccess(event.getMessage());
+                onRegisterSuccess(event.getMessage(), event.getTime());
                 break;
             case RegisterEvent.onSendExitRegisterSuccess:
-                onExitRegisterSuccess(event.getMessage());
+                onRegisterSuccess(event.getMessage(), event.getTime());
                 break;
             case RegisterEvent.onSendRegisterError:
                 onRegisterError(event.getMessage());
@@ -151,16 +150,12 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         registerView.showAlert(message);
     }
 
-    private void onExitRegisterSuccess(String message) {
+    private void onRegisterSuccess(String message, String time) {
 
         registerView.updateList(message);
         registerView.showAlert(message);
-    }
-
-    private void onEnterRegisterSuccess(String message) {
-
-        registerView.updateList(message);
-        registerView.showAlert(message);
+        registerView.updateTextView(time);
+        registerView.enableButton();
     }
 
     private void calculateDistancesAndSort(Location myLocation) {

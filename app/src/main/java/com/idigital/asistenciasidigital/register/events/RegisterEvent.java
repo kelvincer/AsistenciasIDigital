@@ -14,6 +14,7 @@ public class RegisterEvent {
 
     private int eventType;
     private String errorMesage;
+    private String time;
 
     public int getEventType() {
         return eventType;
@@ -29,5 +30,13 @@ public class RegisterEvent {
 
     public void setMesage(String errorMesage) {
         this.errorMesage = errorMesage;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

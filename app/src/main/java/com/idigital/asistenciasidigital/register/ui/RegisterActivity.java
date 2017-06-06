@@ -19,12 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.idigital.asistenciasidigital.BuildConfig;
 import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.ReportActivity;
@@ -35,7 +34,6 @@ import com.idigital.asistenciasidigital.register.RegisterPresenterImpl;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
-import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.AlertDialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
@@ -50,6 +48,22 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     RecyclerView eventRyv;
     @BindView(R.id.delete_btn)
     Button deleteBtn;
+    @BindView(R.id.enter_btn)
+    Button enterBtn;
+    @BindView(R.id.enter_launch_btn)
+    Button enterLaunchBtn;
+    @BindView(R.id.exit_launch_btn)
+    Button exitLaunchBtn;
+    @BindView(R.id.exit_btn)
+    Button exitBtn;
+    @BindView(R.id.time_enter_txv)
+    TextView timeEnterTxv;
+    @BindView(R.id.time_enter_launch_txv)
+    TextView timeEnterLaunchTxv;
+    @BindView(R.id.time_exit_launch_txv)
+    TextView timeExitLaunchTxv;
+    @BindView(R.id.time_exit_txv)
+    TextView timeExitTxv;
     private int ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
     private ProgressDialogView progressView;
@@ -57,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private boolean hasPermissionAccessFineLocation;
     private PreferenceManager preferenceManager;
     private RegisterPresenter presenter;
-    private int category;
+    private int category, activeButton;
     private String movement;
 
     @Override
@@ -71,6 +85,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         presenter.onCreate();
 
         preferenceManager = new PreferenceManager(this);
+        activeButton = preferenceManager.getInt(Constants.ACTIVE_BUTTON, 0);
+        updateButton();
+        updateTimeTextViews();
 
         progressView = new ProgressDialogView(this);
         progressView.setMessage("Conectando...");
@@ -82,6 +99,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             Log.i(TAG, "tiene play service");
         else
             Log.i(TAG, "No tiene play service");
+    }
+
+    private void updateTimeTextViews() {
+
+        timeEnterTxv.setText(preferenceManager.getString(Constants.TIME_1, ""));
+        timeEnterLaunchTxv.setText(preferenceManager.getString(Constants.TIME_2, ""));
+        timeExitLaunchTxv.setText(preferenceManager.getString(Constants.TIME_3, ""));
+        timeExitTxv.setText(preferenceManager.getString(Constants.TIME_4, ""));
     }
 
     @Override
@@ -198,6 +223,45 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         eventAdapter.addNewEvent(message);
     }
 
+
+    @Override
+    public void updateTextView(String time) {
+
+        switch (activeButton) {
+
+            case 0:
+                timeEnterTxv.setText(time);
+                preferenceManager.putString(Constants.TIME_1, time);
+                break;
+            case 1:
+                timeEnterLaunchTxv.setText(time);
+                preferenceManager.putString(Constants.TIME_2, time);
+                break;
+            case 2:
+                timeExitLaunchTxv.setText(time);
+                preferenceManager.putString(Constants.TIME_3, time);
+                break;
+            case 3:
+                timeExitTxv.setText(time);
+                preferenceManager.putString(Constants.TIME_4, time);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid active button number");
+        }
+    }
+
+    @Override
+    public void enableButton() {
+
+        if (activeButton < 3) {
+            activeButton++;
+            updateButton();
+        } else {
+            activeButton = 0;
+            updateButton();
+        }
+    }
+
     public void showLocationSettingsAlert() {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -312,6 +376,42 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         finish();
     }
+
+    public void updateButton() {
+
+        switch (activeButton) {
+
+            case 0:
+                enterBtn.setEnabled(true);
+                enterLaunchBtn.setEnabled(false);
+                exitLaunchBtn.setEnabled(false);
+                exitBtn.setEnabled(false);
+                break;
+            case 1:
+                enterBtn.setEnabled(false);
+                enterLaunchBtn.setEnabled(true);
+                exitLaunchBtn.setEnabled(false);
+                exitBtn.setEnabled(false);
+                break;
+            case 2:
+                enterBtn.setEnabled(false);
+                enterLaunchBtn.setEnabled(false);
+                exitLaunchBtn.setEnabled(true);
+                exitBtn.setEnabled(false);
+                break;
+            case 3:
+                enterBtn.setEnabled(false);
+                enterLaunchBtn.setEnabled(false);
+                exitLaunchBtn.setEnabled(false);
+                exitBtn.setEnabled(true);
+                break;
+            default:
+                break;
+        }
+
+        preferenceManager.putInt(Constants.ACTIVE_BUTTON, activeButton);
+    }
+
 
     private void showUpdateAppVersionDialog(String message) {
 

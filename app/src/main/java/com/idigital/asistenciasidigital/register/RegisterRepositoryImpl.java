@@ -2,6 +2,7 @@ package com.idigital.asistenciasidigital.register;
 
 import android.location.Location;
 
+import com.idigital.asistenciasidigital.model.Time;
 import com.idigital.asistenciasidigital.register.events.RegisterEvent;
 
 import android.util.Log;
@@ -38,16 +39,16 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     RegisterResponse registerResponse = response.body();
 
                     if (registerResponse.getBlocking()) {
-                        postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage());
+                        postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage(), null);
                     } else {
                         if (registerResponse.getCode() == 9 || registerResponse.getCode() == 10) {
-                            postEvent(RegisterEvent.onSendEnterRegisterSuccess, registerResponse.getMessage());
+                            postEvent(RegisterEvent.onSendEnterRegisterSuccess, registerResponse.getMessage(), registerResponse.getData());
                         } else if (registerResponse.getCode() == 7 || registerResponse.getCode() == 8) {
-                            postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage());
+                            postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage(), null);
                         }
                     }
                 } else {
-                    postEvent(RegisterEvent.onSendRegisterError, response.message());
+                    postEvent(RegisterEvent.onSendRegisterError, response.message(), null);
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -74,16 +75,16 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     RegisterResponse registerResponse = response.body();
 
                     if (registerResponse.getBlocking()) {
-                        postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage());
+                        postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage(), null);
                     } else {
                         if (registerResponse.getCode() == 11 || registerResponse.getCode() == 12) {
-                            postEvent(RegisterEvent.onSendExitRegisterSuccess, registerResponse.getMessage());
+                            postEvent(RegisterEvent.onSendExitRegisterSuccess, registerResponse.getMessage(), registerResponse.getData());
                         } else if (registerResponse.getCode() == 13 || registerResponse.getCode() == 8) {
-                            postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage());
+                            postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage(), null);
                         }
                     }
                 } else {
-                    postEvent(RegisterEvent.onSendRegisterError, response.message());
+                    postEvent(RegisterEvent.onSendRegisterError, response.message(), null);
                 }
                 Log.i(TAG, response.raw().toString());
             }
@@ -97,15 +98,16 @@ class RegisterRepositoryImpl implements RegisterRepository {
     }
 
     private void postEvent(int type) {
-        postEvent(type, null);
+        postEvent(type, null, null);
     }
 
-    private void postEvent(int type, String message) {
+    private void postEvent(int type, String message, Time time) {
         RegisterEvent registerEvent = new RegisterEvent();
         registerEvent.setEventType(type);
-        if (message != null) {
+        if (message != null)
             registerEvent.setMesage(message);
-        }
+        if (time != null)
+            registerEvent.setTime(time.getScalar());
 
         EventBus eventBus = GreenRobotEventBus.getInstance();
         eventBus.post(registerEvent);

@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableRight="@drawable/ic_room_service_black_24dp"
-            android:text="E" />
+            android:text="S" />
 
         <Button
             android:id="@+id/exit_launch_btn"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableRight="@drawable/ic_room_service_black_24dp"
-            android:text="S" />
+            android:text="E" />
 
         <Button
             android:id="@+id/exit_btn"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="9:20 a.m" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/time_enter_launch_txv"
@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="1:10 p.m" />
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/time_exit_launch_txv"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="2:10 p.m" />
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/time_exit_txv"
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="6:20 p.m" />
+            android:textSize="12sp"/>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

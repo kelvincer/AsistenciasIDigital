@@ -2,6 +2,7 @@ package com.idigital.asistenciasidigital.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.idigital.asistenciasidigital.model.Time;
 
 /**
  * Created by USUARIO on 05/04/2017.
@@ -11,7 +12,7 @@ public class RegisterResponse {
 
     @SerializedName("data")
     @Expose
-    private Object data;
+    private Time data;
     @SerializedName("code")
     @Expose
     private Integer code;
@@ -22,11 +23,11 @@ public class RegisterResponse {
     @Expose
     private Boolean blocking;
 
-    public Object getData() {
+    public Time getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(Time data) {
         this.data = data;
     }
 
