@@ -44,7 +44,7 @@ public class DetailReportActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         shortReport = (ShortReport) getIntent().getSerializableExtra(Constants.shortReport);
 
-        getSupportActionBar().setTitle(getResources().getString(R.string.detalle));
+        getSupportActionBar().setTitle(getResources().getString(R.string.detail_title));
         fetchDetailReport();
     }
 

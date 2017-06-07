@@ -1,12 +1,11 @@
 <resources>
     <string name="app_name">AsistenciasIDigital</string>
-    <string name="reporte">Reporte</string>
-    <string name="detalle">Detalle Asistencia</string>
-    <string name="registro">Registro</string>
-    <string name="autenticacion">Autenticación</string>
+    <string name="report.title">Reporte</string>
+    <string name="detail.title">Detalle Asistencia</string>
+    <string name="registro.title">Registro</string>
     <string name="alert_cancelar">Cancelar</string>
     <string name="alert_aceptar">Aceptar</string>
-    <string name="authentication_title">Autenticación</string>
+    <string name="authentication.title">Autenticación</string>
     <string name="splash_dialog">No tienes conexión a internet</string>
     <string name="no_internet">No estás conectado a internet</string>
     <string name="service_failed">Existe errores en el servicio</string>

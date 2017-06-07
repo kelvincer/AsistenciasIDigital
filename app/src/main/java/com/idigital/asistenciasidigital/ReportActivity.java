@@ -40,7 +40,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle(getResources().getString(R.string.reporte));
+        getSupportActionBar().setTitle(getResources().getString(R.string.report_title));
         fetchReport();
     }
 

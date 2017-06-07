@@ -3,7 +3,6 @@ package com.idigital.asistenciasidigital.register;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
@@ -99,7 +98,7 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
                 onBlocking(event.getMessage());
                 break;
             default:
-                throw new IllegalArgumentException("Event type Invalid");
+                throw new IllegalArgumentException("Invalid event type");
         }
     }
 
@@ -115,10 +114,10 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         closestPlaceId = firstMapEntry.getKey();
 
         Place place = getClosestPlace();
-        if (place == null) {
+        /*if (place == null) {
             Toast.makeText(context, "Error on place", Toast.LENGTH_SHORT).show();
             return;
-        }
+        }*/
 
         Double placeRadio = Double.parseDouble(place.getRadio());
         if (mininDistance.intValue() <= placeRadio.intValue()) {

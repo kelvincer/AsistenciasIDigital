@@ -79,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_2);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle(getResources().getString(R.string.registro));
+        getSupportActionBar().setTitle(getResources().getString(R.string.registro_title));
         setUpEventsRecyclerview();
         presenter = new RegisterPresenterImpl(this, this);
         presenter.onCreate();

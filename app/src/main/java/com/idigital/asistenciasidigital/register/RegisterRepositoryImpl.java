@@ -35,22 +35,26 @@ class RegisterRepositoryImpl implements RegisterRepository {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
+                Log.i(TAG, response.raw().toString());
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
 
                     if (registerResponse.getBlocking()) {
                         postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage(), null);
                     } else {
-                        if (registerResponse.getCode() == 9 || registerResponse.getCode() == 10) {
+                        if (registerResponse.getCode() == 9 || registerResponse.getCode() == 10
+                                || registerResponse.getCode() == 16 || registerResponse.getCode() == 17
+                                || registerResponse.getCode() == 20 || registerResponse.getCode() == 21) {
                             postEvent(RegisterEvent.onSendEnterRegisterSuccess, registerResponse.getMessage(), registerResponse.getData());
                         } else if (registerResponse.getCode() == 7 || registerResponse.getCode() == 8) {
                             postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage(), null);
+                        } else{
+                            throw new IllegalArgumentException("Invalid register response code");
                         }
                     }
                 } else {
                     postEvent(RegisterEvent.onSendRegisterError, response.message(), null);
                 }
-                Log.i(TAG, response.raw().toString());
             }
 
             @Override
@@ -71,22 +75,26 @@ class RegisterRepositoryImpl implements RegisterRepository {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
+                Log.i(TAG, response.raw().toString());
                 if (response.isSuccessful()) {
                     RegisterResponse registerResponse = response.body();
 
                     if (registerResponse.getBlocking()) {
                         postEvent(RegisterEvent.onUserBlocking, registerResponse.getMessage(), null);
                     } else {
-                        if (registerResponse.getCode() == 11 || registerResponse.getCode() == 12) {
+                        if (registerResponse.getCode() == 11 || registerResponse.getCode() == 12
+                                || registerResponse.getCode() == 18 || registerResponse.getCode() == 19
+                                || registerResponse.getCode() == 22 || registerResponse.getCode() == 23) {
                             postEvent(RegisterEvent.onSendExitRegisterSuccess, registerResponse.getMessage(), registerResponse.getData());
                         } else if (registerResponse.getCode() == 13 || registerResponse.getCode() == 8) {
                             postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage(), null);
+                        }else{
+                            throw new IllegalArgumentException("Invalid register response code");
                         }
                     }
                 } else {
                     postEvent(RegisterEvent.onSendRegisterError, response.message(), null);
                 }
-                Log.i(TAG, response.raw().toString());
             }
 
             @Override
