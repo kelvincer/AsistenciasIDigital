@@ -13,4 +13,5 @@
     <string name="register_unsuccessful">Registro insatisfactorio</string>
     <string name="out_of_range">Estas afuera del radio de la sede. Estas a %01d m.</string>
     <string name="register_failed">Registro Fallido</string>
+    <string name="alert_location_message">Localización no esta habilitado. ¿Deseas ir al menú de configuración?</string>
 </resources>

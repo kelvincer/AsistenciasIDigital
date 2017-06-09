@@ -266,7 +266,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Localización");
-        alertDialog.setMessage("Localización no esta habilitado. ¿Deseas ir al menú de configuración?");
+        alertDialog.setMessage(getResources().getString(R.string.alert_location_message));
 
         alertDialog.setPositiveButton("Configuración", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

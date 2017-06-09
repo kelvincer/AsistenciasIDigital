@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.model.Login;
-import com.idigital.asistenciasidigital.register.ui.*;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.view.AlertDialogView;
@@ -33,8 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     EditText emailEtx;
     @BindView(R.id.password_etx)
     EditText passwordEtx;
-    @BindView(R.id.login_btn)
-    Button loginBtn;
 
     ProgressDialogView progressView;
 
@@ -167,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showUpdateAppVersionDialog(String message) {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");
         alertDialog.setMessage(message);
         alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {

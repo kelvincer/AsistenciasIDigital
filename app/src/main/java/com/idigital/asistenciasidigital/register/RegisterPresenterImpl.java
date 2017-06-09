@@ -204,14 +204,13 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         Log.i(TAG, "El usuario esta dentro de rango");
         Double placeRadio = Double.parseDouble(place.getRadio());
         locationManager.stopLocationUpdates();
-        registerView.updateList("Dentro de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+        registerView.updateList(String.format("Dentro de: %s Centro: %d Radio: %d", place.getName(), mininDistance.intValue(), placeRadio.intValue()));
         setUpForSendRegister(location, Constants.NORMAL, mininDistance.intValue());
     }
 
     private void setUpForSendRegister(Location location, int flag, int distance) {
 
         registerView.setProgressMessage("Enviando registro");
-        attempNumber = 0;
         if (movement.equalsIgnoreCase(Constants.INGRESO)) {
             registerInteractor.sendEnterRegister(getUserId(), closestPlaceId, flag, distance, location, category);
         } else {
@@ -224,13 +223,14 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         Log.i(TAG, "El usuario esta fuera de rango");
         Double placeRadio = Double.parseDouble(place.getRadio());
         locationManager.stopLocationUpdates();
-        registerView.updateList("Fuera de: " + place.getName() + " Centro: " + mininDistance.intValue() + " Radio: " + placeRadio.intValue());
+        registerView.updateList(String.format("Fuera de: %s Centro: %d Radio: %d", place.getName(), mininDistance.intValue(), placeRadio.intValue()));
         if (attempNumber < 2) {
             registerView.updateList(context.getResources().getString(R.string.register_unsuccessful));
             registerView.hideProgressDialog();
             registerView.showAlert(String.format(context.getResources().getString(R.string.out_of_range), mininDistance.intValue() - placeRadio.intValue()));
             attempNumber++;
         } else if (attempNumber == 2) {
+            attempNumber = 0;
             setUpForSendRegister(location, Constants.OBSERVATION, mininDistance.intValue());
         } else {
             throw new IllegalArgumentException("Illegal attempNumber value");
