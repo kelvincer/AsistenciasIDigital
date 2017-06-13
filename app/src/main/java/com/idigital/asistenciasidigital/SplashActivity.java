@@ -82,10 +82,7 @@ public class SplashActivity extends AppCompatActivity {
         if (loggedIn) {
             automaticLogin();
         } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            if (!fetchVersionServerMessage.isEmpty())
-                intent.putExtra(Constants.FETCH_VERSION_MESSAGE, fetchVersionServerMessage);
-            startActivity(intent);
+            navigateToLoginActivity();
             finish();
         }
     }
