@@ -379,36 +379,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     public void updateButton() {
 
-        switch (activeButton) {
+        Button[] buttons = {enterBtn, enterLaunchBtn, exitLaunchBtn, exitBtn};
 
-            case 0:
-                enterBtn.setEnabled(true);
-                enterLaunchBtn.setEnabled(false);
-                exitLaunchBtn.setEnabled(false);
-                exitBtn.setEnabled(false);
-                break;
-            case 1:
-                enterBtn.setEnabled(false);
-                enterLaunchBtn.setEnabled(true);
-                exitLaunchBtn.setEnabled(false);
-                exitBtn.setEnabled(false);
-                break;
-            case 2:
-                enterBtn.setEnabled(false);
-                enterLaunchBtn.setEnabled(false);
-                exitLaunchBtn.setEnabled(true);
-                exitBtn.setEnabled(false);
-                break;
-            case 3:
-                enterBtn.setEnabled(false);
-                enterLaunchBtn.setEnabled(false);
-                exitLaunchBtn.setEnabled(false);
-                exitBtn.setEnabled(true);
-                break;
-            default:
-                break;
+        for (int i = 0; i < buttons.length; i++){
+            if(activeButton == i)
+                buttons[activeButton].setEnabled(true);
+            else
+                buttons[i].setEnabled(false);
         }
-
         preferenceManager.putInt(Constants.ACTIVE_BUTTON, activeButton);
     }
 
