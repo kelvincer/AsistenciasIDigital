@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class IDigitalClient {
 
     private static Retrofit retrofit;
-    private final static String BASE_URL = "http://asistencia.juankuga.io/";
+    private final static String BASE_URL = "http://54.153.55.222/asistencias/public/";
 
     public static IDigitalService getIDigitalService() {
         if (retrofit == null) {

@@ -167,6 +167,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
                 category = Constants.LABORAL;
                 break;
             case R.id.enter_btn:
+                clearTextViewAndPreference();
                 registerMovement();
                 movement = Constants.INGRESO;
                 category = Constants.LABORAL;
@@ -185,6 +186,19 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
                 eventAdapter.clearList();
                 break;
         }
+    }
+
+    private void clearTextViewAndPreference() {
+
+        timeEnterTxv.setText("");
+        timeExitTxv.setText("");
+        timeEnterLaunchTxv.setText("");
+        timeExitLaunchTxv.setText("");
+
+        preferenceManager.clearKeyPreference(Constants.TIME_1);
+        preferenceManager.clearKeyPreference(Constants.TIME_2);
+        preferenceManager.clearKeyPreference(Constants.TIME_3);
+        preferenceManager.clearKeyPreference(Constants.TIME_4);
     }
 
     private void registerMovement() {
@@ -246,7 +260,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
                 preferenceManager.putString(Constants.TIME_4, time);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid active button number");
+                throw new RuntimeException("Invalid active button number");
         }
     }
 
@@ -379,10 +393,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     public void updateButton() {
 
-        Button[] buttons = {enterBtn, enterLaunchBtn, exitLaunchBtn, exitBtn};
+        Button[] buttons = {enterBtn, exitLaunchBtn, enterLaunchBtn, exitBtn};
 
-        for (int i = 0; i < buttons.length; i++){
-            if(activeButton == i)
+        for (int i = 0; i < buttons.length; i++) {
+            if (activeButton == i)
                 buttons[activeButton].setEnabled(true);
             else
                 buttons[i].setEnabled(false);

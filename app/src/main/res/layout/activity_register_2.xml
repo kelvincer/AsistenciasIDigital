@@ -29,15 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="E" />
-
-        <Button
-            android:id="@+id/enter_launch_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableRight="@drawable/ic_room_service_black_24dp"
-            android:text="S" />
+            android:text="I" />
 
         <Button
             android:id="@+id/exit_launch_btn"
@@ -45,7 +37,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableRight="@drawable/ic_room_service_black_24dp"
-            android:text="E" />
+            android:text="S" />
+
+        <Button
+            android:id="@+id/enter_launch_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_room_service_black_24dp"
+            android:text="I" />
 
         <Button
             android:id="@+id/exit_btn"

@@ -15,8 +15,8 @@ public class Constants {
     public static final String LOGGED_IN = "LoggedIn";
     public static final String ACTUAL_VERSION = "ACTUAL_VERSION";
     public static final String PASS_FOR_LOGIN = "passForLogin";
-    public static final String INGRESO = "Ingreso";
-    public static final String SALIDA = "Salida";
+    public static final String INGRESO = "ingreso";
+    public static final String SALIDA = "salida";
     public static final int NORMAL = 0;
     public static final int OBSERVATION = 1;
     public static final String VERSION_UPDATE = "VERSION_UPDATE";

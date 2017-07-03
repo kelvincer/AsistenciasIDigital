@@ -26,6 +26,7 @@ public interface IDigitalService {
     @POST("attendance-add")
     Call<RegisterResponse> postMovement(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
                                         @Field("flag_obs") int flag, @Field("distance") int distance,
+                                        @Field("movement") String movement,
                                         @Field("latitude") double latitude, @Field("longitude") double longitude,
                                         @Field("id_attendance_category") int category);
 

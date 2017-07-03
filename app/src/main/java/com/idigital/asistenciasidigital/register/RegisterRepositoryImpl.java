@@ -26,10 +26,10 @@ class RegisterRepositoryImpl implements RegisterRepository {
     private static final String TAG = RegisterRepositoryImpl.class.getSimpleName();
 
     @Override
-    public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, Location location, int category) {
+    public void sendEnterRegister(String userId, String idQuarter, int flag, int distance, String movement, Location location, int category) {
 
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<RegisterResponse> call = service.postMovement(userId, idQuarter, flag, distance,
+        Call<RegisterResponse> call = service.postMovement(userId, idQuarter, flag, distance, movement,
                 location.getLatitude(), location.getLongitude(), category);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -44,12 +44,16 @@ class RegisterRepositoryImpl implements RegisterRepository {
                     } else {
                         if (registerResponse.getCode() == 9 || registerResponse.getCode() == 10
                                 || registerResponse.getCode() == 16 || registerResponse.getCode() == 17
-                                || registerResponse.getCode() == 20 || registerResponse.getCode() == 21) {
+                                || registerResponse.getCode() == 20 || registerResponse.getCode() == 21
+                                || registerResponse.getCode() == 11 || registerResponse.getCode() == 12
+                                || registerResponse.getCode() == 18 || registerResponse.getCode() == 19
+                                || registerResponse.getCode() == 22 || registerResponse.getCode() == 23) {
                             postEvent(RegisterEvent.onSendEnterRegisterSuccess, registerResponse.getMessage(), registerResponse.getData());
-                        } else if (registerResponse.getCode() == 7 || registerResponse.getCode() == 8) {
+                        } else if (registerResponse.getCode() == 7 || registerResponse.getCode() == 8
+                                || registerResponse.getCode() == 13) {
                             postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage(), null);
-                        } else{
-                            throw new IllegalArgumentException("Invalid register response code");
+                        } else {
+                            throw new RuntimeException("Invalid register response code");
                         }
                     }
                 } else {
@@ -88,8 +92,8 @@ class RegisterRepositoryImpl implements RegisterRepository {
                             postEvent(RegisterEvent.onSendExitRegisterSuccess, registerResponse.getMessage(), registerResponse.getData());
                         } else if (registerResponse.getCode() == 13 || registerResponse.getCode() == 8) {
                             postEvent(RegisterEvent.onSendRegisterError, registerResponse.getMessage(), null);
-                        }else{
-                            throw new IllegalArgumentException("Invalid register response code");
+                        } else {
+                            throw new RuntimeException("Invalid register response code");
                         }
                     }
                 } else {
