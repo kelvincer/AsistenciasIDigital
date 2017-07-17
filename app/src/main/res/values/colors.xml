@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="menu_line_divider">#313131</color>
+    <color name="sign_in_textcolor">#FFFFFF</color>
+    <color name="register_btn_textcolor">#FFFFFF</color>
 </resources>

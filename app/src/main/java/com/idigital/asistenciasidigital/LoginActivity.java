@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         preferenceManager.putString(Constants.USER_NAME, login.getName());
         preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());
 
-        //save login
+        //save activity_login
         preferenceManager.putBoolean(Constants.LOGGED_IN, true);
     }
 

@@ -77,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_2);
+        setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         getSupportActionBar().setTitle(getResources().getString(R.string.registro_title));
         setUpEventsRecyclerview();

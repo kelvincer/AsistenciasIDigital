@@ -14,4 +14,8 @@
     <string name="out_of_range">Estas afuera del radio de la sede. Estas a %01d m.</string>
     <string name="register_failed">Registro Fallido</string>
     <string name="alert_location_message">Localización no esta habilitado. ¿Deseas ir al menú de configuración?</string>
+    <string name="hint_email">Email</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="sign_in_text">Sign In</string>
 </resources>
