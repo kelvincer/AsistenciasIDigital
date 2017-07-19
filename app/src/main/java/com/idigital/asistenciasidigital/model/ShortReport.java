@@ -11,18 +11,50 @@ import java.io.Serializable;
 
 public class ShortReport implements Serializable {
 
+    @SerializedName("id_attendance")
+    @Expose
+    private String idAttendance;
     @SerializedName("id_user")
     @Expose
     private String idUser;
-    @SerializedName("fecha")
-    @Expose
-    private String fecha;
     @SerializedName("nombre")
     @Expose
     private String nombre;
-    @SerializedName("total_horas")
+    @SerializedName("date_show")
     @Expose
-    private String totalHoras;
+    private String dateShow;
+    @SerializedName("id_headquarter")
+    @Expose
+    private String idHeadquarter;
+    @SerializedName("sede")
+    @Expose
+    private String sede;
+    @SerializedName("fecha")
+    @Expose
+    private String fecha;
+    @SerializedName("hora")
+    @Expose
+    private String hora;
+    @SerializedName("movement")
+    @Expose
+    private String movement;
+    @SerializedName("id_attendance_category")
+    @Expose
+    private String idAttendanceCategory;
+    @SerializedName("category")
+    @Expose
+    private String category;
+    @SerializedName("state")
+    @Expose
+    private String state;
+
+    public String getIdAttendance() {
+        return idAttendance;
+    }
+
+    public void setIdAttendance(String idAttendance) {
+        this.idAttendance = idAttendance;
+    }
 
     public String getIdUser() {
         return idUser;
@@ -30,14 +62,6 @@ public class ShortReport implements Serializable {
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
     }
 
     public String getNombre() {
@@ -48,11 +72,75 @@ public class ShortReport implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getTotalHoras() {
-        return totalHoras;
+    public String getDateShow() {
+        return dateShow;
     }
 
-    public void setTotalHoras(String totalHoras) {
-        this.totalHoras = totalHoras;
+    public void setDateShow(String dateShow) {
+        this.dateShow = dateShow;
+    }
+
+    public String getIdHeadquarter() {
+        return idHeadquarter;
+    }
+
+    public void setIdHeadquarter(String idHeadquarter) {
+        this.idHeadquarter = idHeadquarter;
+    }
+
+    public String getSede() {
+        return sede;
+    }
+
+    public void setSede(String sede) {
+        this.sede = sede;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
+
+    public String getMovement() {
+        return movement;
+    }
+
+    public void setMovement(String movement) {
+        this.movement = movement;
+    }
+
+    public String getIdAttendanceCategory() {
+        return idAttendanceCategory;
+    }
+
+    public void setIdAttendanceCategory(String idAttendanceCategory) {
+        this.idAttendanceCategory = idAttendanceCategory;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

@@ -6,11 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.listener.OnItemClickListener;
 import com.idigital.asistenciasidigital.model.ShortReport;
-import com.idigital.asistenciasidigital.util.Constants;
 
 import java.util.List;
 
@@ -54,8 +52,14 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
         TextView userTxv;
         @BindView(R.id.date_txv)
         TextView dateTxv;
-        @BindView(R.id.total_time_txv)
-        TextView totalTimeTxv;
+        @BindView(R.id.time_txv)
+        TextView timeTxv;
+        @BindView(R.id.category_txv)
+        TextView categoryTxv;
+        @BindView(R.id.state_txv)
+        TextView stateTxv;
+        @BindView(R.id.movement_txv)
+        TextView movementTxv;
         View view;
 
         public CustomViewHolder(View itemView) {
@@ -68,13 +72,16 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
 
             userTxv.setText(item.getNombre());
             dateTxv.setText(item.getFecha());
-            totalTimeTxv.setText(item.getTotalHoras());
-            view.setOnClickListener(new View.OnClickListener() {
+            timeTxv.setText(item.getHora());
+            categoryTxv.setText(item.getCategory());
+            stateTxv.setText(item.getState());
+            movementTxv.setText(item.getMovement());
+            /*view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     listener.onItemClick(item);
                 }
-            });
+            });*/
         }
     }
 }
