@@ -1,8 +1,6 @@
 package com.idigital.asistenciasidigital;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +10,9 @@ import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
+import com.idigital.asistenciasidigital.database.UserDao;
 import com.idigital.asistenciasidigital.model.Place;
+import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.VersionResponse;
@@ -30,18 +30,25 @@ public class SplashActivity extends AppCompatActivity {
     private final String TAG = SplashActivity.class.getSimpleName();
     private String fetchVersionServerMessage = "";
     PreferenceManager preferenceManager;
+    DatabaseHelper helper;
+    UserDao userDao;
+    User userLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         preferenceManager = new PreferenceManager(getApplicationContext());
+        helper = new DatabaseHelper(this);
+        userDao = new UserDao(helper);
+        userLoggedIn = userDao.findUserByLoggedIn();
+
         getPlacesFromServer();
     }
 
     private void getPlacesFromServer() {
 
-        new TestAndFetchAsyncTask().execute();
+        new TestConnectionAndFetchPlacesAsyncTask().execute();
     }
 
     private void fetchPlaces() {
@@ -89,12 +96,11 @@ public class SplashActivity extends AppCompatActivity {
 
     private void saveDataListOnDatabase(List<Place> data) {
 
-        DatabaseHelper helper = new DatabaseHelper(this);
         PlaceDao placeDao = new PlaceDao(helper);
         placeDao.insertPlaceList(data);
     }
 
-    private class TestAndFetchAsyncTask extends TestConnectionAsyncTask {
+    private class TestConnectionAndFetchPlacesAsyncTask extends TestConnectionAsyncTask {
 
         @Override
         protected void onPostExecute(Boolean result) {
@@ -114,10 +120,16 @@ public class SplashActivity extends AppCompatActivity {
 
     private void automaticLogin() {
 
-        String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
-        String email = preferenceManager.getString(Constants.USER_EMAIL, "");
+        //String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
+        //String email = preferenceManager.getString(Constants.USER_EMAIL, "");
+
+        if (userLoggedIn == null) {
+            Toast.makeText(this, "Error logged in user", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<LoginResponse> call = service.postLogin(email, password);
+        Call<LoginResponse> call = service.postLogin(userLoggedIn.getEmail(), userLoggedIn.getPassword());
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -131,7 +143,7 @@ public class SplashActivity extends AppCompatActivity {
                         if (loginResponse.getCode() == 5) {
                             navigateToRegisterActivity();
                         } else if (loginResponse.getCode() == 6) {
-                            updatePreferenceManager();
+                            deleteUserAndPreferenceManager();
                             navigateToLoginActivity();
                             Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
                         } else {
@@ -167,10 +179,16 @@ public class SplashActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void updatePreferenceManager() {
+    private void deleteUserAndPreferenceManager() {
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
-        preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
-        preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
+
+        userDao.deleteUser(userLoggedIn);
+
+        //userLoggedIn.setLoggedIn(false);
+        //userDao.insertUser(userLoggedIn);
+
+        //preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
+        //preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
     }
 
     private void fetchVersion() {

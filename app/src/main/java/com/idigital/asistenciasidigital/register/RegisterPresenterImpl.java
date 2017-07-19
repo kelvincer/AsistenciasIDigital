@@ -8,9 +8,11 @@ import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
+import com.idigital.asistenciasidigital.database.UserDao;
 import com.idigital.asistenciasidigital.lib.EventBus;
 import com.idigital.asistenciasidigital.lib.GreenRobotEventBus;
 import com.idigital.asistenciasidigital.model.Place;
+import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.register.events.RegisterEvent;
 import com.idigital.asistenciasidigital.register.location.GeolocationListener;
 import com.idigital.asistenciasidigital.register.location.LocationManager;
@@ -240,7 +242,10 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     }
 
     private String getUserId() {
-        String userId = preferenceManager.getString(Constants.USER_ID, "null");
-        return userId;
+        //String userId = preferenceManager.getString(Constants.USER_ID, "null");
+        DatabaseHelper helper = new DatabaseHelper(context);
+        UserDao userDao = new UserDao(helper);
+        User user = userDao.findUserByLoggedIn();
+        return user.getUserId();
     }
 }

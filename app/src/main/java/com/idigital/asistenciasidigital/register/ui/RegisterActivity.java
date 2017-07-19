@@ -29,6 +29,9 @@ import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.ReportActivity;
 import com.idigital.asistenciasidigital.TestConnectionAsyncTask;
 import com.idigital.asistenciasidigital.adapter.RecyclerEventAdapter;
+import com.idigital.asistenciasidigital.database.DatabaseHelper;
+import com.idigital.asistenciasidigital.database.UserDao;
+import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.register.RegisterPresenter;
 import com.idigital.asistenciasidigital.register.RegisterPresenterImpl;
 import com.idigital.asistenciasidigital.util.Constants;
@@ -69,10 +72,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private ProgressDialogView progressView;
     private RecyclerEventAdapter eventAdapter;
     private boolean hasPermissionAccessFineLocation;
-    private PreferenceManager preferenceManager;
     private RegisterPresenter presenter;
     private int category, activeButton;
     private String movement;
+    private PreferenceManager preferenceManager;
+    DatabaseHelper helper;
+    UserDao userDao;
+    User userLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +89,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         setUpEventsRecyclerview();
         presenter = new RegisterPresenterImpl(this, this);
         presenter.onCreate();
-
         preferenceManager = new PreferenceManager(this);
-        activeButton = preferenceManager.getInt(Constants.ACTIVE_BUTTON, 0);
+        helper = new DatabaseHelper(this);
+        userDao = new UserDao(helper);
+
+        userLoggedIn = userDao.findUserByLoggedIn();
+        activeButton = userLoggedIn.getActiveButton();
+        //activeButton = preferenceManager.getInt(Constants.ACTIVE_BUTTON, 0);
         updateButton();
         updateTimeTextViews();
 
@@ -103,10 +113,15 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     private void updateTimeTextViews() {
 
-        timeEnterTxv.setText(preferenceManager.getString(Constants.TIME_1, ""));
+        timeEnterTxv.setText(userLoggedIn.getTimeOne());
+        timeExitLaunchTxv.setText(userLoggedIn.getTimeTwo());
+        timeEnterLaunchTxv.setText(userLoggedIn.getTimeThree());
+        timeExitTxv.setText(userLoggedIn.getTimeFour());
+
+        /*timeEnterTxv.setText(preferenceManager.getString(Constants.TIME_1, ""));
         timeEnterLaunchTxv.setText(preferenceManager.getString(Constants.TIME_2, ""));
         timeExitLaunchTxv.setText(preferenceManager.getString(Constants.TIME_3, ""));
-        timeExitTxv.setText(preferenceManager.getString(Constants.TIME_4, ""));
+        timeExitTxv.setText(preferenceManager.getString(Constants.TIME_4, ""));*/
     }
 
     @Override
@@ -167,7 +182,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
                 category = Constants.LABORAL;
                 break;
             case R.id.enter_btn:
-                clearTextViewAndPreference();
+                clearTextViewAndUserTime();
                 registerMovement();
                 movement = Constants.INGRESO;
                 category = Constants.LABORAL;
@@ -188,17 +203,22 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         }
     }
 
-    private void clearTextViewAndPreference() {
+    private void clearTextViewAndUserTime() {
 
         timeEnterTxv.setText("");
         timeExitTxv.setText("");
         timeEnterLaunchTxv.setText("");
         timeExitLaunchTxv.setText("");
 
-        preferenceManager.clearKeyPreference(Constants.TIME_1);
+        userLoggedIn.setTimeOne(null);
+        userLoggedIn.setTimeTwo(null);
+        userLoggedIn.setTimeThree(null);
+        userLoggedIn.setTimeFour(null);
+
+        /*preferenceManager.clearKeyPreference(Constants.TIME_1);
         preferenceManager.clearKeyPreference(Constants.TIME_2);
         preferenceManager.clearKeyPreference(Constants.TIME_3);
-        preferenceManager.clearKeyPreference(Constants.TIME_4);
+        preferenceManager.clearKeyPreference(Constants.TIME_4);*/
     }
 
     private void registerMovement() {
@@ -245,19 +265,23 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
             case 0:
                 timeEnterTxv.setText(time);
-                preferenceManager.putString(Constants.TIME_1, time);
+                userLoggedIn.setTimeOne(time);
+                //preferenceManager.putString(Constants.TIME_1, time);
                 break;
             case 1:
-                timeEnterLaunchTxv.setText(time);
-                preferenceManager.putString(Constants.TIME_2, time);
+                timeExitLaunchTxv.setText(time);
+                userLoggedIn.setTimeTwo(time);
+                //preferenceManager.putString(Constants.TIME_3, time);
                 break;
             case 2:
-                timeExitLaunchTxv.setText(time);
-                preferenceManager.putString(Constants.TIME_3, time);
+                timeEnterLaunchTxv.setText(time);
+                userLoggedIn.setTimeThree(time);
+                //preferenceManager.putString(Constants.TIME_2, time);
                 break;
             case 3:
                 timeExitTxv.setText(time);
-                preferenceManager.putString(Constants.TIME_4, time);
+                userLoggedIn.setTimeFour(time);
+                //preferenceManager.putString(Constants.TIME_4, time);
                 break;
             default:
                 throw new RuntimeException("Invalid active button number");
@@ -386,8 +410,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private void logoutAndClose() {
 
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
-        preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
-        preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
+        userLoggedIn.setLoggedIn(false);
+        userDao.insertUser(userLoggedIn);
+        //preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
+        //preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         finish();
     }
 
@@ -401,7 +427,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             else
                 buttons[i].setEnabled(false);
         }
-        preferenceManager.putInt(Constants.ACTIVE_BUTTON, activeButton);
+        //preferenceManager.putInt(Constants.ACTIVE_BUTTON, activeButton);
+        userLoggedIn.setActiveButton(activeButton);
     }
 
 

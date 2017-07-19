@@ -88,7 +88,7 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/time_enter_launch_txv"
+            android:id="@+id/time_exit_launch_txv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -96,7 +96,7 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/time_exit_launch_txv"
+            android:id="@+id/time_enter_launch_txv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

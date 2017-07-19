@@ -11,7 +11,10 @@ import android.widget.Toast;
 
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
+import com.idigital.asistenciasidigital.database.DatabaseHelper;
+import com.idigital.asistenciasidigital.database.UserDao;
 import com.idigital.asistenciasidigital.model.Login;
+import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.view.AlertDialogView;
@@ -31,17 +34,21 @@ public class LoginActivity extends AppCompatActivity {
     EditText emailEtx;
     @BindView(R.id.password_etx)
     EditText passwordEtx;
-
     ProgressDialogView progressView;
+    DatabaseHelper helper;
+    UserDao userDao;
+    PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle(R.string.authentication_title);
+        helper = new DatabaseHelper(this);
+        userDao = new UserDao(helper);
+        preferenceManager = new PreferenceManager(getApplicationContext());
 
-        PreferenceManager preferenceManager = new PreferenceManager(this);
+        getSupportActionBar().setTitle(R.string.authentication_title);
         boolean versionUpdated = preferenceManager.getBoolean(Constants.VERSION_UPDATE, true);
         if (!versionUpdated) {
             String message = getIntent().getStringExtra(Constants.FETCH_VERSION_MESSAGE);
@@ -58,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         showProgressDialog();
-        new TestAndLoginAsyncTask().execute();
+        new TestConnectionAndLoginAsyncTask().execute();
     }
 
     private void loginRequest() {
@@ -113,12 +120,27 @@ public class LoginActivity extends AppCompatActivity {
     private void saveLoginData(LoginResponse response) {
 
         Login login = response.getData();
-        PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
+
+        User user = userDao.findUserById(login.getEmail());
+
+        if (user == null) {
+            user = new User();
+            user.setEmail(login.getEmail());
+            user.setPassword(passwordEtx.getText().toString());
+            user.setActiveButton(0);
+            user.setLoggedIn(true);
+            user.setUserId(login.getIdUser());
+        } else {
+            user.setLoggedIn(true);
+        }
+        userDao.insertUser(user);
+
+        /*PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         preferenceManager.putString(Constants.USER_PASSWORD, passwordEtx.getText().toString());
         preferenceManager.putString(Constants.USER_EMAIL, login.getEmail());
         preferenceManager.putString(Constants.USER_ID, login.getIdUser());
         preferenceManager.putString(Constants.USER_NAME, login.getName());
-        preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());
+        preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());*/
 
         //save activity_login
         preferenceManager.putBoolean(Constants.LOGGED_IN, true);
@@ -142,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
         progressView.showProgressDialog();
     }
 
-    private class TestAndLoginAsyncTask extends TestConnectionAsyncTask {
+    private class TestConnectionAndLoginAsyncTask extends TestConnectionAsyncTask {
 
         @Override
         protected void onPostExecute(Boolean result) {

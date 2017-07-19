@@ -11,8 +11,11 @@ import android.widget.Toast;
 import com.idigital.asistenciasidigital.adapter.RecyclerReportAdapter;
 import com.idigital.asistenciasidigital.api.IDigitalClient;
 import com.idigital.asistenciasidigital.api.IDigitalService;
+import com.idigital.asistenciasidigital.database.DatabaseHelper;
+import com.idigital.asistenciasidigital.database.UserDao;
 import com.idigital.asistenciasidigital.listener.OnItemClickListener;
 import com.idigital.asistenciasidigital.model.ShortReport;
+import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.response.ShortReportResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
@@ -34,12 +37,16 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
     @BindView(R.id.ryv_report)
     RecyclerView ryvReport;
     ProgressDialogView progressView;
+    DatabaseHelper helper;
+    UserDao userDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
+        helper = new DatabaseHelper(this);
+        userDao = new UserDao(helper);
         getSupportActionBar().setTitle(getResources().getString(R.string.report_title));
         fetchReport();
     }
@@ -66,10 +73,13 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
 
     private void requestReport() {
 
-        PreferenceManager preferenceManager = new PreferenceManager(this);
-        String idUser = preferenceManager.getString(Constants.USER_ID, "null");
+        //PreferenceManager preferenceManager = new PreferenceManager(this);
+        //String idUser = preferenceManager.getString(Constants.USER_ID, "null");
+
+        User user = userDao.findUserByLoggedIn();
+
         IDigitalService service = IDigitalClient.getIDigitalService();
-        Call<ShortReportResponse> call = service.postAttendanceUser(idUser);
+        Call<ShortReportResponse> call = service.postAttendanceUser(user.getUserId());
         call.enqueue(new Callback<ShortReportResponse>() {
             @Override
             public void onResponse(Call<ShortReportResponse> call, Response<ShortReportResponse> response) {
