@@ -18,59 +18,59 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-	private static final String DATABASE_NAME    = "data.db";
-	private static final int    DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "data.db";
+    private static final int DATABASE_VERSION = 1;
 
-	private Dao<Place, Integer> mPlaceDao;
-	private Dao<User, String> mUserDao;
+    private Dao<Place, Integer> mPlaceDao;
+    private Dao<User, String> mUserDao;
 
-	public DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	}
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
-	@Override
-	public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
-		try {
-			TableUtils.createTable(connectionSource, Place.class);
-			TableUtils.createTable(connectionSource, User.class);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
+        try {
+            TableUtils.createTable(connectionSource, Place.class);
+            TableUtils.createTable(connectionSource, User.class);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource,
-						  int oldVersion, int newVersion) {
-		try {
-			TableUtils.dropTable(connectionSource, Place.class, true);
-			TableUtils.dropTable(connectionSource, User.class, true);
-			onCreate(db, connectionSource);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource,
+                          int oldVersion, int newVersion) {
+        try {
+            TableUtils.dropTable(connectionSource, Place.class, true);
+            TableUtils.dropTable(connectionSource, User.class, true);
+            onCreate(db, connectionSource);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public Dao<Place, Integer> getPlaceDao() throws SQLException {
-		if (mPlaceDao == null) {
+    public Dao<Place, Integer> getPlaceDao() throws SQLException {
+        if (mPlaceDao == null) {
             mPlaceDao = getDao(Place.class);
         }
 
         return mPlaceDao;
-	}
+    }
 
-	public Dao<User, String> getUserDao() throws SQLException {
+    public Dao<User, String> getUserDao() throws SQLException {
 
-		if(mUserDao == null){
-			mUserDao = getDao(User.class);
-		}
+        if (mUserDao == null) {
+            mUserDao = getDao(User.class);
+        }
 
-		return mUserDao;
-	}
+        return mUserDao;
+    }
 
-	@Override
-	public void close() {
-		mPlaceDao = null;
-
-		super.close();
-	}
+    @Override
+    public void close() {
+        mPlaceDao = null;
+        mUserDao = null;
+        super.close();
+    }
 }
