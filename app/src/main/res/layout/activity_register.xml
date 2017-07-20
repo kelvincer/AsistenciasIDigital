@@ -2,27 +2,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="10dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="0dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:paddingTop ="0dp"
+    android:paddingBottom ="10dp"
+    android:paddingLeft ="20dp"
+    android:paddingRight ="20dp"
+    android:textColor="#FFFFFF"
+    android:background="#03A2D7">
+
+    <ImageView
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:id="@+id/fondoReloj"
+        android:src="@drawable/fondo_reloj"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextClock
         android:id="@+id/clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
         android:format12Hour="h:mm:ss aa"
         android:format24Hour="H:mm:ss"
-        android:textSize="45sp" />
+        android:textColor="#FFFFFF"
+        android:textSize="35sp"
+        android:paddingTop ="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
 
     <LinearLayout
         android:id="@+id/buttons_lrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/clock"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="100dp">
 
         <Button
             android:id="@+id/enter_btn"
@@ -30,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#0a518c"
             android:text="I"
             android:textColor="@android:color/white" />
 
@@ -40,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#0a518c"
             android:drawableRight="@drawable/ic_room_service_black_24dp"
             android:paddingLeft="1dp"
             android:paddingRight="8dp"
@@ -53,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#0a518c"
             android:drawableRight="@drawable/ic_room_service_black_24dp"
             android:paddingLeft="1dp"
             android:paddingRight="8dp"
@@ -66,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#0a518c"
             android:text="S"
             android:textColor="@android:color/white" />
 
@@ -76,22 +93,16 @@
         android:id="@+id/text_lrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buttons_lrl"
-        android:layout_marginTop="5dp">
+        android:layout_below="@+id/buttons_lrl"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:id="@+id/time_enter_txv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/time_exit_launch_txv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:textColor="#FFFFFF"
             android:gravity="center_horizontal"
             android:textSize="12sp" />
 
@@ -101,6 +112,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/time_exit_launch_txv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textColor="#FFFFFF"
             android:textSize="12sp" />
 
         <TextView
@@ -109,22 +130,32 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
+            android:textColor="#FFFFFF"
             android:textSize="12sp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_ryv"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
         android:layout_below="@+id/text_lrl"
-        android:layout_marginTop="15dp" />
+        android:textColor="#ffffff"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/delete_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_ryv"
-        android:layout_marginTop="5dp"
-        android:text="Borrar" />
+        android:text="Borrar"
+        android:background="#0a518c"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/event_ryv"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
