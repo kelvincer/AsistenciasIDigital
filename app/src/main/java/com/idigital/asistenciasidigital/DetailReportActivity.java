@@ -16,7 +16,7 @@ import com.idigital.asistenciasidigital.model.ShortReport;
 import com.idigital.asistenciasidigital.response.DetailReportResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
-import com.idigital.asistenciasidigital.view.AlertDialogView;
+import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.List;
@@ -122,6 +122,6 @@ public class DetailReportActivity extends AppCompatActivity {
     }
 
     private void showAlertDialog(String message) {
-        AlertDialogView.showInternetAlertDialog(this, message);
+        DialogView.showDialog(this, message, Constants.ALERT_DIALOG, null);
     }
 }

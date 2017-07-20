@@ -17,7 +17,7 @@ import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.VersionResponse;
 import com.idigital.asistenciasidigital.util.Constants;
-import com.idigital.asistenciasidigital.view.AlertDialogView;
+import com.idigital.asistenciasidigital.view.DialogView;
 
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class SplashActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), placeResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -115,13 +115,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showInternetDialog() {
-        AlertDialogView.showInternetAlertDialog(this, getResources().getString(R.string.splash_dialog));
+        DialogView.showDialog(this, getResources().getString(R.string.splash_dialog), Constants.ALERT_DIALOG, this);
     }
 
     private void automaticLogin() {
-
-        //String password = preferenceManager.getString(Constants.USER_PASSWORD, "");
-        //String email = preferenceManager.getString(Constants.USER_EMAIL, "");
 
         if (userLoggedIn == null) {
             Toast.makeText(this, "Error logged in user", Toast.LENGTH_SHORT).show();

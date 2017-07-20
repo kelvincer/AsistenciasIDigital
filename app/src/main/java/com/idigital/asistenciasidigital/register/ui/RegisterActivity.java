@@ -1,6 +1,7 @@
 package com.idigital.asistenciasidigital.register.ui;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +39,7 @@ import com.idigital.asistenciasidigital.register.RegisterPresenterImpl;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
-import com.idigital.asistenciasidigital.view.AlertDialogView;
+import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import butterknife.BindView;
@@ -86,6 +88,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         getSupportActionBar().setTitle(getResources().getString(R.string.registro_title));
+        getSupportActionBar().setElevation(0);
         setUpEventsRecyclerview();
         presenter = new RegisterPresenterImpl(this, this);
         presenter.onCreate();
@@ -215,6 +218,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         userLoggedIn.setTimeThree(null);
         userLoggedIn.setTimeFour(null);
 
+        saveUserOnDB(userLoggedIn);
+
         /*preferenceManager.clearKeyPreference(Constants.TIME_1);
         preferenceManager.clearKeyPreference(Constants.TIME_2);
         preferenceManager.clearKeyPreference(Constants.TIME_3);
@@ -249,14 +254,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     @Override
     public void showAlert(String message) {
-        AlertDialogView.showInternetAlertDialog(this, message);
+        DialogView.showDialog(this, message, Constants.SUCCESS_DIALOG, null);
     }
 
     @Override
     public void updateList(String message) {
         eventAdapter.addNewEvent(message);
     }
-
 
     @Override
     public void updateTextView(String time) {
@@ -286,6 +290,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             default:
                 throw new RuntimeException("Invalid active button number");
         }
+
+        saveUserOnDB(userLoggedIn);
     }
 
     @Override
@@ -411,7 +417,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         userLoggedIn.setLoggedIn(false);
-        userDao.insertUser(userLoggedIn);
+        saveUserOnDB(userLoggedIn);
         //preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
         //preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         finish();
@@ -429,12 +435,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         }
         //preferenceManager.putInt(Constants.ACTIVE_BUTTON, activeButton);
         userLoggedIn.setActiveButton(activeButton);
+        saveUserOnDB(userLoggedIn);
     }
 
 
     private void showUpdateAppVersionDialog(String message) {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Alerta");
         alertDialog.setMessage(message);
         alertDialog.setPositiveButton(R.string.alert_cancelar, new DialogInterface.OnClickListener() {
@@ -452,7 +459,30 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             }
         });
 
-        alertDialog.show();
+        alertDialog.show();*/
+
+        final Dialog dialog = new Dialog(this, R.style.Theme_AppCompat_DayNight_Dialog);
+        dialog.setContentView(R.layout.update_dialog);
+        Button acceptBtn = (Button) dialog.findViewById(R.id.dialogButtonOK);
+        Button cancelBtn = (Button) dialog.findViewById(R.id.dialogCancelOK);
+        TextView messageTxv = (TextView) dialog.findViewById(R.id.message_txv);
+        messageTxv.setText(message);
+        acceptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                requestPermissionForLocation();
+            }
+        });
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                requestPermissionForLocation();
+            }
+        });
+
+        dialog.show();
     }
 
     private void checkPassLogin() {
@@ -470,5 +500,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
                 requestPermissionForLocation();
             }
         }
+    }
+
+    private void saveUserOnDB(User user) {
+        userDao.insertUser(user);
     }
 }
