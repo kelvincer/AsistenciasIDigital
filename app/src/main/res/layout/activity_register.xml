@@ -27,8 +27,9 @@
         android:layout_height="wrap_content"
         android:format12Hour="h:mm:ss aa"
         android:format24Hour="H:mm:ss"
+        android:fontFamily="sans-serif-black"
         android:textColor="#FFFFFF"
-        android:textSize="35sp"
+        android:textSize="30sp"
         android:paddingTop ="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -39,53 +40,51 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/clock"
-        android:layout_marginTop="100dp">
+        android:layout_marginTop="110dp">
 
         <Button
             android:id="@+id/enter_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="#0a518c"
-            android:text="I"
-            android:textColor="@android:color/white" />
+            android:padding="10dp"
+            android:drawableTop="@drawable/icono_ingreso_trabajo"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/exit_launch_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="#0a518c"
-            android:drawableRight="@drawable/ic_room_service_black_24dp"
-            android:paddingLeft="1dp"
-            android:paddingRight="8dp"
-            android:text="S"
-            android:textColor="@android:color/white" />
+            android:drawableTop="@drawable/icono_salida_almuerzo"
+            android:padding="10dp"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/enter_launch_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="#0a518c"
-            android:drawableRight="@drawable/ic_room_service_black_24dp"
-            android:paddingLeft="1dp"
-            android:paddingRight="8dp"
-            android:text="I"
-            android:textColor="@android:color/white" />
+            android:drawableTop="@drawable/icono_ingreso_almuerzo"
+            android:padding="10dp"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/exit_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="#0a518c"
-            android:text="S"
-            android:textColor="@android:color/white" />
+            android:drawableTop="@drawable/icono_salida_trabajo"
+            android:padding="10dp"
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 
@@ -137,7 +136,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_ryv"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="15dp"
         android:layout_below="@+id/text_lrl"
@@ -150,6 +149,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Borrar"
+        android:textSize="18sp"
         android:background="#0a518c"
         android:textColor="@android:color/white"
         android:layout_below="@+id/event_ryv"
