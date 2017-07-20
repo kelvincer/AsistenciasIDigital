@@ -19,7 +19,7 @@ import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.response.ShortReportResponse;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
-import com.idigital.asistenciasidigital.view.AlertDialogView;
+import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import java.util.List;
@@ -113,7 +113,7 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
     private void fillRecyclerView(List<ShortReport> data, String message) {
 
         if (data.size() == 0) {
-            AlertDialogView.showInternetAlertDialog(this, message);
+            DialogView.showDialog(this, message, Constants.ALERT_DIALOG, null);
             return;
         }
 
@@ -138,6 +138,6 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
     }
 
     private void showAlertDialog(String message) {
-        AlertDialogView.showInternetAlertDialog(this, message);
+        DialogView.showDialog(this, message, Constants.ALERT_DIALOG, null);
     }
 }

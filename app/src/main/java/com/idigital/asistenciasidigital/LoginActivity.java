@@ -17,7 +17,7 @@ import com.idigital.asistenciasidigital.model.Login;
 import com.idigital.asistenciasidigital.model.User;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.util.Constants;
-import com.idigital.asistenciasidigital.view.AlertDialogView;
+import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
 import butterknife.BindView;
@@ -180,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void showAlertDialog(String message) {
-        AlertDialogView.showInternetAlertDialog(this, message);
+        DialogView.showDialog(this, message, Constants.ALERT_DIALOG, null);
     }
 
     private void showUpdateAppVersionDialog(String message) {

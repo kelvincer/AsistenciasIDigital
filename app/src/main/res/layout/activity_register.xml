@@ -2,37 +2,37 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="0dp"
     android:layout_marginBottom="0dp"
     android:layout_marginLeft="0dp"
     android:layout_marginRight="0dp"
-    android:paddingTop ="0dp"
-    android:paddingBottom ="10dp"
-    android:paddingLeft ="20dp"
-    android:paddingRight ="20dp"
-    android:textColor="#FFFFFF"
-    android:background="#03A2D7">
+    android:layout_marginTop="0dp"
+    android:background="#03A2D7"
+    android:paddingBottom="10dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="0dp"
+    android:textColor="#FFFFFF">
 
     <ImageView
+        android:id="@+id/fondoReloj"
         android:layout_width="230dp"
         android:layout_height="230dp"
-        android:id="@+id/fondoReloj"
-        android:src="@drawable/fondo_reloj"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/fondo_reloj" />
 
     <TextClock
         android:id="@+id/clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-black"
         android:format12Hour="h:mm:ss aa"
         android:format24Hour="H:mm:ss"
-        android:fontFamily="sans-serif-black"
+        android:paddingTop="100dp"
         android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:paddingTop ="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textSize="30sp" />
 
 
     <LinearLayout
@@ -49,8 +49,8 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="#0a518c"
-            android:padding="10dp"
             android:drawableTop="@drawable/icono_ingreso_trabajo"
+            android:padding="10dp"
             android:textColor="#ffffff" />
 
         <Button
@@ -92,21 +92,12 @@
         android:id="@+id/text_lrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttons_lrl"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/buttons_lrl">
 
         <TextView
             android:id="@+id/time_enter_txv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="#FFFFFF"
-            android:gravity="center_horizontal"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/time_enter_launch_txv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -116,6 +107,15 @@
 
         <TextView
             android:id="@+id/time_exit_launch_txv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/time_enter_launch_txv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -137,25 +137,24 @@
         android:id="@+id/event_ryv"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="15dp"
-        android:layout_below="@+id/text_lrl"
-        android:textColor="#ffffff"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/text_lrl"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="20dp"
+        android:textColor="#ffffff" />
 
     <Button
         android:id="@+id/delete_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Borrar"
-        android:textSize="18sp"
-        android:background="#0a518c"
-        android:textColor="@android:color/white"
-        android:layout_below="@+id/event_ryv"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/event_ryv"
+        android:background="#0a518c"
+        android:text="Borrar"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

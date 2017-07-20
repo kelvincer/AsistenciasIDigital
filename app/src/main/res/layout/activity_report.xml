@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textColor="#FFFFFF"
     android:background="#03A2D7"
+    android:textColor="#FFFFFF"
     tools:context="com.idigital.asistenciasidigital.ReportActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/ryv_report"
         android:layout_width="match_parent"
-        android:textColor="#FFFFFF"
         android:layout_height="match_parent" />
+
 
 </LinearLayout>

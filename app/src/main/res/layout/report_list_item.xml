@@ -19,7 +19,8 @@
             android:id="@+id/user_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ladislao" />
+            android:text="ladislao"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 
@@ -36,14 +37,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fecha: " />
+                android:text="Fecha: "
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/date_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_txv"
-                android:text="12/34/23" />
+                android:text="12/34/23"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 
@@ -57,14 +60,16 @@
                 android:id="@+id/label_time_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hora: " />
+                android:text="Hora: "
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/time_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="3:40" />
+                android:text="3:40"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
     </LinearLayout>
@@ -82,12 +87,14 @@
                 android:id="@+id/label_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category: " />
+                android:text="Category: "
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/category_txv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -99,12 +106,14 @@
                 android:id="@+id/label_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Estado: " />
+                android:text="Estado: "
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/state_txv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </LinearLayout>
@@ -121,12 +130,14 @@
                 android:id="@+id/label_movement"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Movimiento: " />
+                android:text="Movimiento: "
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/movement_txv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

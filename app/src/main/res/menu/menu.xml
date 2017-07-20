@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/item_1"
-        android:title="Cerrar Sesión" />
-
-    <item
         android:id="@+id/item_2"
         android:title="Reporte" />
+
+    <item
+        android:id="@+id/item_1"
+        android:title="Cerrar Sesión" />
 </menu>
