@@ -1,11 +1,17 @@
 package com.idigital.asistenciasidigital.util;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+
+import com.idigital.asistenciasidigital.view.ProgressDialogView;
+
+import java.io.IOException;
 
 /**
  * Created by USUARIO on 05/04/2017.
@@ -30,12 +36,53 @@ public class ConnectionUtil {
         }
     }
 
-    public static boolean isConnected(Context context){
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Activity.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected())
-            return true;
-        else
-            return false;
+    public static boolean haveNetworkConnection(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        boolean connected = false;
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            // do something
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                connected = true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to the mobile provider's data plan
+                connected = true;
+            }
+        }
+
+        return connected;
+    }
+
+    static boolean isOnline = false;
+
+    public static boolean isOnline() {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Runtime runtime = Runtime.getRuntime();
+                try {
+                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+                    int exitValue = ipProcess.waitFor();
+                    isOnline = (exitValue == 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return isOnline;
     }
 }

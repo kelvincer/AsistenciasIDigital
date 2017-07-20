@@ -3,32 +3,15 @@ package com.idigital.asistenciasidigital;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- ** Created by rcaroama on 04/11/2016.
- */
-
 public class PreferenceManager {
 
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
-    Context _context;
-
-    // Shared pref mode
-    int PRIVATE_MODE = 0;
-
-    // Sharedpref file name
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
     private static final String PREF_NAME = "IDigital";
 
-    // User name (make variable public to access from outside)
-    public static final String KEY_NAME = "name";
-
-    // Email address (make variable public to access from outside)
-    public static final String KEY_EMAIL = "email";
-    public static final String KEY_SESSION = "session";
-
     public PreferenceManager(Context context) {
-        this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+
+        pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 
@@ -62,8 +45,7 @@ public class PreferenceManager {
         return pref.getInt(key, value);
     }
 
-    public void clearKeyPreference(String key){
-        SharedPreferences.Editor editor = pref.edit();
+    public void clearKeyPreference(String key) {
         editor.remove(key);
         editor.apply();
     }

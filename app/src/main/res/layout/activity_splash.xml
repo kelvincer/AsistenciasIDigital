@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#03A2D7"
     tools:context="com.idigital.asistenciasidigital.SplashActivity">
 
     <ProgressBar
@@ -14,6 +15,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:indeterminateTint="#ffffff"
         app:layout_constraintVertical_bias="0.501" />
 
     <TextView
@@ -25,6 +27,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="0dp"
         android:text="Cargando..."
+        android:textColor="#FFFFFF"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

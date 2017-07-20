@@ -1,11 +1,11 @@
 package com.idigital.asistenciasidigital.api;
 
+import com.idigital.asistenciasidigital.response.DetailReportResponse;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.RegisterResponse;
-import com.idigital.asistenciasidigital.response.ReportResponse;
-
-import java.util.List;
+import com.idigital.asistenciasidigital.response.ShortReportResponse;
+import com.idigital.asistenciasidigital.response.VersionResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -23,19 +23,40 @@ public interface IDigitalService {
     Call<LoginResponse> postLogin(@Field("email") String email, @Field("passwd") String password);
 
     @FormUrlEncoded
-    @POST("attendance_add")
-    Call<RegisterResponse> postRegistry(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
-                                        @Field("date_add") String date, @Field("movement") String movement,
-                                        @Field("latitude") double latitude, @Field("longitude") double longitude);
+    @POST("attendance-add")
+    Call<RegisterResponse> postMovement(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
+                                        @Field("flag_obs") int flag, @Field("distance") int distance,
+                                        @Field("movement") String movement,
+                                        @Field("latitude") double latitude, @Field("longitude") double longitude,
+                                        @Field("id_attendance_category") int category);
 
     @GET("attendance")
-    Call<ReportResponse> getReport();
+    Call<ShortReportResponse> getReport();
 
     @FormUrlEncoded
-    @POST("attendance_place")
-    Call<ReportResponse> postUserReport(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter);
+    @POST("attendance-place")
+    Call<ShortReportResponse> postUserReport(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter);
 
     @FormUrlEncoded
-    @POST("attendance_allplaces")
-    Call<ReportResponse> postAllUserReport(@Field("id_user") String idUser);
+    @POST("attendance-allplaces")
+    Call<ShortReportResponse> postAllUserReport(@Field("id_user") String idUser);
+
+    @FormUrlEncoded
+    @POST("attendance-allheader-user")
+    Call<ShortReportResponse> postAttendanceUser(@Field("id_user") String idUser);
+
+    @FormUrlEncoded
+    @POST("attendance-detailheader-user")
+    Call<DetailReportResponse> postAttendanceDetail(@Field("id_user") String idUser,
+                                                    @Field("date_show_in") String date);
+
+    @FormUrlEncoded
+    @POST("attendance-upd")
+    Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser,  @Field("id_headquarter") String idQuarter,
+                                              @Field("flag_obs") int flag, @Field("distance") int distance,
+                                              @Field("latitude") double latitude, @Field("longitude") double longitude,
+                                              @Field("id_attendance_category") int category);
+    @FormUrlEncoded
+    @POST("android-version")
+    Call<VersionResponse> postVersion(@Field("android_version") int version);
 }

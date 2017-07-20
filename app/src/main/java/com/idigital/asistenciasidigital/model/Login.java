@@ -39,6 +39,9 @@ public class Login {
     @SerializedName("photo")
     @Expose
     private String photo;
+    @SerializedName("id_typeuser")
+    @Expose
+    private String idTypeuser;
     @SerializedName("active")
     @Expose
     private String active;
@@ -51,9 +54,6 @@ public class Login {
     @SerializedName("date_upd")
     @Expose
     private String dateUpd;
-    @SerializedName("id_typeuser")
-    @Expose
-    private String idTypeuser;
 
     public String getIdUser() {
         return idUser;
@@ -135,6 +135,14 @@ public class Login {
         this.photo = photo;
     }
 
+    public String getIdTypeuser() {
+        return idTypeuser;
+    }
+
+    public void setIdTypeuser(String idTypeuser) {
+        this.idTypeuser = idTypeuser;
+    }
+
     public String getActive() {
         return active;
     }
@@ -165,13 +173,5 @@ public class Login {
 
     public void setDateUpd(String dateUpd) {
         this.dateUpd = dateUpd;
-    }
-
-    public String getIdTypeuser() {
-        return idTypeuser;
-    }
-
-    public void setIdTypeuser(String idTypeuser) {
-        this.idTypeuser = idTypeuser;
     }
 }

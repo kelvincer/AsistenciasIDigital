@@ -3,9 +3,6 @@ package com.idigital.asistenciasidigital.response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.idigital.asistenciasidigital.model.Login;
-import com.idigital.asistenciasidigital.model.Report;
-
-import java.util.List;
 
 /**
  * Created by USUARIO on 05/04/2017.
@@ -15,10 +12,16 @@ public class LoginResponse {
 
     @SerializedName("data")
     @Expose
-    private Login data = null;
-    @SerializedName("error")
+    private Login data;
+    @SerializedName("code")
     @Expose
-    private boolean error;
+    private Integer code;
+    @SerializedName("message")
+    @Expose
+    private String message;
+    @SerializedName("blocking")
+    @Expose
+    private Boolean blocking;
 
     public Login getData() {
         return data;
@@ -28,11 +31,27 @@ public class LoginResponse {
         this.data = data;
     }
 
-    public boolean getError() {
-        return error;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setError(boolean error) {
-        this.error = error;
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(Boolean blocking) {
+        this.blocking = blocking;
     }
 }

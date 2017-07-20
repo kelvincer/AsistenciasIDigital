@@ -20,6 +20,7 @@ public class LocationUtil {
                 locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
             } catch (Settings.SettingNotFoundException e) {
                 e.printStackTrace();
+                return false;
             }
 
             isAvailable = (locationMode != Settings.Secure.LOCATION_MODE_OFF);

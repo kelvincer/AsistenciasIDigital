@@ -2,6 +2,7 @@ package com.idigital.asistenciasidigital.database;
 
 import com.idigital.asistenciasidigital.model.Place;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.List;
