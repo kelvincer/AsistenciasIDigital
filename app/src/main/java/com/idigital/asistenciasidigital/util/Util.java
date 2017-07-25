@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by USUARIO on 07/04/2017.
@@ -31,5 +32,9 @@ public class Util {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
+    }
+    public static String generateToken() {
+
+        return UUID.randomUUID().toString();
     }
 }

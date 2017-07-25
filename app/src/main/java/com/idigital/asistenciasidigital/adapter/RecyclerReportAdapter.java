@@ -58,8 +58,6 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
         TextView categoryTxv;
         @BindView(R.id.state_txv)
         TextView stateTxv;
-        @BindView(R.id.movement_txv)
-        TextView movementTxv;
         View view;
 
         public CustomViewHolder(View itemView) {
@@ -75,13 +73,6 @@ public class RecyclerReportAdapter extends RecyclerView.Adapter<RecyclerReportAd
             timeTxv.setText(item.getHora());
             categoryTxv.setText(item.getCategory());
             stateTxv.setText(item.getState());
-            movementTxv.setText(item.getMovement());
-            /*view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onItemClick(item);
-                }
-            });*/
         }
     }
 }

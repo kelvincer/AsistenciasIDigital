@@ -8,4 +8,6 @@
     <color name="sign_in_textcolor">#FFFFFF</color>
     <color name="register_btn_textcolor">#FFFFFF</color>
     <color name="alert_dialog_background_color">#FFFFFF</color>
+    <color name="button_enable_color">#0a518c</color>
+    <color name="button_disable_color">#8d8d8d</color>
 </resources>

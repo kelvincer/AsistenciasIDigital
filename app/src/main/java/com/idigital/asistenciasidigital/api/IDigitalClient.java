@@ -7,7 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class IDigitalClient {
 
     private static Retrofit retrofit;
-    private final static String BASE_URL = "http://54.67.124.238/asistencias/public/";
+    //private final static String BASE_URL = "http://54.67.124.238/asistencias/public/";
+    private final static String BASE_URL = "http://54.67.124.238/rest.devel/public/";
 
     public static IDigitalService getIDigitalService() {
         if (retrofit == null) {

@@ -8,8 +8,5 @@ import android.location.Location;
 
 public interface RegisterRepository {
 
-    void sendEnterRegister(String userId, String idQuarter, int flag, int distance,String movement, Location location, int category);
-
-    void sendExitRegister(String userId, String idQuarter, int flag, int distance, Location location, int category);
-
+    void sendRegister(String userId, String idQuarter, int flag, int distance, Location location, int category, String token);
 }

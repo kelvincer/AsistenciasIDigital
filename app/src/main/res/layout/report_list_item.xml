@@ -117,27 +117,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/label_movement"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Movimiento: "
-                android:textColor="@android:color/white" />
-
-            <TextView
-                android:id="@+id/movement_txv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-    </LinearLayout>
 </LinearLayout>

@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +38,11 @@ import com.idigital.asistenciasidigital.register.RegisterPresenterImpl;
 import com.idigital.asistenciasidigital.util.Constants;
 import com.idigital.asistenciasidigital.util.LocationUtil;
 import com.idigital.asistenciasidigital.util.SimpleDividerItemDecoration;
+import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
+
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,7 +78,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private boolean hasPermissionAccessFineLocation;
     private RegisterPresenter presenter;
     private int category, activeButton;
-    private String movement;
     private PreferenceManager preferenceManager;
     DatabaseHelper helper;
     UserDao userDao;
@@ -98,7 +99,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
         userLoggedIn = userDao.findUserByLoggedIn();
         activeButton = userLoggedIn.getActiveButton();
-        //activeButton = preferenceManager.getInt(Constants.ACTIVE_BUTTON, 0);
         updateButton();
         updateTimeTextViews();
 
@@ -120,11 +120,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         timeExitLaunchTxv.setText(userLoggedIn.getTimeTwo());
         timeEnterLaunchTxv.setText(userLoggedIn.getTimeThree());
         timeExitTxv.setText(userLoggedIn.getTimeFour());
-
-        /*timeEnterTxv.setText(preferenceManager.getString(Constants.TIME_1, ""));
-        timeEnterLaunchTxv.setText(preferenceManager.getString(Constants.TIME_2, ""));
-        timeExitLaunchTxv.setText(preferenceManager.getString(Constants.TIME_3, ""));
-        timeExitTxv.setText(preferenceManager.getString(Constants.TIME_4, ""));*/
     }
 
     @Override
@@ -179,26 +174,23 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     @OnClick({R.id.enter_btn, R.id.enter_launch_btn, R.id.exit_launch_btn, R.id.exit_btn, R.id.delete_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.exit_btn:
-                registerMovement();
-                movement = Constants.SALIDA;
-                category = Constants.LABORAL;
-                break;
+
             case R.id.enter_btn:
                 clearTextViewAndUserTime();
                 registerMovement();
-                movement = Constants.INGRESO;
-                category = Constants.LABORAL;
-                break;
-            case R.id.enter_launch_btn:
-                registerMovement();
-                movement = Constants.INGRESO;
-                category = Constants.ALMUERZO;
+                category = Constants.LABOR_ENTER;
                 break;
             case R.id.exit_launch_btn:
                 registerMovement();
-                movement = Constants.SALIDA;
-                category = Constants.ALMUERZO;
+                category = Constants.LAUNCH_EXIT;
+                break;
+            case R.id.enter_launch_btn:
+                registerMovement();
+                category = Constants.LAUNCH_ENTER;
+                break;
+            case R.id.exit_btn:
+                registerMovement();
+                category = Constants.LABOR_EXIT;
                 break;
             case R.id.delete_btn:
                 eventAdapter.clearList();
@@ -267,22 +259,22 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
         switch (activeButton) {
 
-            case 0:
+            case 1:
                 timeEnterTxv.setText(time);
                 userLoggedIn.setTimeOne(time);
                 //preferenceManager.putString(Constants.TIME_1, time);
                 break;
-            case 1:
+            case 2:
                 timeExitLaunchTxv.setText(time);
                 userLoggedIn.setTimeTwo(time);
                 //preferenceManager.putString(Constants.TIME_3, time);
                 break;
-            case 2:
+            case 3:
                 timeEnterLaunchTxv.setText(time);
                 userLoggedIn.setTimeThree(time);
                 //preferenceManager.putString(Constants.TIME_2, time);
                 break;
-            case 3:
+            case 4:
                 timeExitTxv.setText(time);
                 userLoggedIn.setTimeFour(time);
                 //preferenceManager.putString(Constants.TIME_4, time);
@@ -297,12 +289,15 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     @Override
     public void enableButton() {
 
-        if (activeButton < 3) {
+        if (activeButton < 4) {
             activeButton++;
             updateButton();
         } else {
-            activeButton = 0;
+            activeButton = 1;
             updateButton();
+            //preferenceManager.clearKeyPreference(Constants.TOKEN);
+            userLoggedIn.setToken(null);
+            userDao.insertUser(userLoggedIn);
         }
     }
 
@@ -405,7 +400,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             eventAdapter.addNewEvent("Hay conexión a internet");
             if (LocationUtil.isLocationServicesAvailable(getApplicationContext())) {
                 progressView.setMessage("Obteniendo tu ubicación");
-                presenter.sendRegister(movement, category);
+                //String token = preferenceManager.getString(Constants.TOKEN, null);
+                String token = userLoggedIn.getToken();
+                if (token == null) {
+                    token = Util.generateToken();
+                    userLoggedIn.setToken(token);
+                    userDao.insertUser(userLoggedIn);
+                }
+                presenter.sendRegister(category, token);
             } else {
                 progressView.dismissDialog();
                 showLocationSettingsAlert();
@@ -428,16 +430,18 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         Button[] buttons = {enterBtn, exitLaunchBtn, enterLaunchBtn, exitBtn};
 
         for (int i = 0; i < buttons.length; i++) {
-            if (activeButton == i)
-                buttons[activeButton].setEnabled(true);
-            else
+            if ((activeButton - 1) == i) {
+                buttons[i].setEnabled(true);
+                buttons[i].setBackgroundColor(ContextCompat.getColor(this, R.color.button_enable_color));
+            } else {
                 buttons[i].setEnabled(false);
+                buttons[i].setBackgroundColor(ContextCompat.getColor(this, R.color.button_disable_color));
+            }
         }
-        //preferenceManager.putInt(Constants.ACTIVE_BUTTON, activeButton);
+
         userLoggedIn.setActiveButton(activeButton);
         saveUserOnDB(userLoggedIn);
     }
-
 
     private void showUpdateAppVersionDialog(String message) {
 
@@ -461,7 +465,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
         alertDialog.show();*/
 
-        final Dialog dialog = new Dialog(this, R.style.Theme_AppCompat_DayNight_Dialog);
+        final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.update_dialog);
         Button acceptBtn = (Button) dialog.findViewById(R.id.dialogButtonOK);
         Button cancelBtn = (Button) dialog.findViewById(R.id.dialogCancelOK);
@@ -505,4 +509,5 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private void saveUserOnDB(User user) {
         userDao.insertUser(user);
     }
+
 }

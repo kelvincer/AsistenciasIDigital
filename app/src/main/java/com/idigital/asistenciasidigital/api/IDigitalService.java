@@ -1,5 +1,6 @@
 package com.idigital.asistenciasidigital.api;
 
+import com.idigital.asistenciasidigital.response.ActiveButtonResponse;
 import com.idigital.asistenciasidigital.response.DetailReportResponse;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
@@ -26,20 +27,8 @@ public interface IDigitalService {
     @POST("attendance-add")
     Call<RegisterResponse> postMovement(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter,
                                         @Field("flag_obs") int flag, @Field("distance") int distance,
-                                        @Field("movement") String movement,
                                         @Field("latitude") double latitude, @Field("longitude") double longitude,
-                                        @Field("id_attendance_category") int category);
-
-    @GET("attendance")
-    Call<ShortReportResponse> getReport();
-
-    @FormUrlEncoded
-    @POST("attendance-place")
-    Call<ShortReportResponse> postUserReport(@Field("id_user") String idUser, @Field("id_headquarter") String idQuarter);
-
-    @FormUrlEncoded
-    @POST("attendance-allplaces")
-    Call<ShortReportResponse> postAllUserReport(@Field("id_user") String idUser);
+                                        @Field("id_attendance_category") int category, @Field("token") String token);
 
     @FormUrlEncoded
     @POST("attendance-allheader-user")
@@ -51,12 +40,10 @@ public interface IDigitalService {
                                                     @Field("date_show_in") String date);
 
     @FormUrlEncoded
-    @POST("attendance-upd")
-    Call<RegisterResponse> postUpdateMovement(@Field("id_user") String idUser,  @Field("id_headquarter") String idQuarter,
-                                              @Field("flag_obs") int flag, @Field("distance") int distance,
-                                              @Field("latitude") double latitude, @Field("longitude") double longitude,
-                                              @Field("id_attendance_category") int category);
-    @FormUrlEncoded
     @POST("android-version")
     Call<VersionResponse> postVersion(@Field("android_version") int version);
+
+    @FormUrlEncoded
+    @POST("attendance-button")
+    Call<ActiveButtonResponse> getActiveButton(@Field("id_user") String idUser, @Field("token") String token);
 }

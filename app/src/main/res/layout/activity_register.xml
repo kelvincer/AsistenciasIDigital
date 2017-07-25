@@ -39,8 +39,10 @@
         android:id="@+id/buttons_lrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/clock"
-        android:layout_marginTop="110dp">
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/fondoReloj"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <Button
             android:id="@+id/enter_btn"

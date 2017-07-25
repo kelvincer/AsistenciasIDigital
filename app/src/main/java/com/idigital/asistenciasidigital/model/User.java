@@ -28,6 +28,8 @@ public class User {
     Boolean loggedIn;
     @DatabaseField
     String userId;
+    @DatabaseField
+    String token;
 
     public String getEmail() {
         return email;
@@ -99,5 +101,13 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

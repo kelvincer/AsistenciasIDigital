@@ -13,13 +13,17 @@ import com.idigital.asistenciasidigital.database.PlaceDao;
 import com.idigital.asistenciasidigital.database.UserDao;
 import com.idigital.asistenciasidigital.model.Place;
 import com.idigital.asistenciasidigital.model.User;
+import com.idigital.asistenciasidigital.register.ui.RegisterActivity;
+import com.idigital.asistenciasidigital.response.ActiveButtonResponse;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.response.PlaceResponse;
 import com.idigital.asistenciasidigital.response.VersionResponse;
 import com.idigital.asistenciasidigital.util.Constants;
+import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.DialogView;
 
 import java.util.List;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -121,7 +125,7 @@ public class SplashActivity extends AppCompatActivity {
     private void automaticLogin() {
 
         if (userLoggedIn == null) {
-            Toast.makeText(this, "Error logged in user", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error logged in is null", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -138,19 +142,22 @@ public class SplashActivity extends AppCompatActivity {
                     if (!loginResponse.getBlocking()) {
 
                         if (loginResponse.getCode() == 5) {
-                            navigateToRegisterActivity();
+                            //navigateToRegisterActivity();
+                            requestActiveButton();
                         } else if (loginResponse.getCode() == 6) {
                             deleteUserAndPreferenceManager();
                             navigateToLoginActivity();
                             Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            finish();
                         } else {
                             Log.i(TAG, loginResponse.getMessage());
+                            finish();
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 }
-                finish();
             }
 
             @Override
@@ -170,7 +177,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void navigateToRegisterActivity() {
 
-        Intent intent = new Intent(this, com.idigital.asistenciasidigital.register.ui.RegisterActivity.class);
+        Intent intent = new Intent(this, RegisterActivity.class);
         if (!fetchVersionServerMessage.isEmpty())
             intent.putExtra(Constants.FETCH_VERSION_MESSAGE, fetchVersionServerMessage);
         startActivity(intent);
@@ -217,6 +224,47 @@ public class SplashActivity extends AppCompatActivity {
             public void onFailure(Call<VersionResponse> call, Throwable t) {
 
                 t.printStackTrace();
+            }
+        });
+    }
+
+    private void requestActiveButton() {
+
+        final User user = userDao.findUserByLoggedIn();
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        //String token = preferenceManager.getString(Constants.TOKEN, null);
+        String token = user.getToken();
+        if (token == null) {
+            token = Util.generateToken();
+            //preferenceManager.putString(Constants.TOKEN, token);
+            user.setToken(token);
+            userDao.insertUser(user);
+        }
+        Call<ActiveButtonResponse> call = service.getActiveButton(user.getUserId(), token);
+        call.enqueue(new Callback<ActiveButtonResponse>() {
+            @Override
+            public void onResponse(Call<ActiveButtonResponse> call, Response<ActiveButtonResponse> response) {
+
+                if (response.isSuccessful()) {
+                    ActiveButtonResponse buttonResponse = response.body();
+                    if (buttonResponse.getCode() == 0) {
+                        user.setActiveButton(Integer.parseInt(buttonResponse.getData().getId()));
+                        userDao.insertUser(user);
+                        navigateToRegisterActivity();
+                    } else {
+                        Toast.makeText(SplashActivity.this, buttonResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(SplashActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+                Log.i(TAG, response.raw().toString());
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<ActiveButtonResponse> call, Throwable t) {
+                t.printStackTrace();
+                Log.i(TAG, "request active button failure");
             }
         });
     }

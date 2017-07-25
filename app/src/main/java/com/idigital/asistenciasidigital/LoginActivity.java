@@ -15,8 +15,10 @@ import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.UserDao;
 import com.idigital.asistenciasidigital.model.Login;
 import com.idigital.asistenciasidigital.model.User;
+import com.idigital.asistenciasidigital.response.ActiveButtonResponse;
 import com.idigital.asistenciasidigital.response.LoginResponse;
 import com.idigital.asistenciasidigital.util.Constants;
+import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
@@ -81,15 +83,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
                 Log.i(TAG, response.raw().toString());
-                progressView.dismissDialog();
-
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
                     if (!loginResponse.getBlocking()) {
                         if (loginResponse.getCode() == 5) {
                             saveLoginData(loginResponse);
-                            navigateToRegisterActivity();
-                            finish();
+                            requestActiveButton();
                         } else {
                             showAlertDialog(loginResponse.getMessage());
                         }
@@ -120,7 +119,6 @@ public class LoginActivity extends AppCompatActivity {
     private void saveLoginData(LoginResponse response) {
 
         Login login = response.getData();
-
         User user = userDao.findUserById(login.getEmail());
 
         if (user == null) {
@@ -134,13 +132,6 @@ public class LoginActivity extends AppCompatActivity {
             user.setLoggedIn(true);
         }
         userDao.insertUser(user);
-
-        /*PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
-        preferenceManager.putString(Constants.USER_PASSWORD, passwordEtx.getText().toString());
-        preferenceManager.putString(Constants.USER_EMAIL, login.getEmail());
-        preferenceManager.putString(Constants.USER_ID, login.getIdUser());
-        preferenceManager.putString(Constants.USER_NAME, login.getName());
-        preferenceManager.putString(Constants.USER_LAST_NAME, login.getLastname());*/
 
         //save activity_login
         preferenceManager.putBoolean(Constants.LOGGED_IN, true);
@@ -177,6 +168,40 @@ public class LoginActivity extends AppCompatActivity {
             }
             loginRequest();
         }
+    }
+
+    private void requestActiveButton() {
+
+        final User user = userDao.findUserByLoggedIn();
+        IDigitalService service = IDigitalClient.getIDigitalService();
+        //String token = preferenceManager.getString(Constants.TOKEN, null);
+        String token = user.getToken();
+        if (token == null) {
+            token = Util.generateToken();
+            //preferenceManager.putString(Constants.TOKEN, token);
+            user.setToken(token);
+            userDao.insertUser(user);
+        }
+        Call<ActiveButtonResponse> call = service.getActiveButton(user.getUserId(), token);
+        call.enqueue(new Callback<ActiveButtonResponse>() {
+            @Override
+            public void onResponse(Call<ActiveButtonResponse> call, Response<ActiveButtonResponse> response) {
+
+                progressView.dismissDialog();
+                if (response.isSuccessful()) {
+                    ActiveButtonResponse buttonResponse = response.body();
+                    user.setActiveButton(Integer.parseInt(buttonResponse.getData().getId()));
+                    userDao.insertUser(user);
+                    navigateToRegisterActivity();
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ActiveButtonResponse> call, Throwable t) {
+                Log.i(TAG, "request active button failure");
+            }
+        });
     }
 
     public void showAlertDialog(String message) {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
-import com.idigital.asistenciasidigital.PreferenceManager;
 import com.idigital.asistenciasidigital.R;
 import com.idigital.asistenciasidigital.database.DatabaseHelper;
 import com.idigital.asistenciasidigital.database.PlaceDao;
@@ -40,10 +39,8 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     private LocationManager locationManager;
     private List<Place> places;
     private Map<String, Double> sortedDistanceMap;
-    private String closestPlaceId;
+    private String closestPlaceId, randomToken;
     private int attempNumber = 0;
-    private String movement;
-    private PreferenceManager preferenceManager;
     private int category;
 
     public RegisterPresenterImpl(Context context, RegisterView registerView) {
@@ -53,7 +50,6 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         this.eventBus = GreenRobotEventBus.getInstance();
         this.registerInteractor = new RegisterInteractorImpl();
         locationManager = new LocationManager(context, this);
-        preferenceManager = new PreferenceManager(context);
     }
 
     @Override
@@ -68,12 +64,12 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     }
 
     @Override
-    public void sendRegister(String movement, int category) {
+    public void sendRegister(int category, String token) {
         if (registerView != null) {
             registerView.showProgressDialog();
         }
-        this.movement = movement;
         this.category = category;
+        this.randomToken = token;
         locationManager.connect();
     }
 
@@ -100,7 +96,7 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
                 onBlocking(event.getMessage());
                 break;
             default:
-                throw new IllegalArgumentException("Invalid event type");
+                throw new RuntimeException("Invalid event type");
         }
     }
 
@@ -179,9 +175,6 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
         }
         sortedDistanceMap = new HashMap<>();
         sortedDistanceMap = Util.sortMapByValue(map);
-        for (Map.Entry<String, Double> entry : sortedDistanceMap.entrySet()) {
-            Log.i(TAG, entry.getKey() + "/" + entry.getValue());
-        }
     }
 
     private Map.Entry<String, Double> getFirstMapEntry() {
@@ -213,13 +206,7 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
     private void setUpForSendRegister(Location location, int flag, int distance) {
 
         registerView.setProgressMessage("Enviando registro");
-       /* if (movement.equalsIgnoreCase(Constants.INGRESO)) {
-            registerInteractor.sendEnterRegister(getUserId(), closestPlaceId, flag, distance, location, category);
-        } else {
-            registerInteractor.sendExitRegister(getUserId(), closestPlaceId, flag, distance, location, category);
-        }*/
-        registerInteractor.sendEnterRegister(getUserId(), closestPlaceId, flag, distance, movement, location, category);
-
+        registerInteractor.sendRegisteredMovement(getUserId(), closestPlaceId, flag, distance, location, category, randomToken);
     }
 
     private void handleUserOutOfRange(Place place, Double mininDistance, Location location) {
@@ -237,12 +224,11 @@ public class RegisterPresenterImpl implements RegisterPresenter, GeolocationList
             attempNumber = 0;
             setUpForSendRegister(location, Constants.OBSERVATION, mininDistance.intValue());
         } else {
-            throw new IllegalArgumentException("Illegal attempNumber value");
+            throw new RuntimeException("Illegal attempNumber value");
         }
     }
 
     private String getUserId() {
-        //String userId = preferenceManager.getString(Constants.USER_ID, "null");
         DatabaseHelper helper = new DatabaseHelper(context);
         UserDao userDao = new UserDao(helper);
         User user = userDao.findUserByLoggedIn();

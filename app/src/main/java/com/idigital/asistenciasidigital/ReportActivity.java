@@ -122,7 +122,6 @@ public class ReportActivity extends AppCompatActivity implements OnItemClickList
         ryvReport.addItemDecoration(new SimpleDividerItemDecoration(this));
     }
 
-
     private class TestAndFetchReportAsyncTask extends TestConnectionAsyncTask {
 
         @Override
