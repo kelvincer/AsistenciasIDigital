@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class DialogView {
     public static void showDialog(final Context context, String message, int type, final Activity listener) {
 
         final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.custom_dialog);
         Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
         TextView messageTxv = (TextView) dialog.findViewById(R.id.message_txv);

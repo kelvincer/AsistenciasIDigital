@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,9 +80,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
     private RegisterPresenter presenter;
     private int category, activeButton;
     private PreferenceManager preferenceManager;
-    DatabaseHelper helper;
-    UserDao userDao;
-    User userLoggedIn;
+    private DatabaseHelper helper;
+    private UserDao userDao;
+    private User userLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -466,6 +467,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         alertDialog.show();*/
 
         final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.update_dialog);
         Button acceptBtn = (Button) dialog.findViewById(R.id.dialogButtonOK);
         Button cancelBtn = (Button) dialog.findViewById(R.id.dialogCancelOK);
