@@ -265,6 +265,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onFailure(Call<ActiveButtonResponse> call, Throwable t) {
                 t.printStackTrace();
                 Log.i(TAG, "request active button failure");
+                Toast.makeText(SplashActivity.this, "Request active button failure", Toast.LENGTH_SHORT).show();
             }
         });
     }

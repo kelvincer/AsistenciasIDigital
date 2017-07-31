@@ -30,6 +30,8 @@ public class User {
     String userId;
     @DatabaseField
     String token;
+    @DatabaseField
+    String name;
 
     public String getEmail() {
         return email;
@@ -109,5 +111,13 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
                 Log.i(TAG, response.raw().toString());
+
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
                     if (!loginResponse.getBlocking()) {
@@ -90,12 +91,15 @@ public class LoginActivity extends AppCompatActivity {
                             saveLoginData(loginResponse);
                             requestActiveButton();
                         } else {
+                            progressView.dismissDialog();
                             showAlertDialog(loginResponse.getMessage());
                         }
                     } else {
+                        progressView.dismissDialog();
                         showAlertDialog(loginResponse.getMessage());
                     }
                 } else {
+                    progressView.dismissDialog();
                     showAlertDialog(response.message());
                 }
             }
@@ -128,6 +132,8 @@ public class LoginActivity extends AppCompatActivity {
             user.setActiveButton(0);
             user.setLoggedIn(true);
             user.setUserId(login.getIdUser());
+            user.setToken(login.getToken());
+            user.setName(login.getName() + " " + login.getLastname());
         } else {
             user.setLoggedIn(true);
         }
@@ -200,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ActiveButtonResponse> call, Throwable t) {
                 Log.i(TAG, "request active button failure");
+                Toast.makeText(LoginActivity.this, "Request active button failure", Toast.LENGTH_SHORT).show();
             }
         });
     }

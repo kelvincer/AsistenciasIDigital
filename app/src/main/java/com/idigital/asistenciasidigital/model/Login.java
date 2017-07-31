@@ -54,6 +54,9 @@ public class Login {
     @SerializedName("date_upd")
     @Expose
     private String dateUpd;
+    @SerializedName("token")
+    @Expose
+    private String token;
 
     public String getIdUser() {
         return idUser;
@@ -173,5 +176,13 @@ public class Login {
 
     public void setDateUpd(String dateUpd) {
         this.dateUpd = dateUpd;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -43,8 +43,6 @@ import com.idigital.asistenciasidigital.util.Util;
 import com.idigital.asistenciasidigital.view.DialogView;
 import com.idigital.asistenciasidigital.view.ProgressDialogView;
 
-import java.util.UUID;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -89,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle(getResources().getString(R.string.registro_title));
+        //getSupportActionBar().setTitle(getResources().getString(R.string.registro_title));
         getSupportActionBar().setElevation(0);
         setUpEventsRecyclerview();
         presenter = new RegisterPresenterImpl(this, this);
@@ -99,6 +97,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         userDao = new UserDao(helper);
 
         userLoggedIn = userDao.findUserByLoggedIn();
+        getSupportActionBar().setTitle(userLoggedIn.getName());
         activeButton = userLoggedIn.getActiveButton();
         updateButton();
         updateTimeTextViews();
@@ -263,22 +262,18 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             case 1:
                 timeEnterTxv.setText(time);
                 userLoggedIn.setTimeOne(time);
-                //preferenceManager.putString(Constants.TIME_1, time);
                 break;
             case 2:
                 timeExitLaunchTxv.setText(time);
                 userLoggedIn.setTimeTwo(time);
-                //preferenceManager.putString(Constants.TIME_3, time);
                 break;
             case 3:
                 timeEnterLaunchTxv.setText(time);
                 userLoggedIn.setTimeThree(time);
-                //preferenceManager.putString(Constants.TIME_2, time);
                 break;
             case 4:
                 timeExitTxv.setText(time);
                 userLoggedIn.setTimeFour(time);
-                //preferenceManager.putString(Constants.TIME_4, time);
                 break;
             default:
                 throw new RuntimeException("Invalid active button number");
@@ -296,7 +291,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         } else {
             activeButton = 1;
             updateButton();
-            //preferenceManager.clearKeyPreference(Constants.TOKEN);
             userLoggedIn.setToken(null);
             userDao.insertUser(userLoggedIn);
         }
@@ -421,8 +415,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         preferenceManager.putBoolean(Constants.LOGGED_IN, false);
         userLoggedIn.setLoggedIn(false);
         saveUserOnDB(userLoggedIn);
-        //preferenceManager.clearKeyPreference(Constants.USER_EMAIL);
-        //preferenceManager.clearKeyPreference(Constants.USER_PASSWORD);
         finish();
     }
 
@@ -470,7 +462,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.update_dialog);
         Button acceptBtn = (Button) dialog.findViewById(R.id.dialogButtonOK);
-        Button cancelBtn = (Button) dialog.findViewById(R.id.dialogCancelOK);
+        Button cancelBtn = (Button) dialog.findViewById(R.id.dialogButtonCancel);
         TextView messageTxv = (TextView) dialog.findViewById(R.id.message_txv);
         messageTxv.setText(message);
         acceptBtn.setOnClickListener(new View.OnClickListener() {
